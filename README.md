@@ -28,11 +28,11 @@ The **source code** is as follows. First go to the Electron Cash console and ent
 
 import electroncash
 
-def __(S):
+    def __(S):
 
-    try: return bitcoin.int_to_hex(eval('electroncash.address.OpCodes.OP_'+S).value)
+        try: return bitcoin.int_to_hex(eval('electroncash.address.OpCodes.OP_'+S).value)
     
-    except: return S
+        except: return S
     
 _=lambda String: ''.join([__(Str) for Str in String.split()])
 
