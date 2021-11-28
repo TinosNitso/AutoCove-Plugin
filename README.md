@@ -17,7 +17,7 @@ In the case of 'preturn...', it will return whatever coins are sent to it, autom
 - Sender must use a P2PKH address.
 - Sending transaction must be no more than 520B. Only 3 inputs at most.
 - 14 bits minimum for only one input.
-- 21 BCH max, but I've only tested ~$38 at most with this exact address.
+- 21 BCH max (theoretically), but I've only tested about $38 worth at most with this exact address.
 - 8 bits minimum fee.
 
 bitcoincash:preturnf8g0qd9pte0u4qkkvlk6t42zz2s5a9qj3r4
