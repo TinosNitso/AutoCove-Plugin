@@ -1,4 +1,5 @@
 # AutoCove-Plugin
+
 Automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. TabIcon will change, and there will be a BCH assembly encoder/decoder in a future version. This is a minimum viable release.
 
 The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'!
@@ -25,7 +26,7 @@ simpleledger:preturnf8g0qd9pte0u4qkkvlk6t42zz2scxwm83at
 
 The private key is just 1, but that's OK.
 
-The source code is as follows. First go to the Electron Cash console and enter the following:
+The **source code** is as follows. First go to the Electron Cash console and enter the following:
 
 import electroncash
 
@@ -37,7 +38,7 @@ def __(S):
     
 _=lambda String: ''.join([__(Str) for Str in String.split()])
 
-_ is a virtual-machine code translator. Then copy-paste the following lines:
+_ is a virtual-machine code **translator**. Then copy-paste the following lines of **assembly** code:
 
 '210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798'	#STACK IS [TXPARENT, PREIMAGE, SIG] BEFORE [, PUBKEY].
 
@@ -61,4 +62,6 @@ _('SWAP SIZE 0128 BIN2NUM SUB SPLIT NIP 0120 BIN2NUM SPLIT DROP  EQUAL')	#[PREIM
 
 '08060000000044434675'	#[BOOL] APPEND NONCE, FOR VANITY ADDRESS (SEE VANITYTXID-PLUGIN)
 
-Appending line after line will yield exactly the covenant script. The nonce was generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+**Appending** line after line will yield exactly the covenant Script. The nonce was generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+SHA256 Checksum: **00000**9379d5ed71837398b6f9280074cb9e978494ec33395437be522328d41e6
