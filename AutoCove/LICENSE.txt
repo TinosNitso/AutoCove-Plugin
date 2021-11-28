@@ -1,0 +1,11 @@
+A large portion of the "class Plugin(BasePlugin):" code is copied from the plugin template at https://github.com/KarolTrzeszczkowski/Electron-Cash-Plugin-Template
+which uses GPLv3 license.
+
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+...
