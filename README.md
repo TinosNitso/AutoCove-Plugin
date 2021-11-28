@@ -22,9 +22,7 @@ In the case of 'preturn...', it will return whatever coins are sent to it, autom
 
 bitcoincash:preturnf8g0qd9pte0u4qkkvlk6t42zz2s5a9qj3r4
 
-simpleledger:preturnf8g0qd9pte0u4qkkvlk6t42zz2scxwm83at
-
-The private key is just 1, but that's OK.
+The private key is just 1, but that's OK. **Never** send SLP tokens, it isn't aware. (I failed to make that clear in the plugin tab.)
 
 The **source code** is as follows. First go to the Electron Cash console and enter the following:
 
