@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-v1.0.0 has a bug if someone double-pays the address in the same txn, like [this](https://www.blockchain.com/bch/tx/c51e89797be1bc22342bebfd126318dc75aa3d4b0a022f8880dba4e2cd1558d5) example. In that case wallet must be restarted to detect 2nd UTXO in the same UTX. Will be fixed in next version. *ppythagoras* should be spelled *ppythag0ras*.
+v1.0.0 has a bug if someone double-pays the address in the same txn, like [this](https://www.blockchain.com/bch/tx/c51e89797be1bc22342bebfd126318dc75aa3d4b0a022f8880dba4e2cd1558d5) example. In that case wallet must be restarted to detect 2nd UTXO in the same UTX. Will be fixed in next version. *ppythagoras* should be spelled *ppythag0ras*. Actually there may be a potential vulnerability in the covenant itself if someone uses the exact same address to send the exact same amount within 10 minutes. In that case, half the money could conceivably be lost as a fee. Next version of *preturn*... should require only 1 return input.
 
 Automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. TabIcon will change, and there will be a BCH assembly encoder/decoder in a future version. This is a minimum viable release.
 
