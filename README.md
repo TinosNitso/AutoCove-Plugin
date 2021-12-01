@@ -14,7 +14,7 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 - 14 bits minimum for only 1 input. **More** bits needed for more inputs.
 - 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH. I've tested multiple inputs & outputs, both Schnorr & ECDSA.
 - 8 bits minimum fee.
-- Total amount will be returned to *1st* input.
+- Total amount will be returned to *1st* input. v1.0.0 requires we don't send the exact same amount simultaneously from the same address, but charges a 5% lower fee.
 - **Never** send SLP tokens, or they'll be burned.
 
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
@@ -22,7 +22,7 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.0.1 notes:
-- Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as users type opcodes etc.
+- Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
 - Covenants' source-code now inside plugin tab. Both are enforced simultaneously.
 - Extra line of assembly -> **5%** fee increase, but guarantees return TX has only 1 input.
 - No more infinite loop, instead **.history_updated_signal** is used.
