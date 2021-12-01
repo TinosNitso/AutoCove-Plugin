@@ -21,6 +21,8 @@ Another example could be address *ppythag0ras*... which only returns three coins
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
+The next version should be able to interpret commas & *op.*, allowing copy-pasting of many existing EC contracts.
+
 v1.0.1 notes:
 - Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
 - Covenants' source-code now inside plugin tab. Both are enforced simultaneously.
