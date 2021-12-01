@@ -14,7 +14,7 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 - 14 bits minimum for only 1 input. **More** bits needed for more inputs.
 - 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH. I've tested multiple inputs & outputs, both Schnorr & ECDSA.
 - 8 bits minimum fee.
-- Total amount will be returned to *1st* input. v1.0.0 requires we don't send the exact same amount simultaneously from the same address, but charges a 5% lower fee.
+- Total amount will be returned to *1st* input. v1.0.0 requires we don't send the exact same amount simultaneously from the same address, but charges a 4% lower fee.
 - **Never** send SLP tokens, or they'll be burned.
 
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
