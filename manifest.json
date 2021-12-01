@@ -1,7 +1,7 @@
 {
     "display_name": "AutoCove",
-    "version": "1.0.0",
-    "description": "Automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. TabIcon will change, and there will be a BCH assembly encoder/decoder in a future version. This is a minimum viable release.",
+    "version": "1.0.1",
+    "description": "Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. TabIcon needs improvement, colors are needed & maybe a Script decoder too.",
     "project_url": "https://github.com/TinosNitso/AutoCove-Plugin",
     "minimum_ec_version": "3.6",
     "package_name": "AutoCove",
