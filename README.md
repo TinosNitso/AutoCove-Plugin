@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+Unfortunately there's a potential malleability **problem** with the preturn addresses! A miner could malleate the txn sending to the address, in which case my scripts aren't smart enough to figure out who sent the money. That would result in the money being burned. Miners routinely vary sigscripts to claim money sent to [this](https://www.blockchain.com/bch/address/bitcoincash:pz689gnx6z7cnsfhq6jpxtx0k9hhcwulev5cpumfk0?page=2) address for example (the empty redeem script address). Unfortunately the miners could always add a huge amount of data into the sender's sigscript, making it too difficult to return to sender! The next version of the IDE will have (optional) colors for all the opcodes, and highlight all instances of a selected word, etc.
+
 I forgot to mention I copied the v1.0.1 tabIcon from [bitcoinbch.com](https://bitcoinbch.com).
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.1.png)
