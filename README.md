@@ -1,8 +1,10 @@
 # AutoCove-Plugin
 
-Unfortunately there's a potential malleability **problem** with the preturn addresses! A miner could malleate the txn sending to the address, in which case my scripts aren't smart enough to figure out who sent the money. That would result in the money being burned. Miners routinely vary sigscripts to claim money sent to [this](https://www.blockchain.com/bch/address/bitcoincash:pz689gnx6z7cnsfhq6jpxtx0k9hhcwulev5cpumfk0?page=2) address for example (the empty redeem script address). Unfortunately the miners could always add a huge amount of data into the sender's sigscript, making it too difficult to return to sender! The next version of the IDE will have (optional) colors for all the opcodes, and highlight all instances of a selected word, etc.
+Unfortunately there's a potential malleability **problem** with the preturn addresses! A miner could malleate the txn sending to the address, in which case the scripts aren't smart enough to figure out who sent the money. That would result in the money being burned. Miners routinely vary return (but not sender) sigscripts to claim money sent to [this](https://www.blockchain.com/bch/address/bitcoincash:pz689gnx6z7cnsfhq6jpxtx0k9hhcwulev5cpumfk0?page=2) address for example (the empty redeem script address). Unfortunately the miners could always add a huge amount of spam data into the sender's sigscript, making it too difficult to return to sender!
 
-I forgot to mention I copied the v1.0.1 tabIcon from [bitcoinbch.com](https://bitcoinbch.com).
+Sender must use P2PKH address as first input (coin spent), not P2PK or P2SH. An address starting with *q* might not work if it's P2PK (the original BTC addresses wouldn't work).
+
+I forgot to mention I copied the v1.0.1 tab icon from [bitcoinbch.com](https://bitcoinbch.com). Next version should have an altered version, since this plugin is unrelated. There will be (optional) colors for all the opcodes, and highlighting of all instances of a selected word, etc. At first I programmed the box to re-insert all the text, but that caused some lag. Then I figured out a QTextCursor has to be used, but holding in space bar still uses up a whole processor of the CPU. The biggest problem is deciding exactly what colors to use, e.g. full green, yellow & cyan are unacceptable.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.1.png)
 
