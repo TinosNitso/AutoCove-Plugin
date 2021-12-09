@@ -34,10 +34,10 @@ v1.0.2 notes:
 - *Colors* option. The blue isn't accurate for PUSHDATA2 & PUSHDATA4. Adding serifs to default font is too difficult (BCH code differentiation). The asignment of colors can change in the future. Holding in spacebar with colors will max out a CPU processor.
 - **Hex** coloring, too! This increases CPU lag, which was barely noticeable for script-only colors.
 - Added **malleability** warning, along with P2PK & SLP warnings. Sender should use standard output (no OP_PUSHDATA), or else EC doesn't detect it.
-- Bugfix for double-broadcast when returning from *preturn...*. Also bugfix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history.
+- Bugfix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history. Unfortunately a double-broadcast bug is still persisting, despite a couple lines of code I added.
 - **TabStopDistance** reduced to 4 chars.
 - EC should be **restarted** when updating via re-install.
-- SHA256 Checksum **000000**8d1ffd822d27a92384baf925138ca8682bcec70107347f74e813999e37 (56 kH/s · 3 mins)
+- SHA256 Checksum **000000**9067E053DEDA7A8898F4D34AB77EEC654396A03004D9194664942D4950 (60 kH/s · 25s)
 
 v1.0.1:
 - Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
