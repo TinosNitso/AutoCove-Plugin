@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QMovie, QColor, QFont
+from PyQt5.QtGui import QIcon, QMovie, QColor
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QTextEdit, QCheckBox
 import electroncash, zipfile, shutil, threading, time
 from electroncash import bitcoin
@@ -216,12 +216,15 @@ class UI(QDialog):
             TX=TX.serialize()
             if TX!=self.HiddenBox.toPlainText(): self.HiddenBox.setPlainText(TX)    #Don't double broadcast!
     def broadcast_transaction(self): self.window.broadcast_transaction(electroncash.Transaction(self.HiddenBox.toPlainText()),None)  #description=None.
-    def textChanged(self):  #Whenever users type, attempt to re-compile.
-        Assembly=''.join(Line.split('#')[0].upper()+' ' for Line in self.ScriptBox.toPlainText().splitlines())    #This removes all line breaks & comments from assembly code.
-        Script=''
+    def ToHex(self,Script): #This method handles both complete Script as well as selections!
+        Assembly=''.join(Line.split('#')[0].upper()+' ' for Line in Script.splitlines())    #This removes all line breaks & comments from assembly code.
+        ScriptHex=''
         for Str in Assembly.split():
-            if Str in HexDict.keys(): Script+=HexDict[Str]
-            else:                     Script+=Str
+            if Str in HexDict.keys(): ScriptHex+=HexDict[Str]
+            else:                     ScriptHex+=Str
+        return ScriptHex
+    def textChanged(self):  #Whenever users type, attempt to re-compile.
+        Script=self.ToHex(self.ScriptBox.toPlainText())
         self.HexBox.setPlainText(Script.lower())
         self.lenHex=len(Script) #Need this for coloring HexBox.
         self.CountLabel.setText(str(self.lenHex>>1)+' Bytes')
@@ -299,15 +302,15 @@ class UI(QDialog):
         else:                        Cursor.setPosition(selectionEnd) #Right-to-left selection.
         Cursor.setPosition(CursorPos,Cursor.KeepAnchor), self.ScriptBox.setTextCursor(Cursor)
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)
-   
-        if Selection in HexDict.keys(): Selection=HexDict[Selection]    #This section highlights HexBox using a Byte search.
-        try: Bytes, SelectionBytes = bitcoin.bfh(self.HexBox.toPlainText()), bitcoin.bfh(Selection)
+
+        SelectionHex=self.ToHex(Selection)
+        try: Bytes, SelectionBytes = bitcoin.bfh(self.HexBox.toPlainText()), bitcoin.bfh(SelectionHex)
         except: return
         Find, Pos = Bytes.find(SelectionBytes), 0
-        while Selection and Find>=0:
+        while SelectionBytes and Find>=0:
             Pos+=Find*2
             HexCursor.setPosition(Pos)
-            Pos+=len(Selection)
+            Pos+=len(SelectionHex)
             HexCursor.setPosition(Pos,HexCursor.KeepAnchor), HexCursor.setCharFormat(Format)
             Bytes=Bytes[Find+len(SelectionBytes):]
             Find=Bytes.find(SelectionBytes)
