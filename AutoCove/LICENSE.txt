@@ -1,3 +1,5 @@
+The tab icon Icon.webp is copied & edited from bitcoinbch.com
+
 A large portion of the "class Plugin(BasePlugin):" code is copied from the plugin template at https://github.com/KarolTrzeszczkowski/Electron-Cash-Plugin-Template
 which uses GPLv3 license.
 
