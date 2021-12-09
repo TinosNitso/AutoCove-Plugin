@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+The next version could be **faster** by only coloring in once per second, using a unique separate thread. Also it should list all the 6 disabled OpCodes.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2_macOS.png)
