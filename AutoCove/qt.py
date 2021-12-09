@@ -6,18 +6,18 @@ from electroncash import bitcoin
 from electroncash.i18n import _ #Language translator didn't work on more than one word at a time, when I checked.
 from electroncash.plugins import BasePlugin, hook
 
-Codes={'Constants': 'FALSE PUSHDATA1 PUSHDATA2 PUSHDATA4 1NEGATE TRUE'+''.join(' '+str(N) for N in range(17))}   #Start Codes dictionary, used only for colors.
-Codes['Flow']='NOP IF NOTIF ELSE ENDIF VERIFY RETURN'
-Codes['Stack']='TOALTSTACK FROMALTSTACK IFDUP DEPTH DROP DUP NIP OVER PICK ROLL ROT SWAP TUCK 2DROP 2DUP 3DUP 3DUP 2ROT 2SWAP'
+Codes={'Constants': '0 FALSE  PUSHDATA1 PUSHDATA2 PUSHDATA4 1NEGATE  1 TRUE '+''.join(' '+str(N) for N in range(2,17))}   #Start Codes dictionary, used only for colors.
+Codes['Flow control']='NOP IF NOTIF ELSE ENDIF VERIFY RETURN'
+Codes['Stack']='TOALTSTACK FROMALTSTACK 2DROP 2DUP 3DUP 2OVER 2ROT 2SWAP IFDUP DEPTH DROP DUP NIP OVER PICK ROLL ROT SWAP TUCK'
 Codes['Splice']='CAT SPLIT NUM2BIN BIN2NUM SIZE'    #NUM2BIN & BIN2NUM take Splice hex codes, but are they really Splice? BIN2NUM is often needed to SPLIT, but NUM2BIN is used for amounts (in sats).
-Codes['Logic']='INVERT AND OR XOR EQUAL EQUALVERIFY'
+Codes['Bitwise logic']='INVERT AND OR XOR EQUAL EQUALVERIFY'
 Codes['Arithmetic']='1ADD 1SUB 2MUL 2DIV NEGATE ABS NOT 0NOTEQUAL ADD SUB MUL DIV MOD LSHIFT RSHIFT BOOLAND BOOLOR NUMEQUAL NUMEQUALVERIFY NUMNOTEQUAL LESSTHAN GREATERTHAN LESSTHANOREQUAL GREATERTHANOREQUAL MIN MAX WITHIN'
 Codes['Crypto']='RIPEMD160 SHA1 SHA256 HASH160 HASH256 CODESEPARATOR CHECKSIG CHECKSIGVERIFY CHECKMULTISIG CHECKMULTISIGVERIFY CHECKDATASIG CHECKDATASIGVERIFY'
-Codes['Locktime']='CHECKLOCKTIMEVERIFY CHECKSEQUENCEVERIFY'
-Codes['Reserved']='RESERVED VER VERIF VERNOTIF RESERVED1 RESERVED2'+''.join(' NOP'+str(x) for x in range(1,11))
-Codes['BCH']='CAT SPLIT AND OR XOR DIV MOD NUM2BIN BIN2NUM CHECKDATASIG CHECKDATASIGVERIFY'
+Codes['Locktime']='CHECKLOCKTIMEVERIFY NOP2  CHECKSEQUENCEVERIFY NOP3'
+Codes['Reserved words']='RESERVED VER VERIF VERNOTIF RESERVED1 RESERVED2 NOP1 NOP4 NOP5 NOP6 NOP7 NOP8 NOP9 NOP10'
+Codes['BCH']='CAT SPLIT NUM2BIN BIN2NUM AND OR XOR DIV MOD CHECKDATASIG CHECKDATASIGVERIFY'
 
-Colors={'Constants':Qt.blue,'Flow':Qt.darkMagenta,'Stack':Qt.darkGreen,'Splice':Qt.red,'Logic':QColor(255,127,0),'Arithmetic':QColor(0,127,255),'Crypto':Qt.magenta,'Locktime':Qt.darkCyan,'Reserved':Qt.darkYellow}
+Colors={'Constants':Qt.blue,'Flow control':Qt.darkMagenta,'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,127,0),'Arithmetic':QColor(0,127,255),'Crypto':Qt.magenta,'Locktime':Qt.darkCyan,'Reserved words':Qt.darkYellow}
 Colors['SelectionForeground'] = Qt.white   #Windows & MX Linux agree on white selection font. 
 if 'nt' in shutil.os.name: Colors['SelectionBackground']=QColor(0,120,215)
 elif 'Darwin' in shutil.os.uname().sysname: Colors['SelectionForeground'], Colors['SelectionBackground'] = Qt.black, QColor(179,215,255)  #macOS Catalina selections use black font with pale blue background.
@@ -69,7 +69,7 @@ SWAP 041976a914 CAT SWAP CAT 0288ac CAT  HASH256	#[..., Amount, Address] Predict
 OVER SIZE 0128 SUB SPLIT NIP 0120 SPLIT DROP  EQUALVERIFY	#[Preimage,hashOutputs] VERIFY hashOutputs EQUAL Amount & Address from Parent.
 4 SPLIT  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP  HASH256 EQUALVERIFY #[Preimage] VERIFY only 1 input in return TX.
 0803000000001cf0d6 DROP #[nVersion] Append nonce for vanity address, generated using VanityTXID-Plugin.\n''',
-''.join('\n'*(key=='BCH') + Codes[key]+' #'+key+'\n' for key in Codes.keys())]   #List all the OpCodes.
+''.join('\n'*(key=='BCH') + Codes[key]+'    #'+key+'\n' for key in Codes.keys())]   #List all the OpCodes.
 
 class Plugin(BasePlugin):
     def __init__(self, parent, config, name):
@@ -213,7 +213,8 @@ class UI(QDialog):
             PreImage=TX.serialize_preimage(0)
             Sig=electroncash.schnorr.sign((1).to_bytes(32,'big'),bitcoin.Hash(bitcoin.bfh(PreImage)))
             TX.inputs()[0]['scriptSig']=bitcoin.push_script(UTX.raw)+bitcoin.push_script(PreImage)+bitcoin.push_script(Sig.hex()+'41')+bitcoin.push_script(PubKey)*(index>1)+bitcoin.push_script(self.Scripts[index])
-            self.HiddenBox.setPlainText(TX.serialize())
+            TX=TX.serialize()
+            if TX!=self.HiddenBox.toPlainText(): self.HiddenBox.setPlainText(TX)    #Don't double broadcast!
     def broadcast_transaction(self): self.window.broadcast_transaction(electroncash.Transaction(self.HiddenBox.toPlainText()),None)  #description=None.
     def textChanged(self):  #Whenever users type, attempt to re-compile.
         Assembly=''.join(Line.split('#')[0].upper()+' ' for Line in self.ScriptBox.toPlainText().splitlines())    #This removes all line breaks & comments from assembly code.
@@ -267,7 +268,7 @@ class UI(QDialog):
                         Pos+=len(Word)
                         HexCursor.setPosition(HexPos+2,Cursor.KeepAnchor), HexCursor.setCharFormat(Format)
                         HexPos+=len(Word)
-                    LineCode=LineCode[Find+len(Word):]
+                    LineCode=LineCode[Find+len(Word):]  #Python strings are immutable so this should be efficient.
                 # Font.setFamily('MS Shell Dlg 2'), Format.setFont(Font)
                 Cursor.setPosition(StartPosit+CommentPos)   #This section greys out the comments.
                 StartPosit+=len(Line)
@@ -299,17 +300,17 @@ class UI(QDialog):
         Cursor.setPosition(CursorPos,Cursor.KeepAnchor), self.ScriptBox.setTextCursor(Cursor)
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)
    
-        if Selection in HexDict.keys(): Selection=HexDict[Selection]    #This section highlights HexBox.
-        else:                           Selection=Selection.lower()
-        Text=self.HexBox.toPlainText()
-        Find, Pos = Text.find(Selection), 0
+        if Selection in HexDict.keys(): Selection=HexDict[Selection]    #This section highlights HexBox using a Byte search.
+        try: Bytes, SelectionBytes = bitcoin.bfh(self.HexBox.toPlainText()), bitcoin.bfh(Selection)
+        except: return
+        Find, Pos = Bytes.find(SelectionBytes), 0
         while Selection and Find>=0:
-            Pos+=Find
+            Pos+=Find*2
             HexCursor.setPosition(Pos)
             Pos+=len(Selection)
             HexCursor.setPosition(Pos,HexCursor.KeepAnchor), HexCursor.setCharFormat(Format)
-            Text=Text[Find+len(Selection):]
-            Find=Text.find(Selection)
+            Bytes=Bytes[Find+len(SelectionBytes):]
+            Find=Bytes.find(SelectionBytes)
         HexCursor.setPosition(0), self.HexBox.setTextCursor(HexCursor)
     def toggled(self): self.selectionChanged(), self.ScriptBox.setFocus()   #QCheckBox steals focus.
         
