@@ -1,7 +1,5 @@
 # AutoCove-Plugin
 
-There's currently a bug in the screenshot here where it lists NOP2 & NOP3. I haven't made the v1.0.2 "release" yet, so I'll fix this first. Also I need to replace the hex search with a Byte search (in hex)...
-
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2-macOS.png)
@@ -32,14 +30,14 @@ v1.0.2 notes:
 - *preturn...* covenant has **7%** fee reduction by eliminating unecessary PubKey & *BIN2NUM*. Improved comments.
 - Full list of colored **OpCodes**.
 - Selecting text now **highlights** all instances of it. Works with both colors & B&W. Highlighting is maintained when toggling colors. 
-- Highlighting works with scriptCode **hex**, too. i.e. double-click an OpCode or data push to light up all instances of its hex. Should also work with testnet OpCodes which I haven't colored.
+- Highlighting works with scriptCode **hex**, too, as a byte search. i.e. double-click an OpCode or data push to light up all instances of its hex. Should also work with testnet OpCodes which I haven't colored.
 - *Colors* option. The blue isn't accurate for PUSHDATA2 & PUSHDATA4. Adding serifs to default font is too difficult (BCH code differentiation). The asignment of colors can change in the future. Holding in spacebar with colors will max out a CPU processor.
 - **Hex** coloring, too! This increases CPU lag, which was barely noticeable for script-only colors.
 - Added **malleability** warning, along with P2PK & SLP warnings. Sender should use standard output (no OP_PUSHDATA), or else EC doesn't detect it.
 - Bugfix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history. Unfortunately a double-broadcast bug is still persisting, despite a couple lines of code I added.
 - **TabStopDistance** reduced to 4 chars.
 - EC should be **restarted** when updating via re-install.
-- SHA256 Checksum TBD
+- SHA256 Checksum **000000**7fbdb023999dcb5c121bc9be1063b1e0dcb19c609bd69a5782481b1d2a
 
 v1.0.1:
 - Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
