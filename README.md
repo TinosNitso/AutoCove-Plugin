@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-There's currently a bug in the screenshot here where it lists NOP2 & NOP3. I haven't made the v1.0.2 "release" yet, so I'll fix this first.
+There's currently a bug in the screenshot here where it lists NOP2 & NOP3. I haven't made the v1.0.2 "release" yet, so I'll fix this first. Also I need to replace the hex search with a Byte search (in hex)...
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
