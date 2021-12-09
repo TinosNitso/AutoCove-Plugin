@@ -6,7 +6,7 @@ The next version could be **faster** by only coloring in once per second, using 
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2_macOS.png)
 
-*INVERT*, *2MUL*, *2DIV*, *MUL*, *LSHIFT* & *RSHIFT* are **disabled**, but otherwise all OpCodes should work on Bitcoin Cash. Next version will list the disabled OpCodes.
+*INVERT*, *2MUL*, *2DIV*, *MUL*, *LSHIFT* & *RSHIFT* are **disabled**, but otherwise all OpCodes should work on Bitcoin Cash.
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant addresses & scripts are:
 
