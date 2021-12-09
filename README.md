@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+There's currently a bug in the screenshot here where it lists NOP2 & NOP3. I haven't made the v1.0.2 "release" yet, so I'll fix this first.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2-macOS.png)
@@ -37,7 +39,7 @@ v1.0.2 notes:
 - Bugfix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history. Unfortunately a double-broadcast bug is still persisting, despite a couple lines of code I added.
 - **TabStopDistance** reduced to 4 chars.
 - EC should be **restarted** when updating via re-install.
-- SHA256 Checksum **000000**9067E053DEDA7A8898F4D34AB77EEC654396A03004D9194664942D4950 (60 kH/s · 25s)
+- SHA256 Checksum TBD
 
 v1.0.1:
 - Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
