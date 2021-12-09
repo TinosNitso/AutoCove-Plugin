@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2-macOS.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2_macOS.png)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant addresses & scripts are:
 
