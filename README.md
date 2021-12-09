@@ -40,7 +40,7 @@ v1.0.2 notes:
 - Bugfix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history. Unfortunately a double-broadcast bug is still persisting, despite a couple lines of code I added.
 - **TabStopDistance** reduced to 4 chars.
 - EC should be **restarted** when updating via re-install.
-- SHA256 Checksum **000000**4408023144774d6e75c61d708e3da6e1afcb3d00430b2d4726f6673920 (53 kH/s · 1min)
+- SHA256 Checksum **000000**eab8901f17435840ff2a80367d035966f436219425741ec473625b71da (60 kH/s · 10s)
 
 v1.0.1:
 - Script compiler (encoder) now included. Accepts both lower & upper case opcodes. Both 'Nip' & 'OP_NIP' encode the same. Byte counter included, along with BCH address gen. A future version needs to color the different opcodes in different colors. Maybe a save feature, and decoder? The "IDE" builds the BCH address as user types opcodes etc.
