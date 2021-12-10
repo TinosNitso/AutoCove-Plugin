@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-The next version could be **faster** by only coloring in once per second, using a unique separate thread which detects text changes. Also it should list all the 6 disabled OpCodes.
+The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. All **6** disabled OpCodes will be listed. Coloring might be faster by only coloring in once per second, using a unique separate thread which detects text changes.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
