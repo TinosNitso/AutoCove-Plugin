@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. I figure 16 words/line max, but I *don't* give IF & ENDIF their own lines (line ends instead). It's some tedious code! All **6** disabled OpCodes will be listed. Selections will allow **splitting** words, but still find hex bytecode in between. Coloring more efficient by only coloring when bytecode or selections **change**. Oh I've realized that miners could probably steal from the *preturn* addresses with clever enough sender sigscript malleation, so I'll probably have a fix for that.
+The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. I figure 16 words/line max, but I *don't* give IF, NOTIF & ENDIF their own lines (line ends instead, along with all VERIFY codes). It's some tedious code, with tabbing etc! All **6** disabled OpCodes will be listed. Selections will allow **splitting** words, but still find hex bytecode in between. Coloring more efficient by only coloring when bytecode or selections **change**. Oh I've realized that miners could probably steal from the *preturn* addresses with clever enough sender sigscript malleation, so I'll probably have a fix for that.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
