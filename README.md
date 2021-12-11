@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. All **6** disabled OpCodes will be listed. Coloring might be faster by only coloring in once per second, using a unique separate thread which detects text changes.
+The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. I figure 16 words/line max, but I *don't* give IF & ENDIF their own lines (line ends instead). It's some tedious code! All **6** disabled OpCodes will be listed. Selections will allow **splitting** words, but still find hex bytecode in between. Coloring more efficient by only coloring when bytecode or selections **change**.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
 
