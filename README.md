@@ -2,6 +2,8 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
+I just noticed an incorrect comment in v1.0.3, which should be removed, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c,0x4d,0x4e are +ve, but still can't be used to steal money using malleability.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2_macOS.png)
 
 *INVERT*, *2MUL*, *2DIV*, *MUL*, *LSHIFT* & *RSHIFT* are **disabled**, but otherwise all OpCodes should work on Bitcoin Cash.
