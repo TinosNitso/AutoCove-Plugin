@@ -1,12 +1,12 @@
 # AutoCove-Plugin
 
-I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green.
+I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3-macOS.png)
 
-Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant addresses & scripts are:
+Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
 
 **v1.0.3** [preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42](https://www.blockchain.com/bch/address/preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42):
 >6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940253029458807c01297f77517f7c018ba269517f780141a2697c7f77517f7c7f75a97c041976a9147e7c7e0288ac7eaa7c820128947f7701207f7587080600000000ba708775
