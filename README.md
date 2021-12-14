@@ -1,8 +1,6 @@
 # AutoCove-Plugin
 
-The next version will have **auto-decoding** for any hex script. It looks nice for the Mecenas & Hodl examples I have. I figure 16 words/line max, but I *don't* give IF, NOTIF & ENDIF their own lines (line ends instead, along with all VERIFY codes). It's some tedious code, with tabbing etc! All **6** disabled OpCodes will be listed. Selections will allow **splitting** words, but still find hex bytecode in between. Coloring more efficient by only coloring when bytecode or selections **change**. Oh I've realized that miners could probably steal from the *preturn* addresses with clever enough sender sigscript malleation, so I'll probably have a fix for that.
-
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.2_macOS.png)
 
@@ -10,28 +8,32 @@ The next version will have **auto-decoding** for any hex script. It looks nice f
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant addresses & scripts are:
 
-**v1.0.2** [preturn5m3pmwehk92lc2mqkc5mg9k73tq5se62dgn](https://www.blockchain.com/bch/address/preturn5m3pmwehk92lc2mqkc5mg9k73tq5se62dgn):
->6fad7b828c7f757ca87bbb7d01447f7701207f7578aa8878820134947f77587f758178827794023f029458807c012a7f77517f7c7f77517f7c7f75a97c041976a9147e7c7e0288ac7eaa78820128947f7701207f7588547f01207f01207f7701247f75aa880803000000001cf0d675
+**v1.0.3** [preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42](https://www.blockchain.com/bch/address/preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42):
+>6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940253029458807c01297f77517f7c018ba269517f780141a2697c7f77517f7c7f75a97c041976a9147e7c7e0288ac7eaa7c820128947f7701207f7587080600000000ba708775
 
-**v1.0.1** [preturn3s5mpe0lna9quvgcs606pffh69g5xukl2hu](https://www.blockchain.com/bch/address/preturn3s5mpe0lna9quvgcs606pffh69g5xukl2hu):
->210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f817986fad7b828c7f757ca87bbb7d0144817f770120817f7578aa887882013481947f77587f758178827794027902819458807c012a817f77517f7c817f77517f7c817f75a97c041976a9147e7c7e0288ac7eaa7882012881947f770120817f7588547f0120817f0120817f770124817f75aa88080600000001292a8675
-
-**v1.0.0** [preturnf8g0qd9pte0u4qkkvlk6t42zz2s5a9qj3r4](https://www.blockchain.com/bch/address/preturnf8g0qd9pte0u4qkkvlk6t42zz2s5a9qj3r4):
->210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f817986fad7b828c7f757ca87bbb7d0144817f770120817f7578aa887882013481947f77587f758178827794025402819458807c012a817f77517f7c817f77517f7c817f75a97c041976a9147e7c7e0288ac7eaa7c82012881947f770120817f758708060000000044434675
-
-In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming a few conditions.
+In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** address (starting with *q* or *1*, but not P2PK).
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
 - Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes. Unfortunately miner's are free to add too much spam to sigscripts.
 - 14 bits minimum for only 1 input. **More** bits needed for more inputs.
-- 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH. I've tested multiple inputs & outputs, both Schnorr & ECDSA.
+- 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH. I've tested multiple inputs & outputs, both Schnorr & ECDSA, & both compressed & uncompressed PubKeys.
 - 8 bits minimum fee.
-- Total amount will be returned to *1st* input. v1.0.0 requires we don't send the exact same amount simultaneously from the same address, but charges a 4% lower fee.
+- Total amount will be returned to *1st* input.
 - Never send **SLP** tokens, or they'll be burned.
 
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.3 notes:
+- Hex **decoder**! Copy paste any script hex into the Script box, and it will be auto-decoded into readable form. This lets us color in any BCH Script (& hex), eg from Mecenas or Hodl plugins, using only their blockchain hex. The exact decoding rules seem subjective: 16 words/line max; data pushes >=20B get their own lines; any VERIFY, NUM2BIN or BIN2NUM ends lines; tabbing for IF, NOTIF, ELSE etc. 
+- *preturn* covenant now has malleability fix which blocks miners from **stealing** the money. Both compressed & uncompressed sender PubKeys have been tested, as well as Schnorr & ECDSA sigs.
+- 6 **disabled** OpCodes are now listed.
+- More efficient coloring by only coloring when either hex (bytecode) or selection has changed.
+- **Split**-word selection highlighting. e.g. Selecting 'R OR' highlights all instances of 'OR' in hex.
+- 'New' QComboBox item, but still no memory (nor undo & save).
+- Increased return broadcast **delay** to 2s.
+- SHA256 Checksum 000000ed60808ac146dd2cba2c19bbcdd96c968b5be1972a440fe7c33b73494e (51 kH/s · 44 s). Restart EC if updating via re-install.
 
 v1.0.2 notes:
 - *preturn...* covenant has **7%** fee reduction by eliminating unnecessary PubKey & *BIN2NUM*. Improved comments.
@@ -41,9 +43,8 @@ v1.0.2 notes:
 - *Colors* option. The blue isn't accurate for PUSHDATA2 & PUSHDATA4. Adding serifs to default font is too difficult (BCH code differentiation). The assignment of colors can change in the future. Holding in space-bar with colors will max out a CPU processor.
 - **Hex** coloring, too! This increases CPU lag, which was barely noticeable for script-only colors.
 - Added **malleability** warning, along with P2PK & SLP warnings. Sender should use standard output (no OP_PUSHDATA), or else EC doesn't detect it.
-- Bug-fix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history. Unfortunately a double-broadcast bug is still persisting, despite a couple lines of code I added.
+- Bug-fix for when a new wallet imports a *preturn...* and plugin tries to re-broadcast before wallet has had time to fully analyze history.
 - **TabStopDistance** reduced to 4 chars.
-- EC should be **restarted** when updating via re-install.
 - SHA256 Checksum **000000**eab8901f17435840ff2a80367d035966f436219425741ec473625b71da (60 kH/s · 10s).
 
 v1.0.1:
