@@ -1,7 +1,7 @@
 {
     "display_name": "AutoCove",
-    "version": "1.0.2",
-    "description": "Color in all the Bitcoin OpCodes as both text & hex! Highlight all instances concurrently. Fully automatic covenants can forward payments without any further authorization. Introspection is achieved using private key=1, so that PubKey is the compressed base point of secp256k1. A hex decoder (to script) is still needed.",
+    "version": "1.0.3",
+    "description": "Decode & color BCH hex scripts! Select words & lines to highlight them & their hex. Fully automatic covenants can forward payments without any further authorization. Introspection is achieved using private key=1, so that PubKey is the compressed base point of secp256k1. Currently can only auto-return from 1 address.",
     "project_url": "https://github.com/TinosNitso/AutoCove-Plugin",
     "minimum_ec_version": "3.6",
     "package_name": "AutoCove",
