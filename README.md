@@ -1,8 +1,8 @@
 # AutoCove-Plugin
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
+I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green.
 
-I just noticed an incorrect comment in v1.0.3, which should be removed, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c,0x4d,0x4e are +ve, but still can't be used to steal money using malleability.
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3-macOS.png)
 
