@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green.
+I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) 
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
