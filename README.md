@@ -1,6 +1,12 @@
 # AutoCove-Plugin
 
-I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. Also where the comments have UTX[0x29:] & UTX[0x2a:], it should instead be UTX[0x2a:] & UTX[0x2b:]. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) The next version will probably have a toggle between *Code*, *CODE* & *OP_CODE* for the decoder. I figure *CODE* is the easiest to type, but *Code* might be more readable. e.g. OutpointTXHash vs OUTPOINTTXHASH. There's a bug-fix for when someone holds down delete, & *BoolAnd* should finish lines.
+I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. Also where the comments have UTX[0x29:] & UTX[0x2a:], it should instead be UTX[0x2a:] & UTX[0x2b:]. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) The next version will probably have a toggle between *Code*, *CODE* & *OP_CODE* for the decoder. I figure *CODE* is the easiest to type, but *Code* might be more readable. e.g.
+
+>OutpointTXHash OutpointIndex OutputBytecode
+
+>OUTPOINTTXHASH OUTPOINTINDEX OUTPUTBYTECODE
+
+There's a bug-fix for when someone holds down delete, & *BoolAnd* should finish lines. The highlighting will have a slightly different shade of blue. Oh and whole txns should be decodable with each P2SH input being stored in the combo-box.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
