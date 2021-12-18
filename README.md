@@ -1,12 +1,14 @@
 # AutoCove-Plugin
 
-I've just realized there's a new EC-v4.2.6 with new OpCodes, released several days ago! The decoder still gets them, but they don't have proper colors. I'll pick colors for them in the next plugin version. There's an incorrect comment in v1.0.3, which I'll remove next time, "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. Also where the comments have UTX[0x29:] & UTX[0x2a:], it should instead be UTX[0x2a:] & UTX[0x2b:]. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but being able to save .rtf is probably something I'll look at. The Locktime color might be a bit too green. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) The next version will probably have a toggle between *Code*, *CODE* & *OP_CODE* for the decoder. I figure *CODE* is the easiest to type, but *Code* might be more readable. e.g.
+v1.0.4-dev1 is a pre-release I've uploaded above. It has a new combo-box for Codes, CODES & OP_CODES. It stores each new decode in memory (existing combo-box). I'll probably switch around yellow & brown. It's got Script comment corrections. There's a bug-fix for when someone holds down delete, & BOOLAND finishes lines. The highlighting has a slightly different shade of blue.
 
->OutpointTXHash OutpointIndex OutputBytecode
+Whole txns should be decodable with each P2SH input being stored in the combo-box. Also threading.Thread.isAlive() should be improved.
 
->OUTPOINTTXHASH OUTPOINTINDEX OUTPUTBYTECODE
+There's a new EC-v4.2.6 with new OpCodes! The v1.0.3 decoder still gets them, but messes up the colors. v1.0.3 has a bad comment: "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. Also where the comments have UTX[0x29:] & UTX[0x2a:], it should instead be UTX[0x2a:] & UTX[0x2b:]. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but maybe being able to save .rtf is something I'll look at. The Locktime color might be a bit too green. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) I figure *CODE* is the easiest to type, but *Code* might be more readable. e.g.
 
-There's a bug-fix for when someone holds down delete, & *BoolAnd* should finish lines. The highlighting will have a slightly different shade of blue. Oh and whole txns should be decodable with each P2SH input being stored in the combo-box.
+`OutpointTXHash OutpointIndex OutputBytecode`
+
+`OUTPOINTTXHASH OUTPOINTINDEX OUTPUTBYTECODE`
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 
