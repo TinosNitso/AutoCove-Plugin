@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-v1.0.4-dev2 is a pre-release I've uploaded above. It has a new combo-box for Codes, CODES & OP_CODES. It stores each new decode in memory (existing combo-box).  It's got Script comment corrections. There's a bug-fix for when someone holds down delete, & BOOLAND finishes lines. The highlighting has a slightly different shade of blue. It can decode whole txns and put each P2SH inputs in the combo-box. I might switch around yellow & brown. Unfortunately the dev1 version had a serious bug in the decoder (large data pushes which I didn't notice).
+v1.0.4-dev2 is a pre-release I've uploaded above. It has a new combo-box for Codes, CODES & OP_CODES. It stores each new decode in memory (existing combo-box).  It's got Script comment corrections. There's a bug-fix for when someone holds down delete, & BOOLAND finishes lines. The highlighting has a slightly different shade of blue. It can decode whole txns and puts all P2SH inputs in the combo-box. I might switch around yellow & brown. Unfortunately the dev1 version had a serious bug in the decoder (large data pushes which I didn't notice).
 
 threading.Thread.isAlive() still needs improvement, along with support for larger data pushes.
 
