@@ -7,7 +7,7 @@
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
 
-**v1.0.3** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9):
+**v1.0.4** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9):
 >6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
