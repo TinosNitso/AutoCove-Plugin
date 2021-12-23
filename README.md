@@ -1,37 +1,44 @@
 # AutoCove-Plugin
 
-v1.0.4-dev2 is a pre-release I've uploaded above. It has a new combo-box for Codes, CODES & OP_CODES. It stores each new decode in memory (existing combo-box).  It's got Script comment corrections. There's a bug-fix for when someone holds down delete, & BOOLAND finishes lines. The highlighting has a slightly different shade of blue. It can decode whole txns and puts all P2SH inputs in the combo-box. Both *//* & *#* imply comments.
-
-v1.0.4 will fix the Thread.isAlive() rename issue and support data pushes up to 0xff. Native Introspection OpCodes might be purple, while Locktime darkYellow & Reserved words brown (dark orange). I figure *CODE* is the easiest to type, but *Code* might be more readable. e.g.
-
-`OutpointTXHash OutpointIndex OutputBytecode`
-
-`OUTPOINTTXHASH OUTPOINTINDEX OUTPUTBYTECODE`
-
-There's a new EC-v4.2.6 with new OpCodes! The v1.0.3 decoder still gets them, but messes up the colors. v1.0.3 has a bad comment: "A PUSHDATA OpCode is -ve." I was thinking of 0xfd used to push a large sigscript. 0x4c, 0x4d & 0x4e are all +ve, but still can't be used to steal money using malleability. Also where the comments have UTX[0x29:] & UTX[0x2a:], it should instead be UTX[0x2a:] & UTX[0x2b:]. One future possibility is that the decoder might be able to predict the stack depth (as a #comment), but maybe being able to save .rtf is something I'll look at. (Aside: **BFP** is working in the SLP Ed. v3.6.7-dev7.) 
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.4.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
+(v1.0.3 screenie has some incorrect comments...)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3-macOS.png)
+Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
 
-Fully automatic covenants forward payments without any further authorization. Parental introspection is achieved using private key=1, so that our public key is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
-
-**v1.0.3** [preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42](https://www.blockchain.com/bch/address/preturnge52kd6s9cq2tvmheh5j5jv42cv4ahf0v42):
->6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940253029458807c01297f77517f7c018ba269517f780141a2697c7f77517f7c7f75a97c041976a9147e7c7e0288ac7eaa7c820128947f7701207f7587080600000000ba708775
+**v1.0.3** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9):
+>6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** address (starting with *q* or *1*, but not P2PK).
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
-- Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes. Unfortunately miner's are free to add too much spam to sigscripts.
-- 14 bits minimum for only 1 input. **More** bits needed for more inputs.
-- 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH. I've tested multiple inputs & outputs, both Schnorr & ECDSA, & both compressed & uncompressed PubKeys.
-- 8 bits minimum fee.
-- Total amount will be returned to *1st* input.
+- 14 bits minimum for only 1 input. **More** bits needed per extra input.
+- 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH (& 10 tBCH on a [testnet4](https://testnet4.imaginary.cash/tx/c2dbbccf399c0a4f7bfa847b95feb44d2fb56254d4a820b28325b443b6874c87)). I've tested multiple inputs & outputs, both Schnorr & ECDSA, & both compressed & uncompressed PubKeys.
+- 8→12 bits fee.
+- Total amount will be returned to **first** input.
 - Never send **SLP** tokens, or they'll be burned.
+- Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes.
 
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.4 notes:
+- OP_CODES, CODES, Codes & Op_Codes combo-box, with **highlighted** activation!
+- Auto-decodes now **saved** into a combo-box, with 'Clear all...' item.
+- Bugfix for when sender's txn is **exactly** size 255B.
+- Highlighting is now a slightly **different** color. Unfortunately the macOS shade I chose is too light - will be fixed next time.
+- OpCodes list display improved, with purple for Native Introspection. darkCyan was a tiny bit too close to darkGreen, so Locktime can be darkYellow & Reserved words brown (dark orange). Lines broken up into nullary, unary, binary & ternary etc.
+- '//' comments are now fully enabled.
+- Bugfix for auto-decode when user holds in delete.
+- Users can now copy-paste whole raw txns and the decoder will store all P2SH Scripts. Another decoder is at [imaginary.cash](https://testnet4.imaginary.cash/decoder).
+- BOOLAND now **ends** lines (auto-decode).
+- Decoding in-Script data pushes up to **255B** size now supported (instead of just 0x4b).
+- Thread.isAlive renamed to Thread.is_alive, to resolve [Issue #1](https://github.com/TinosNitso/AutoCove-Plugin/issues/1). I still haven't built EC itself from source, though. Apparently builds are **deterministic**. 
+- Description moved from its own box to Script comments. Improved TabIcon.
+- preturn Script which is only 108B. Malleability was [fixed](https://read.cash/@BigBlockIfTrue/achievement-unlocked-bitcoin-cash-fixed-all-common-third-party-transaction-malleation-vectors-219682ef) years ago.
+- SHA256 Checksum 0000001e9dba81c3416e191153644daed60081aacf24f226055db613f0abb4f7 (49 kH/s · 1min). EC needs to be restarted when updating via re-install.
 
 v1.0.3 notes:
 - Hex **decoder**! Copy paste any script hex into the Script box, and it will be auto-decoded into readable form. This lets us color in any BCH Script (& hex), eg from Mecenas or Hodl plugins, using only their blockchain hex. The exact decoding rules seem subjective: 16 words/line max; data pushes >=20B get their own lines; any VERIFY, NUM2BIN or BIN2NUM ends lines; tabbing for IF, NOTIF, ELSE etc. 
