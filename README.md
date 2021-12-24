@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.4.png)
 
-REVERSEBYTES is unlisted! (Decoder still gets it, but it's colored darkGray.) I didn't do a thorough check until after releasing v1.0.4! Next version will list it.
+REVERSEBYTES is unlisted! (Decoder still gets it, but it's colored darkGray.) Next version will list it, and fully support all OpCodes (proper blue coloring for PUSHDATA2 etc), & improve macOS highlight color.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
 (v1.0.3 screenie has some incorrect comments...)
