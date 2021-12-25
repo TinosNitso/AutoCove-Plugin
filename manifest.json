@@ -1,7 +1,7 @@
 {
     "display_name": "AutoCove",
-    "version": "1.0.4",
-    "description": "Decode & color BCH hex Scripts! Raw TX input accepted. Selection highlighting of OpCodes etc. Fully automatic covenants can forward payments without any further authorization. Introspection is achieved using private key=1, so that PubKey is the compressed base point of secp256k1. Currently only auto-returns from 1 address.",
+    "version": "1.0.5",
+    "description": "Decode & color P2SH hex Scripts! Raw TX input accepted. Selection highlighting of OpCodes, etc. Auto change spelling between OP_CODE & op_code, etc. Plugin can automatically return BCH sent to a preturn... covenant. Introspection is achieved using private key=1, so that PubKey is the compressed base point of secp256k1.",
     "project_url": "https://github.com/TinosNitso/AutoCove-Plugin",
     "minimum_ec_version": "3.6",
     "package_name": "AutoCove",

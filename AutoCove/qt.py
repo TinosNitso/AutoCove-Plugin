@@ -5,42 +5,54 @@ import electroncash, zipfile, shutil, threading, time
 from electroncash import bitcoin
 from electroncash.plugins import BasePlugin, hook
 
-Codes={'Constants': '0 False  PushData1 PushData2 PushData4 1Negate  1 True '+''.join(' '+str(N) for N in range(2,17))}   #Start Codes dictionary, used for colors & lower-case conversion.
+Codes={'Constants': '0 False  PushData1 PushData2 PushData4 1Negate  1 True '+''.join(' '+str(N) for N in range(2,17))}   #Codes dict is used for colors & lower-case conversion.
 Codes['Flow control']='NOp If NotIf Else EndIf Verify Return'
 Codes['Stack']='ToAltStack FromAltStack 2Drop 2Dup 3Dup 2Over 2Rot 2Swap IfDup Depth Drop Dup Nip Over Pick Roll Rot Swap Tuck'
-Codes['Splice']='Cat Split Num2Bin  \nBin2Num Size'
-Codes['Bitwise logic']='Invert  \nAnd Or XOr Equal EqualVerify'
-Codes['Arithmetic']='1Add 1Sub 2Mul 2Div Negate Abs Not 0NotEqual  \nAdd Sub Mul Div Mod LShift RShift BoolAnd BoolOr NumEqual NumEqualVerify NumNotEqual LessThan GreaterThan LessThanOrEqual GreaterThanOrEqual Min Max  \nWithin'  #First 8 are unary, then the rest are binary except WITHIN is ternary.
-Codes['Crypto']='RIPEMD160 SHA1 SHA256 Hash160 Hash256  \nCodeSeparator  \nCheckSig CheckSigVerify  \nCheckMultiSig CheckMultiSigVerify CheckDataSig CheckDataSigVerify'
-Codes['Locktime']='CheckLocktimeVerify NOp2  CheckSequenceVerify NOp3'
+Codes['Splice']='Cat Split Num2Bin  \nBin2Num Size' #Binary & unary.
+Codes['Bitwise logic']='Invert And Or XOr Equal EqualVerify'    #Unary & binary.
+Codes['Arithmetic']='1Add 1Sub 2Mul 2Div Negate Abs Not 0NotEqual  \nAdd Sub Mul Div Mod LShift RShift BoolAnd BoolOr NumEqual NumEqualVerify NumNotEqual LessThan GreaterThan LessThanOrEqual GreaterThanOrEqual Min Max  \nWithin'
+Codes['Crypto']='RIPEMD160 SHA1 SHA256 Hash160 Hash256 CodeSeparator  \nCheckSig CheckSigVerify CheckMultiSig CheckMultiSigVerify CheckDataSig CheckDataSigVerify ReverseBytes'
+Codes['Locktime']='CheckLocktimeVerify NOp2  CheckSequenceVerify NOp3'  #Unary
 
-OpCodesMembers=electroncash.address.OpCodes.__members__.keys()  #Not all EC versions have Native Introspection, which fits in between Locktime & Reserved words.
-if 'OP_TXLOCKTIME' in OpCodesMembers: Codes['Native Introspection']='InputIndex ActiveBytecode TXVersion TXInputCount TXOutputCount TXLocktime  \nUTXOValue UTXOBytecode OutpointTXHash OutpointIndex InputBytecode InputSequenceNumber OutputValue OutputBytecode'
-
+codesPythonic='pushData1 pushData2 pushData4  nOp notIf endIf  toAltStack fromAltStack ifDup  xOr equalVerify 0notEqual lShift rShift boolAnd boolOr numEqual numEqualVerify numNotEqual lessThan greaterThan lessThanOrEqual greaterThanOrEqual  codeSeparator checkSig checkSigVerify checkMultiSig checkMultiSigVerify checkDataSig checkDataSigVerify reverseBytes  checkLocktimeVerify nOp2 checkSequenceVerify nOp3  verIf verNotIf nOp1 nOp4 nOp5 nOp6 nOp7 nOp8 nOp9 nOp10  '
+OpCodesMembers=electroncash.address.OpCodes.__members__.keys()  #Not all EC versions have Native Introspection, which I figure fits in between Locktime & Reserved words.
+if 'OP_TXLOCKTIME' in OpCodesMembers:
+    Codes['Native Introspection']='InputIndex ActiveBytecode TXVersion TXInputCount TXOutputCount TXLocktime  \nUTXOValue UTXOBytecode OutpointTXHash OutpointIndex InputBytecode InputSequenceNumber OutputValue OutputBytecode'   #Nullary & unary.
+    codesPythonic               +='inputIndex activeBytecode txVersion txInputCount txOutputCount txLocktime utxoValue utxoBytecode outpointTxHash outpointIndex inputBytecode inputSequenceNumber outputValue outputBytecode'
 Codes['Reserved words']='Reserved Ver VerIf VerNotIf Reserved1 Reserved2 NOp1 NOp4 NOp5 NOp6 NOp7 NOp8 NOp9 NOp10'  #Nullary
-Codes['BCH']='\nCAT SPLIT NUM2BIN BIN2NUM AND OR XOR DIV MOD CHECKDATASIG CHECKDATASIGVERIFY' #'MS Shell Dlg 2' is default font but doesn't seem to allow adding serifs (e.g. for BCH codes).
+
+Codes['BCH']='\nCAT SPLIT NUM2BIN BIN2NUM AND OR XOR DIV MOD CHECKDATASIG CHECKDATASIGVERIFY REVERSEBYTES' #'MS Shell Dlg 2' is default font but doesn't seem to allow adding serifs (e.g. for BCH codes).
 Codes['Disabled']='INVERT 2MUL 2DIV MUL LSHIFT RSHIFT'
 #Test line (copy-paste for full spectrum): PUSHDATA1 RETURN TOALTSTACK NUM2BIN INVERT MAX CHECKSIGVERIFY CHECKLOCKTIMEVERIFY TXLOCKTIME RESERVED 
-Colors={'Constants':Qt.blue,'Flow control':Qt.darkMagenta,'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':QColor(128,64,0),'Native Introspection':QColor(128,0,255)}    #Brown is dark-orange. Sky-blue & Purple stem from blue. darkCyan appears too close to darkGreen. Pure violet doesn't exist, but the purple is violet/grey.
-Colors['SelectionForeground'] = Qt.white   #Windows & MX Linux agree on white selection font. 
-if 'nt' in shutil.os.name: Colors['SelectionBackground']=QColor(0,142,255) #QColor(0,120,215) is Windows. But we need a different shade to be differentiable. I multiplied by 255/215.
-elif 'Darwin' in shutil.os.uname().sysname: Colors['SelectionForeground'], Colors['SelectionBackground'] = Qt.black, QColor(212,255,255)    #QColor(179,215,255) is macOS Catalina (pale blue). I multiplied R&G by 255/215. Highlighting should be lighter than selecting.
-else:                      Colors['SelectionBackground']=QColor(62,180,255)    #QColor(48,140,198) is MX Linux (medium blue). I multiplied by 255/198.
+Colors={'Constants':Qt.blue,'Flow control':Qt.darkMagenta,'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':QColor(128,64,0),'Native Introspection':QColor(128,0,255)}    #Brown is dark-orange. Sky-blue & Purple stem from blue. darkCyan appears too close to darkGreen.
+Colors['SelectionForeground'] = Qt.white   #Windows & MX Linux agree on white selection font.
+if 'nt' in shutil.os.name:                  Color=QColor(0,120,215) #WIN10 is strong blue.
+elif 'Darwin' in shutil.os.uname().sysname: Color, Colors['SelectionForeground'] = QColor(179,215,255), Qt.black     #macOS Catalina is pale blue.
+else:                                       Color=QColor(48,140,198)    #MX Linux is medium blue.
+Color.setHsl(Color.hslHue(),Color.hslSaturation(),64+.75*Color.lightness())   #This formula decreases darkness of highlighting by 25%, for all OSs.
+Colors['SelectionBackground'] = Color
 
-ColorDict, HexDict, CodeDict, CaseDict = {}, {}, {}, {}    #OpCode dictionaries. CodeDict is used by the decoder as a reversed HexDict. CaseDict changes CODE to Code.
-for OpCode in OpCodesMembers:    #There might be more OpCodes than I've typed.
-    Code=OpCode[3:]
-    HexDict[Code] = bitcoin.int_to_hex(electroncash.address.OpCodes[OpCode].value)
-    CodeDict[HexDict[Code]] = Code
-    ColorDict[Code], CaseDict[Code] = Qt.darkGray, Code  #This line ensures ColorDict & CaseDict are well-defined for all OpCodes, even if I haven't typed them out.
-for Code in '0 1 CHECKLOCKTIMEVERIFY CHECKSEQUENCEVERIFY'.split(): CodeDict[HexDict[Code]] = Code   #I prefer the ones spelled here.
+ColorDict, HexDict, CodeDict, CaseDict = {}, {}, {}, {}    #OpCode dictionaries. CodeDict is used by the decoder as a reversed HexDict. ColorDict maps CODE to Color, & CaseDict maps CODE to Code. All dicts could easily be combined into one master dict, but that may not be as fast and elegant, except during initialization. CodeDict & CaseDict can be slow if that's more convenient.
 for key in Codes.keys()-{'BCH','Disabled'}:
     for Code in Codes[key].split():
-        CodeUp=Code.upper()
-        ColorDict[CodeUp], CaseDict[CodeUp] = Colors[key], Code
-CovenantScripts=['',   #This section provides examples of scripts.
-''.join(Codes[key].upper()+'    #'+key+'\n' for key in Codes.keys()),    #List all the OpCodes.
-'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. I write the starting stack items relevant to each line, to the right of it. This version is simpler & smaller since malleability shouldn't be a problem. It's impossible for a miner to corrupt the P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2. Both '//' & '#' start comments.
+        CODE = Code.upper()
+        ColorDict[CODE], CaseDict[CODE] = Colors[key], Code
+for OP_CODE in OpCodesMembers:    #There might be more OpCodes than what's typed here.
+    CODE=OP_CODE[3:]
+    HexDict[CODE] = bitcoin.int_to_hex(electroncash.address.OpCodes[OP_CODE].value)
+    CodeDict[HexDict[CODE]] = CODE
+    try:    ColorDict[CODE]    #Check whether code's been typed out.
+    except: ColorDict[CODE], CaseDict[CODE] = Qt.darkGray, CODE  #Ensure ColorDict & CaseDict well-defined for all OpCodes.
+for CODE in '0 1 CHECKLOCKTIMEVERIFY CHECKSEQUENCEVERIFY'.split(): CodeDict[HexDict[CODE]] = CODE   #I prefer the ones spelled here.
+
+for code in codesPythonic.split():  #This section converts CaseDict from CODE→Code mapping, into CODE → Code, code mapping. 
+    CODE = code.upper()
+    CaseDict[CODE] = CaseDict[CODE], code
+for CODE in CaseDict.keys()-codesPythonic.upper().split(): CaseDict[CODE] = CaseDict[CODE], CODE.lower()  #Ensure CaseDict tuple is valid for all CODEs.
+
+CovenantScripts=['',   #This section can provide examples of scripts.
+''.join(Codes[key].upper()+'    #'+key+'\n' for key in Codes.keys())+'//Native Introspection OpCodes & MUL will be enabled in 2022.',    #List all the OpCodes.
+'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. Assumes miners can't corrupt a P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2.
 3DUP CHECKSIGVERIFY  ROT SIZE 1SUB SPLIT DROP  SWAP SHA256  ROT CHECKDATASIGVERIFY    #[..., Preimage, Sig, PubKey] VERIFY DATApush=Preimage. DATASIG is 1 shorter than a SIG.
 TUCK  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[UTX, Preimage] VERIFY Prevouts = Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 0x24 long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID = Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -63,16 +75,15 @@ SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, hashOutputs]
 #To return from other addresses currently requires editing qt.py.
 ''',
 ''] #Blanks for 'New' & 'Clear all below'.
-CovenantScripts[1]=CovenantScripts[1].replace('Flow control','Flow control (nullary & unary)').replace('Locktime','Locktime (unary)').replace('Reserved words','Reserved words (nullary)').replace('BCH','BCH (binary, unary & ternary)').replace('Disabled','Disabled (unary & binary)')   #This section provides some commentary to OpCodes list.
+CovenantScripts[1]=CovenantScripts[1].replace('Bitwise logic','Bitwise logic (unary & binary)').replace('Locktime','Locktime (unary)').replace('Reserved words','Reserved words (nullary)').replace('#BCH','//BCH (binary, unary & ternary)').replace('#Disabled','//Disabled (unary & binary)')   #This section provides some commentary to OpCodes list.
 CovenantScripts[1]=CovenantScripts[1].replace('Splice','Splice (unary)').replace('NUM2BIN  ','NUM2BIN    #Splice (binary)')
-CovenantScripts[1]=CovenantScripts[1].replace('Bitwise logic','Bitwise logic (binary)').replace('INVERT  ','INVERT    #Bitwise logic (unary)')
 CovenantScripts[1]=CovenantScripts[1].replace('Arithmetic','Arithmetic (ternary)').replace('MAX  ','MAX    #Arithmetic (binary)').replace('0NOTEQUAL','0NOTEQUAL    #Arithmetic (unary)')
-CovenantScripts[1]=CovenantScripts[1].replace('Crypto','Crypto (multary)').replace('CHECKSIGVERIFY  ','CHECKSIGVERIFY    #Crypto (binary)').replace('CODESEPARATOR  ','CODESEPARATOR    #Crypto (nullary)').replace('HASH256  ','HASH256    #Crypto (unary)')
-CovenantScripts[1]=CovenantScripts[1].replace('Native Introspection','Native Introspection (unary)').replace('TXLOCKTIME  ','TXLOCKTIME    #Native Introspection (nullary)')[:-1]     #Remove last \n.
+CovenantScripts[1]=CovenantScripts[1].replace('Crypto','Crypto (binary, multary & unary)').replace('CODESEPARATOR  ','CODESEPARATOR    #Crypto (unary & nullary)')
+CovenantScripts[1]=CovenantScripts[1].replace('#Native Introspection','#Native Introspection (unary)').replace('TXLOCKTIME  ','TXLOCKTIME    #Native Introspection (nullary)')
 
 ReturnScripts='''
 6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
-'''.splitlines()[1:]    #The covenant script hex is only needed by the watching-only wallet. Adding another line here allows wallet to return from that Script's address, if the fee is correct.
+'''.splitlines()[1:]    #The covenant script hex is only needed by the watching-only wallet. Adding another line here allows wallet to also return from that Script's address, if the fee is correct.
 ReturnAddresses=[electroncash.address.Address.from_multisig_script(bitcoin.bfh(Script)) for Script in ReturnScripts]
 
 def push_script(script):    #Bugfix for script size 255B.
@@ -137,15 +148,16 @@ class UI(QDialog):
         self.HiddenBox.textChanged.connect(self.broadcast_transaction)
 
         self.CheckBox = QCheckBox('Colors')
-        self.CheckBox.setToolTip("Slows down typing & selections.\nNot sure how colors should be assigned.\nPUSHDATA2 (& 4) won't have correct blue coloring.")
+        self.CheckBox.setToolTip("Slows down typing & selections.\nNot sure how colors should be assigned.")
         self.CheckBox.setChecked(True), self.CheckBox.toggled.connect(self.toggled)
                 
         self.CaseBox=QComboBox()
-        self.CaseBox.addItems(['Codes','CODES','OP_CODES','Op_Codes'])
-        self.CaseBox.setCurrentIndex(1)
-        self.CaseBox.textHighlighted.connect(self.CaseBoxHighlighted), self.CaseBox.activated.connect(self.CaseBoxActivated)
+        self.CaseBox.addItems('codes Codes CODES OP_CODES Op_Codes op_codes'.split())
+        self.CaseBox.setCurrentIndex(2), self.CaseBox.activated.connect(self.CaseBoxActivated)
+        try: self.CaseBox.textHighlighted.connect(self.CaseBoxHighlighted)
+        except: pass    #textHighlighted signal unavailable in EC-v3.6.6.
         
-        Title=QLabel('AutoCove v1.0.4')
+        Title=QLabel('AutoCove v1.0.5')
         Title.setStyleSheet('font-weight: bold'), Title.setAlignment(Qt.AlignCenter)
 
         self.ScriptsBox = QComboBox()
@@ -174,7 +186,7 @@ class UI(QDialog):
 
         VBox=QVBoxLayout()
         VBox.addLayout(HBoxTitle)
-        VBox.addWidget(QLabel("Auto-decode Script hex into readable form by pasting it (or a full raw txn) below. PUSHDATA1 is fully supported, but not PUSHDATA2&4."))
+        VBox.addWidget(QLabel("Auto-decode P2SH Script hex into readable form by pasting it below. Paste raw txn to decode all its P2SH input Scripts."))
         VBox.addWidget(self.ScriptBox,10), VBox.addWidget(self.HexBox,1)  #Script bigger than hex.
         VBox.addLayout(HBoxAddress)
         self.setLayout(VBox)
@@ -221,58 +233,65 @@ class UI(QDialog):
         Script=self.ScriptBox.toPlainText()
         if self.ScriptsBox.currentIndex() and Script not in self.Scripts: self.ScriptsBox.setCurrentIndex(0)     #New script.
         
-        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if we can loop over all P2SH inputs of a TX.
+        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if a TX.
         if ' ' not in Script:
             try:
                 Bytes=bitcoin.bfh(Script)
                 try:
-                    {self.ScriptBox.setPlainText(electroncash.address.Script.get_ops(bitcoin.bfh(Input['scriptSig']))[-1][-1].hex()) for Input in electroncash.Transaction(Script).inputs() if Input['type'] in {'p2sh','unknown'}}
-                    return
+                    TX=electroncash.Transaction(Script)
+                    Inputs=TX.inputs()
+                    Inputs[0] and TX.outputs()[0]   #Check there's at least 1 input & output, or else not a TX.
+                    {self.ScriptBox.setPlainText(electroncash.address.Script.get_ops(bitcoin.bfh(Input['scriptSig']))[-1][-1].hex()) for Input in Inputs if Input['type'] in {'p2sh','unknown'}}    #'p2sh' is usually multisig, but 'unknown' also has a Script.
+                    if Script!=self.ScriptBox.toPlainText(): return #P2SH input detected.
+                    else: Bytes=''  #Treat TX as though it's a Script, but don't decode.
                 except: pass    #Not a TX.
             except: pass    #Not hex.
         if Bytes:
             endlBefore = 'IF NOTIF ELSE ENDIF RETURN VER VERIF VERNOTIF'.split()   #New line before & after these OpCodes.
             endlAfter = endlBefore+'NUM2BIN BIN2NUM BOOLAND'.split()    #Binary conversion & BOOLAND may look good at line ends.
             Script, endl = '', '\n' #endl gets tabbed after IFs (IF & NOTIF) etc.
-            PushCount, Size, SizeSize, Words = 0, 0, 0, 0  #Variable count & Size of "current" data push. SizeSize is size of Size (0 for Size<0x4c). Words is the words on current line s.t. 0<Words/Line<=16.
-            Index=self.CaseBox.currentIndex()
+            Size, SizeSize, Words = 0, 0, 0  #Size count-down of "current" data push. SizeSize is the "remaining" size of Size (0 for 0<Size<0x4c). Words is the words on current line s.t. 0<Words/Line<=16.
             for Byte in Bytes:
                 Hex=bitcoin.int_to_hex(Byte,1)  #Byte is an int.
-                if PushCount<Size:  #Keep pushing data.
+                if SizeSize:    #This section is for PUSHDATA2&4 (&1, too).
+                    SizeSize-=1
+                    SizeHex +=Hex
+                    if not SizeSize:    #SizeHex is complete.
+                        Size, SizeFull = [ int(bitcoin.rev_hex(SizeHex),16) ]*2 #This is the data-push size. SizeFull remains constant throughout push, but there may be a more elegant code.
+                        if Words and Size>=20: Script+=endl    #New line before large data push.
+                        Script+=SizeHex
+                    continue
+                if Size:  #This section is for all data pushes.
+                    Size  -=1
                     Script+=Hex
-                    PushCount+=1
-                    if PushCount==Size: #End of data push.
+                    if not Size: #End of data push.
                         Script+=' '
                         Words+=1
-                        if Size>=20 or Words>=16: Words, Script = 0, Script+endl    #Large data pushes (e.g. HASH160) get their own line.  At most 16 words per line.
+                        if SizeFull>=20 or Words>=16: Words, Script = 0, Script+endl    #Large data pushes (e.g. HASH160) get their own line.  At most 16 words per line.
                     continue
                 try:    #OpCode or else new data push.
-                    if SizeSize:
-                        SizeSize-=1
-                        raise   #Data push.
-                    OpCode=CodeDict[Hex].upper()
-                    if OpCode in {'ENDIF','ELSE'}:
+                    CODE=CodeDict[Hex]
+                    if CODE in {'ENDIF','ELSE'}:
                         endl='\n'+endl[5:] #Subtract tab for ENDIF & ELSE.
                         if not Words and Script[-4:]=='    ': Script=Script[:-4]    #Tab back if already on a new line.
-                    if Words and (OpCode in endlBefore or 'RESERVED' in OpCode): Words, Script = 0, Script+endl     #New line before & after any RESERVED.
-                    if OpCode in {'VERIF', 'VERNOTIF'}: Script=Script.rstrip(' ')   #No tab before these since script will fail no matter what.
-                    Script+='Op_'*(Index==3)+CaseDict[OpCode]*(Index in {0,3}) + 'OP_'*(Index==2) + OpCode*(Index in {1,2})+' '
+                    if Words and (CODE in endlBefore or 'RESERVED' in CODE): Words, Script = 0, Script+endl     #New line before & after any RESERVED.
+                    if CODE in {'VERIF', 'VERNOTIF'}: Script=Script.rstrip(' ')   #No tab before these since script will fail no matter what.
+                    Script+=CODE+' '
                     Words+=1
-                    if OpCode in {'ELSE', 'IF', 'NOTIF'}: endl+='    ' #Add tab after ELSE, IF & NOTIF.
-                    elif 'PUSHDATA' in OpCode: SizeSize=2**(Byte-0x4c)  #0x4c is SizeSize=1.
-                    if Words>=16 or OpCode in endlAfter or any(Word in OpCode for Word in {'RESERVED', 'VERIFY'}): Words, Script = 0, Script+endl    #New line *after* any VERIFY.
+                    if CODE in {'ELSE', 'IF', 'NOTIF'}: endl+='    ' #Add tab after ELSE, IF & NOTIF.
+                    elif 'PUSHDATA' in CODE: SizeHex, SizeSize = '', 2**(Byte-0x4c)  #0x4c is SizeSize=1. SizeHex is to be the little endian hex form of Size.
+                    if Words>=16 or CODE in endlAfter or any(Word in CODE for Word in {'RESERVED', 'VERIFY'}): Words, Script = 0, Script+endl    #New line *after* any VERIFY.
                 except:
-                    PushCount, Size = 0, Byte
+                    Size, SizeFull = [ Byte ]*2
                     if Words and Size>=20: Script+=endl    #New line before large data push.
                     Script+=Hex
-            if PushCount<Size: return   #Failed to decode.
             Script=Script.rstrip(' ')+'\n'*(Words>0)+'#Auto-decode'
-
-            self.Scripts.append(Script) #This section adds the Auto-decode to memory in the combo-box.
-            self.ScriptsBox.addItem(''), self.ScriptsBox.setCurrentText('')
-            self.HexBox.clear(), self.ScriptActivated()   #Clearing HexBox ensures new colors, in case it's the same re-coding.
-            self.ScriptsBox.setItemText(self.ScriptsBox.currentIndex(), self.Address)
-            return  #textChanged signal will return to below this point. Decoder ends here.
+            if not (Size or SizeSize):   #Successful decode is plausible if all data-pushes completed successfully.
+                self.Scripts.append(Script) #This section adds the Auto-decode to memory in the combo-box.
+                self.ScriptsBox.addItem(''), self.ScriptsBox.setCurrentText('')
+                self.HexBox.clear(), self.ScriptActivated()   #Clearing HexBox ensures new colors, in case it's the same re-coding.
+                self.ScriptsBox.setItemText(self.ScriptsBox.currentIndex(), self.Address)
+                return  #textChanged signal will return to below this point. Decoder ends here.
         if self.CheckBox.isChecked():  #This section greys out typed '#' even though they don't change bytecode.
             Cursor=self.ScriptBox.textCursor()
             Format=Cursor.charFormat()
@@ -313,8 +332,8 @@ class UI(QDialog):
         Format.setForeground(Qt.black), Format.setBackground(Qt.transparent)
         Cursor.setPosition(0), Cursor.movePosition(Cursor.End,Cursor.KeepAnchor), Cursor.setCharFormat(Format)   #All black. This line guarantees fully transparent background.
         HexCursor.setPosition(0), HexCursor.movePosition(HexCursor.End,HexCursor.KeepAnchor), HexCursor.setCharFormat(Format)  #Hex colors actually add a lot of CPU lag.
-        if self.CheckBox.isChecked():   #This can max out a CPU core when users hold in a button like '0'.
-            StartPosit, HexPos = 0, 0    #Line's absolute position, along with HexBox position.
+        if self.CheckBox.isChecked():   #This can max out a CPU core when users hold in a button like '0'. A future possibility is only coloring the current word, unless copy/paste detected.
+            StartPosit, HexPos, SizeSize = 0, 0, 2    #Line's absolute position, along with HexBox position. SizeSize is the # of hex digits which are colored in blue, by default.
             for Line in Text.splitlines():
                 LineCode=Line.split('#')[0].split('//')[0].upper()
                 CommentPos, Pos, lenLine = len(LineCode), StartPosit, len(Line)  #Comment posn, virtual cursor position.
@@ -328,12 +347,16 @@ class UI(QDialog):
                         Cursor   .setPosition(   Pos,Cursor.KeepAnchor),    Cursor.setCharFormat(Format)
                         HexPos+=2
                         HexCursor.setPosition(HexPos,Cursor.KeepAnchor), HexCursor.setCharFormat(Format)
+                        
+                        if   'PUSHDATA2' in Word: SizeSize = 4  # of blue digits to follow.
+                        elif 'PUSHDATA4' in Word: SizeSize = 8
                     except: #Assume data push
                         Format.setForeground(Colors['Constants'])   #Color 1st 2 chars blue if not an opcode. Then the rest black.
-                        Cursor   .setPosition(   Pos+2,Cursor.KeepAnchor),    Cursor.setCharFormat(Format)
-                        HexCursor.setPosition(HexPos+2,Cursor.KeepAnchor), HexCursor.setCharFormat(Format)
+                        Cursor   .setPosition(   Pos+SizeSize,Cursor.KeepAnchor),    Cursor.setCharFormat(Format)
+                        HexCursor.setPosition(HexPos+SizeSize,Cursor.KeepAnchor), HexCursor.setCharFormat(Format)
                         Pos   +=lenWord
                         HexPos+=lenWord
+                        if SizeSize!=2: SizeSize=2  #Reset to coloring in 2 digits as blue.
                     LineCode=LineCode[Find+lenWord:]
                 Cursor.setPosition(StartPosit+CommentPos)   #This section greys out the comments. I treat '//' & '#' the same, but Qt.darkGray or Qt.lightGray could also work for '//'.
                 StartPosit+=lenLine
@@ -406,7 +429,7 @@ class UI(QDialog):
                 
                 WordUp=Word.upper().replace('OP_','')
                 try:
-                    insertWord = 'Op_'*(Index==3)+CaseDict[WordUp]*(Index in {0,3}) + 'OP_'*(Index==2) + WordUp*(Index in {1,2})
+                    insertWord = (Index==3)*'OP_' + (Index==4)*'Op_' + (Index==5)*'op_' + (Index in {2,3})*WordUp + (Index in {1,4})*CaseDict[WordUp][0] + (Index in {0,5})*CaseDict[WordUp][1]
                     lenChange=len(insertWord)-lenWord
                     Cursor.insertText(insertWord)
                     Pos       +=lenChange
