@@ -54,7 +54,7 @@ SWAP 041976a914 CAT  SWAP CAT  0288ac CAT  HASH256    #[..., Amount, HASH160] Pr
 SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, hashOutputs] VERIFY hashOutputs is correct. It's located 0x28 from Preimage end.
 080600000000ba7087 DROP    #[BOOL] Append nonce for vanity address, generated using VanityTXID-Plugin.
 ''',
-'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. I write the starting stack items relevant to each line, to the right of it. This version is simpler & smaller since malleability shouldn't be a problem. It's impossible for a miner to corrupt the P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2. Both '//' & '#' start comments.
+'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. Assumes miners can't corrupt a P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2.
 3DUP CHECKSIGVERIFY  ROT SIZE 1SUB SPLIT DROP  SWAP SHA256  ROT CHECKDATASIGVERIFY    #[..., Preimage, Sig, PubKey] VERIFY DATApush=Preimage. DATASIG is 1 shorter than a SIG.
 TUCK  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[UTX, Preimage] VERIFY Prevouts = Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 0x24 long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID = Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -68,10 +68,10 @@ SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, hashOutputs]
 //If the 'preturn...' address is added to a watching-only wallet, this plugin will automatically broadcast the return txns.
 #Sender must use a P2PKH address, not P2PK nor P2SH. Native Introspection in 2022 should enable a much simpler Script allowing any sender.
 #Sending txn SIZE must be at most 520 Bytes (3 inputs max).
-#14 bits minimum for single input, but greater minimum for more inputs.
+#14 bits minimum for single input, but add a couple more bits per extra input.
 #Never send it SLP tokens!
 #Fee between 8 to 12 bits.
-#21 BCH max, but I've only tested 5 tBCH. If the sending txn is somehow malleated (e.g. by miner), then the money may be lost! 
+#21 BCH max, but I haven't tested over 10tBCH. If the sending txn is somehow malleated (e.g. by miner), then the money may be lost! 
 #The private key used to auto-return is 1.
 #The sender must not use a PUSHDATA OpCode in the output pkscript (non-standard).
 #To return from other addresses currently requires editing qt.py.
