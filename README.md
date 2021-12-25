@@ -1,11 +1,10 @@
 # AutoCove-Plugin
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.4.png)
-
-REVERSEBYTES is unlisted! (Decoder still gets it, but it's colored darkGray.) Next version will list it, and fully support all OpCodes (proper blue coloring for PUSHDATA2 etc), & improve macOS highlight color.
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
-(v1.0.3 screenie has some incorrect comments...)
+
+(v1.0.3 screenie had some incorrect comments...)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
 
@@ -25,6 +24,14 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.5 notes:
+- All OpCodes now supported. Correct decoding & blue coloring for PUSHDATA2 & PUSHDATA4. REVERSEBYTES included as Crypto (Qt.magenta). It had its own CHIP & I've never seen it used, so I missed it in v1.0.4.
+- codes (Pythonic-style) & op_codes now selectable, as well as CODES, OP_CODES etc.
+- Highlight color now set to reduce Selection HSL darkness(=255-L) by 25%. Unfortunately 25% mightn't be enough on macOS, due to the pale blue.
+- Bugfix for EC-v3.6.6. Unfortunately v1.0.4 broke backwards compatibility without me realizing, due to instant combo-box activation. SLP Ed. now supported.
+- Bugfix for auto-decode, when unable to.
+- SHA256 checksum 00000000b514a883d6f742eb82c0585a695c021fc8ca7f99e9d8f713e3c1fadb (44 kH/s · 10 mins). Luckiest hash yet! Updating via reinstall requires restarting EC.
 
 v1.0.4 notes:
 - OP_CODES, CODES, Codes & Op_Codes combo-box, with **highlighted** activation!
