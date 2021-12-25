@@ -6,7 +6,9 @@
 
 (v1.0.3 screenie had some incorrect comments...)
 
-Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1. The name is because I worked full-time for years at a factory named after Cathedral **Cove**, here in NZ. 'Cove' is also short for 'Covenant'! The covenant address & script is:
+Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
+
+I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. 'Cove' is also short for 'Covenant'! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
 **v1.0.4** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9):
 >6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
@@ -26,12 +28,12 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.0.5 notes:
-- All OpCodes now supported. Correct decoding & blue coloring for PUSHDATA2 & PUSHDATA4. REVERSEBYTES included as Crypto (Qt.magenta). It had its own CHIP & I've never seen it used, so I missed it in v1.0.4.
-- codes (Pythonic-style) & op_codes now selectable, as well as CODES, OP_CODES etc.
-- Highlight color now set to reduce Selection HSL darkness(=255-L) by 25%. Unfortunately 25% mightn't be enough on macOS, due to the pale blue.
-- Bugfix for EC-v3.6.6. Unfortunately v1.0.4 broke backwards compatibility without me realizing, due to instant combo-box activation. SLP Ed. now supported.
+- **All** OpCodes now supported. Correct decoding & blue coloring for PUSHDATA2 & PUSHDATA4. REVERSEBYTES included as Crypto (Qt.magenta). It had its own CHIP & I've never seen it used, so I missed it in v1.0.4.
+- codes (Pythonic-style) & **op_codes** now selectable, as well as CODES, OP_CODES etc.
+- Highlight color now set to reduce Selection HSL darkness(=255-L) by **25%**. Unfortunately 25% mightn't be enough on macOS, due to the pale blue.
+- Bugfix for EC-v3.6.6. Unfortunately v1.0.4 broke backwards compatibility without me realizing, due to instant combo-box activation. **SLP Ed.** now supported.
 - Bugfix for auto-decode, when unable to.
-- SHA256 checksum 00000000b514a883d6f742eb82c0585a695c021fc8ca7f99e9d8f713e3c1fadb (44 kH/s · 10 mins). Luckiest hash yet! Updating via reinstall requires restarting EC.
+- SHA256 checksum 00000000b514a883d6f742eb82c0585a695c021fc8ca7f99e9d8f713e3c1fadb (44 kH/s · 10 mins). **Luckiest** hash yet! Updating via reinstall requires restarting EC.
 
 v1.0.4 notes:
 - OP_CODES, CODES, Codes & Op_Codes combo-box, with **highlighted** activation!
