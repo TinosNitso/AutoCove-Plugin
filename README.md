@@ -1,6 +1,8 @@
 # AutoCove-Plugin
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.GIF)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
+
+Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (as in above WebP). Next version should!
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
