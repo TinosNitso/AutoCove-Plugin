@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (as in above WebP). Next version should!
+Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text! There will be an ASM (assembly) option (probably a check-box) which removes all leading blue bytes whenever possible, or else assumes they're already removed. ASM will help with CashScript compatibility, because its "bytecode" is in ASM by default (currently use `cashc --hex` for AutoCove compatibility). There'll be other improvements, too.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
