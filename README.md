@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.GIF)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
