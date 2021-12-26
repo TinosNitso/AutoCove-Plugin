@@ -4,7 +4,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
-(v1.0.3 screenie had some incorrect comments...)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/Test.webp) (testing WebP)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
 
