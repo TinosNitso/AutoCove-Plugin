@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.png)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.3.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
 (v1.0.3 screenie had some incorrect comments...)
 
