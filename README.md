@@ -2,9 +2,9 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text! There will be an ASM (assembly) option (probably a check-box) which removes all leading blue bytes whenever possible, or else assumes they're already removed. ASM will help with CashScript compatibility, because its "bytecode" is in ASM by default (currently can use `cashc --hex` for AutoCove compatibility).
+Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an ASM (assembly) option (probably a check-box) which removes all leading blue bytes whenever possible, or else assumes they're already removed. ASM will help with CashScript compatibility, because its "bytecode" is in ASM by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (2of2 max) returns as well as P2PKH.
 
-There's a serious bug when two or more wallets are open. The decoder decodes from the other wallet's memory somehow! (Will be fixed in next update.)
+There's a bug sometimes when two or more wallets are open. The decoder loads from the other wallet's memory somehow! (Will be fixed in next update.)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
 
@@ -12,7 +12,7 @@ Fully automatic covenants forward payments without any further authorization. Pa
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.0.4** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9):
+**v1.0.4** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9) ([AutoCove_pReturn#157609; 🌵](https://www.cashaccount.info/#lookup) Cash Account):
 >6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
