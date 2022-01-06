@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an ASM (assembly) option (probably a check-box) which removes all leading blue bytes whenever possible, or else assumes they're already removed. ASM will help with CashScript compatibility, because its "bytecode" is in ASM by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (min 3 data-pushes, max 2of2 compressed, VanityTXID compatible) returns as well as P2PKH (all correspond to 2 data-pushes).
+Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an asm & hex combo-box (instant stripping etc of leading blue bytes, works with all PUSHDATAs). Asm should help with CashScript compatibility, because its "bytecode" is in asm by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (min 3 data-pushes, max 2of2 compressed, VanityTXID compatible) returns as well as P2PKH (all correspond to 2 data-pushes). There will be an OpCount with the Byte Count. TXID lookup. Hex input can start with '0x' etc. And there'll be a new tabIcon based on a Wikimedia flag icon.
 
 There's a bug sometimes when two or more wallets are open. The decoder loads from the other wallet's memory somehow! (Will be fixed in next update.)
 
