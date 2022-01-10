@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an asm & hex combo-box (instant stripping of leading blue bytes etc, works with all PUSHDATAs, 1N→OP_1N). Asm should help with CashScript compatibility, because its "bytecode" is in asm by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (min 3 data-pushes, max 2of2 compressed & 252B sigscript, compatible with VanityTXID) returns as well as P2PKH (all correspond to 2 data-pushes). There will be an OpCount with the Byte Count. TXID lookup. Auto-decoder input can start with *0x* & *0X*. When decoding a full txn, each scriptSig will have all but its last data-push as comments (1 per line in asm, similar to Blockchain.com). And there'll be a new tabIcon based on a Wikimedia flag icon. Also, colors will all work in the dark color theme. 
+Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an asm & hex combo-box (instant stripping of leading blue bytes etc, works with all PUSHDATAs, 1N→OP_1N). Asm should help with CashScript compatibility, because its "bytecode" is in asm by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (min 3 data-pushes, max 2of2 compressed & 252B sigscript, compatible with VanityTXID) returns as well as P2PKH (all correspond to 2 data-pushes). There will be an OpCount with the Byte Count. TXID lookup. Auto-decoder input can start with *0x* & *0X*. When decoding a full txn, each scriptSig will have all but its last data-push as comments (1 per line in asm, similar to Blockchain.com). And there'll be a new tabIcon based on a Wikimedia flag icon. Also, colors will all work in the dark color theme. Auto-decode will target up to 21B/line, instead of 16 words/line. Default font to be Consolas PointSize(10), so all chars have equal width.
 
 There's a bug sometimes when two or more wallets are open. The decoder loads from the other wallet's memory somehow! (Will be fixed in next update.)
 
@@ -25,7 +25,7 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 - Never send **SLP** tokens, or they'll be burned.
 - Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes.
 
-Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a). I don't like Spedn & CashScript (*spedn.exe* alone is 21MB).
+Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
