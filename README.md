@@ -2,32 +2,46 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-Unfortunately v1.0.5 doesn't retain highlighting properly when switching spells (like in above WebP). Next version will remember the highlighted text properly! There will be an asm & hex combo-box (instant stripping of leading blue bytes etc, works with all PUSHDATAs, 1N→OP_1N). Asm should help with CashScript compatibility, because its "bytecode" is in asm by default (currently can use `cashc --hex` for AutoCove compatibility). The next *preturn*... covenant will support P2SH (min 3 data-pushes, max 2of2 compressed & 252B sigscript, compatible with VanityTXID) returns as well as P2PKH (all correspond to 2 data-pushes). There will be an OpCount with the Byte Count. TXID lookup. Auto-decoder input can start with *0x* & *0X*. When decoding a full txn, each scriptSig will have all but its last data-push as comments (1 per line in asm, similar to Blockchain.com). And there'll be a new tabIcon based on a Wikimedia flag icon. Also, colors will all work in the dark color theme. Auto-decode will target up to 21B/line, instead of 16 words/line. Default font to be Consolas PointSize(10), so all chars have equal width.
-
-There's a bug sometimes when two or more wallets are open. The decoder loads from the other wallet's memory somehow! (Will be fixed in next update.)
-
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5-macOS.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.6-macOS.png)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.0.4** [preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9](https://www.blockchain.com/bch/address/preturn49xt9r8n82rr0lwmzxpgxf6hv4v3gya4qk9) ([AutoCove_pReturn#157609; 🌵](https://www.cashaccount.info/#lookup) Cash Account):
->6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940239029458807c012a7f77517f7c7f77517f7c7f75a9041976a9147c7e7e0288ac7eaa7c820128947f7701207f7587080500000001e5413e75
+**v1.0.6** [preturn5pf0m9dnrjwqx0ttca4f8pxfvscnwwy0zl3](https://www.blockchain.com/bch/address/preturn5pf0m9dnrjwqx0ttca4f8pxfvscnwwy0zl3) ([pReturn_AutoCove#?; 🌵](https://www.cashaccount.info/#lookup) Cash Account):
+>6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940289029458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa7c820128947f7701207f758708030000000071d8e975
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
-- Sender must use a **P2PKH** address (starting with *q* or *1*, but not P2PK).
+- Sender must use a **P2PKH** or **P2SH** address (but not P2PK).
+- P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible.
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
-- 14 bits minimum for only 1 input. **More** bits needed per extra input.
-- 21 BCH max (theoretically), but I've only ever [tested](https://www.blockchain.com/bch/tx/c3350c09687b922c4d91d9a504b11ea9fac64e599b94975cc50d743f422eb7c4) just over a BCH (& 10 tBCH on a [testnet4](https://testnet4.imaginary.cash/tx/c2dbbccf399c0a4f7bfa847b95feb44d2fb56254d4a820b28325b443b6874c87)). I've tested multiple inputs & outputs, both Schnorr & ECDSA, & both compressed & uncompressed PubKeys.
+- 15 bits minimum for only 1 input. ~2 bits **more** needed per extra input.
+- 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn5pf0m9dnrjwqx0ttca4f8pxfvschu2rd4cd).
 - 8→12 bits fee.
-- Total amount will be returned to **first** input.
-- Never send **SLP** tokens, or they'll be burned.
+- Total amount will be returned to **first** (0th) input.
+- Never send **SLP** tokens.
 - Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes.
 
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.6 notes:
+- **asm** stripping (instant via combo-box). It works with PUSHDATA OpCodes, and highlighting. OpCodes 10-16 must have a leading 'OP_'. It's some tricky code! e.g. [Here](https://github.com/mr-zwets/RefreshContract/blob/main/refresh.json) is the RefreshTimer.cash CashScript bytecode.
+- **OpCount** next to ByteCount. e.g. Mecenas uses 228 ops, but only <201 ever execute.
+- New v1.0.6 covenant supports both P2PKH & **P2SH** (3 or 4 data pushes ≤75B, ≤252B sigscript) returns. This enables VanityTXID address compatibility, so that sending TXID may be vanitized (but a miner malleating a data-push past 75B is a vulnerability).
+- *0x* & *0X* hex input now accepted, but only for decoder, raw TX & TXID.
+- Decoding whole txns now includes the whole **scriptSig** of each input with data-pushes as comments (1/line). Sort of like Blockchain.com. Unfortunately the SLP Ed. causes a bug when OP_0 is a data-push (as is common with multisig Scripts), but next update should fix it.
+- **TXID** lookup if user pastes it instead of the txn. A neat trick is to line up lots of TXID examples and have the EC network fetch each successful stack.
+- Byte/s following a *PUSHDATA* are now gray-blue, instead of blue.
+- PUSHDATA4 added to *Disabled* list. BCH disabled it as part of a malleability fix, I think.
+- Selection & highlighting maintained as spells are changed between CODES & OP_CODES etc. Tracking is ok, but for multiple words the selection doesn't change size.
+- **Dark theme** fully supported! Keeping colors consistent is tricky. A future version could enable live toggling between white & dark. On MX Linux the combo-boxes are strange, but still work, in the dark theme.
+- macOS highlighting now darker, but it turned out too dark!
+- Bugfix so that multiple wallets have their own auto-decoder memory (combo-box).
+- 21 Bytes/line max target for auto-decoder, instead of 16 words/line. e.g. HASH160 requires (1+20)B. BIN2NUM no longer ends lines. Oh & indents are 8 spaces.
+- New tabIcon based on a public-domain WikiMedia flag icon. Still not animated.
+- SHA256 Checksum: 000000b45c129df3950971cf14608568ac8cf8bf853e4b09dde0900dda1aca72 (36 kH/s · 12 mins) Update via re-install requires restarting EC.
 
 v1.0.5 notes:
 - **All** OpCodes now supported. Correct decoding & blue coloring for PUSHDATA2 & PUSHDATA4. REVERSEBYTES included as Crypto (Qt.magenta). It had its own CHIP & I've never seen it used, so I missed it in v1.0.4. Next version might use darkBlue for byte/s following a PUSHDATA, instead of blue.
@@ -35,7 +49,7 @@ v1.0.5 notes:
 - Highlight color now set to reduce Selection HSL darkness(=255-L) by **25%**. Unfortunately 25% mightn't be enough on macOS, due to the pale blue.
 - Bugfix for EC-v3.6.6. Unfortunately v1.0.4 broke backwards compatibility without me realizing, due to instant combo-box activation. **SLP Ed.** now supported.
 - Bugfix for auto-decode, when unable to.
-- SHA256 checksum 00000000b514a883d6f742eb82c0585a695c021fc8ca7f99e9d8f713e3c1fadb (44 kH/s · 10 mins). **Luckiest** hash yet! Updating via reinstall requires restarting EC.
+- SHA256 checksum 00000000b514a883d6f742eb82c0585a695c021fc8ca7f99e9d8f713e3c1fadb (44 kH/s · 10 mins). **Luckiest** hash yet!
 
 v1.0.4 notes:
 - OP_CODES, CODES, Codes & Op_Codes combo-box, with **highlighted** activation!
