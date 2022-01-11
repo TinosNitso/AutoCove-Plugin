@@ -27,8 +27,8 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.0.6 notes:
-- **asm** stripping (instant via combo-box). It works with PUSHDATA OpCodes, and highlighting. OpCodes 10-16 must have a leading 'OP_'. It's some tricky code! e.g. [Here](https://github.com/mr-zwets/RefreshContract/blob/main/refresh.json) is the RefreshTimer.cash CashScript bytecode.
-- **OpCount** next to ByteCount. e.g. Mecenas uses 228 ops, but only <201 ever execute.
+- **asm** stripping (instant via combo-box). It works with PUSHDATA OpCodes, and highlighting. OpCodes 10-16 are given a leading 'OP_'. It's some tricky code! e.g. [Here](https://github.com/mr-zwets/RefreshContract/blob/main/refresh.json) is the RefreshTimer.cash CashScript bytecode.
+- **OpCount** next to ByteCount. e.g. [Mecenas](https://www.blockchain.com/bch/tx/4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f) has 228 ops, but only <201 ever execute.
 - New v1.0.6 covenant supports both P2PKH & **P2SH** (3 or 4 data pushes ≤75B, ≤252B sigscript) returns. This enables VanityTXID address compatibility, so that sending TXID may be vanitized (but a miner malleating a data-push past 75B is a vulnerability).
 - *0x* & *0X* hex input now accepted, but only for decoder, raw TX & TXID.
 - Decoding whole txns now includes the whole **scriptSig** of each input with data-pushes as comments (1/line). Sort of like Blockchain.com. Unfortunately the SLP Ed. causes a bug when OP_0 is a data-push (as is common with multisig Scripts), but next update should fix it.
@@ -38,8 +38,8 @@ v1.0.6 notes:
 - Selection & highlighting maintained as spells are changed between CODES & OP_CODES etc. Tracking is ok, but for multiple words the selection doesn't change size.
 - **Dark theme** fully supported! Keeping colors consistent is tricky. A future version could enable live toggling between white & dark. On MX Linux the combo-boxes are strange, but still work, in the dark theme.
 - macOS highlighting now darker, but it turned out too dark!
-- Bugfix so that multiple wallets have their own auto-decoder memory (combo-box).
-- 21 Bytes/line max target for auto-decoder, instead of 16 words/line. e.g. HASH160 requires (1+20)B. BIN2NUM no longer ends lines. Oh & indents are 8 spaces.
+- Bugfix so that multiple wallets each have their own auto-decoder memory (combo-box).
+- 21 bytes/line max target for auto-decoder, instead of 16 words/line. e.g. HASH160 requires (1+20)B. BIN2NUM no longer ends lines. Oh & indents are 8 spaces.
 - New tabIcon based on a public-domain WikiMedia flag icon. Still not animated.
 - SHA256 Checksum: 000000b45c129df3950971cf14608568ac8cf8bf853e4b09dde0900dda1aca72 (36 kH/s · 12 mins) Update via re-install requires restarting EC.
 
