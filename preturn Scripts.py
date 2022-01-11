@@ -54,7 +54,7 @@ SWAP 041976a914 CAT  SWAP CAT  0288ac CAT  HASH256    #[..., Amount, HASH160] Pr
 SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, hashOutputs] VERIFY hashOutputs is correct. It's located 0x28 from Preimage end.
 080600000000ba7087 DROP    #[BOOL] Append nonce for vanity address, generated using VanityTXID-Plugin.
 ''',
-'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. Assumes miners can't corrupt a P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2.
+'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.4 Script. UTX = (Unspent TX) = Parent. I write the starting stack items relevant to each line, to the right of it. This version is simpler & smaller since malleability shouldn't be a problem. It's impossible for a miner to corrupt the P2PKH sender's sigscript. v1.0.4 is a few bytes smaller than v1.0.2. Both '//' & '#' start comments.
 3DUP CHECKSIGVERIFY  ROT SIZE 1SUB SPLIT DROP  SWAP SHA256  ROT CHECKDATASIGVERIFY    #[..., Preimage, Sig, PubKey] VERIFY DATApush=Preimage. DATASIG is 1 shorter than a SIG.
 TUCK  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[UTX, Preimage] VERIFY Prevouts = Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 0x24 long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID = Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -64,12 +64,34 @@ SWAP 012a SPLIT NIP  1 SPLIT  SWAP SPLIT NIP  1 SPLIT  SWAP SPLIT DROP  HASH160 
 041976a914 SWAP CAT  CAT  0288ac CAT  HASH256    #[..., Amount, HASH160] Predict hashOutputs for P2PKH sender.
 SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, hashOutputs] VERIFY hashOutputs is correct. It's located 0x28 from Preimage end. Script could conceivably be a byte shorter by using EQUALVERIFY somehow.
 080500000001e5413e DROP    #[BOOL] Append nonce for vanity address, generated using VanityTXID-Plugin.
+''',
+'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.6 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. This update increases fees by 11% by supporting both P2PKH & P2SH senders! P2SH sender must have 3 or 4 data-pushes ≤75B (e.g. 1of1, 1of2 or 2of2) in its unlocking sigscript ≤252B. VanityTXID (compressed) sender is supported! Mof3 MULTISIG not supported yet. CHECKMULTISIG's leading 0 gives an extra data-push.
+3DUP CHECKSIGVERIFY  ROT SIZE 1SUB SPLIT DROP  SWAP SHA256  ROT CHECKDATASIGVERIFY    #[..., Preimage, Sig, PubKey] VERIFY DATApush=Preimage. DATASIG is 1 shorter than a SIG.
+TUCK  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[UTX, Preimage] VERIFY Prevouts = Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 0x24 long @ position 0x44.
+0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID = Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
+OVER SIZE 0134 SUB SPLIT NIP  8 SPLIT DROP  BIN2NUM    #[Preimage, UTX] Obtain input value from Preimage, always @ 0x34 from its end.
+OVER SIZE NIP SUB  028902 SUB  8 NUM2BIN    #[..., UTX, Amount] Subtract fee of (SIZE(UTX)+649 sats). A sat less should also always work. P2SH returns are 2B smaller than P2PKH for same SIZE(UTX).
+SWAP 0129 SPLIT NIP  1 SPLIT SWAP 0100 CAT BIN2NUM  SPLIT DROP    #[..., UTX, Amount] NIP UTX-start & DROP UTX-end, isolating scriptSig. Always assumes SIZE(scriptSig)<0xfd.
+1 SPLIT  SWAP BIN2NUM SPLIT NIP    #[..., scriptSig]  Always assume SIZE(data-push)<0x4c. This rules out Mof3 MULTISIG, & uncompressed VanityTXID. The "0th" data-push, "scriptSig(0)", is only final for P2PK sender, therefore NIP it off. BIN2NUM is only required for an empty data-push (has leading 0-byte).
+1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(1)), scriptSig(1:)] ] Separate next data-push.
+SIZE  IF  NIP    #[Preimage, Amount, scriptSig(1), [SIZE(scriptSig(2)), scriptSig(2:)] ] SIZE decides whether sender was P2SH or P2PKH. IMO it's more elegant to combine IF with a stack OpCode to simplify the stack.
+        1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(2)), scriptSig(2:)] ] Separate next data-push.
+        SIZE  IF  NIP	#[Preimage, Amount, scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
+                1 SPLIT  SWAP SPLIT    #[..., [SIZE(scriptCode), scriptSig(3:)] ] BIN2NUM unnecessary because the empty redeem Script isn't supported.
+        ENDIF  DROP    #[..., scriptCode, 0] Assume "3rd" data-push is final & is scriptCode (i.e. redeem Script).
+        HASH160  0317a914 SWAP CAT  CAT  0187    #[..., Amount, scriptCode] Predict Outputs for P2SH sender.
+ELSE  DROP    #[Preimage, Amount, PubKey, 0]
+        HASH160  041976a914 SWAP CAT  CAT  0288ac    #[..., Amount, PubKey] Predict Outputs for P2PKH sender.
+ENDIF  CAT    #[..., SPLIT(Outputs)] From now is the same for both P2SH & P2PKH.
+HASH256  SWAP SIZE 0128 SUB SPLIT NIP  0120 SPLIT DROP  EQUAL    #[Preimage, Outputs] VERIFY Outputs==Output is correct. hashOutputs is located 0x28 from Preimage end.
+08030000000071d8e9 DROP    #[BOOL] Append nonce for vanity address, generated using VanityTXID-Plugin.
 
-//If the 'preturn...' address is added to a watching-only wallet, this plugin will automatically broadcast the return txns.
-#Sender must use a P2PKH address, not P2PK nor P2SH. Native Introspection in 2022 should enable a much simpler Script allowing any sender.
+#If the 'preturn...' address is added to a watching-only wallet, this plugin will automatically broadcast the return txns.
+#Sender must use a P2PKH or P2SH address, not P2PK.
+#P2SH sender must have only 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible.
 #Sending txn SIZE must be at most 520 Bytes (3 inputs max).
-#14 bits minimum for single input, but add a couple more bits per extra input.
-#Never send it SLP tokens!
+#15 bits minimum for single input, but add a couple more bits per extra input.
+#It can't return SLP tokens!
 #Fee between 8 to 12 bits.
 #21 BCH max, but I haven't tested over 10tBCH. If the sending txn is somehow malleated (e.g. by miner), then the money may be lost! 
 #The private key used to auto-return is 1.
