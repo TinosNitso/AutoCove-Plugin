@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+v1.0.6 is having trouble decoding all sigscript data-pushes as comments, when they're indices (as is common). Next version will fix it. Also the v1.0.6 covenant would fail if the P2SH sender pushes a constant like OP_1 as one of the 3 or 4 data-pushes. Brown & darkMagenta should be switched around, and on dark theme the light-blue constants needs to be lighter.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.6-macOS.png)
