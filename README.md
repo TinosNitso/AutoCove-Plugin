@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-v1.0.6 is having trouble decoding all sigscript data-pushes as comments, when they're just non-0 constants like OP_1. Next version will fix it. Also the v1.0.6 covenant would fail if the P2SH sender pushes a non-0 constant like OP_1 as one of the 3 or 4 data-pushes. Brown & darkMagenta should be switched around, and on dark theme the light-blue constants needs to be lighter.
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.7.png)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
@@ -28,6 +28,16 @@ Another example could be address *ppythag0ras*... which only returns three coins
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
+v1.0.7 notes:
+- Bugfix for when asm + OP_CODES setting converts 011N into OP_1N (oops).
+- Bugfix for auto-decode of TX with a sigscript containing an OP_N (instead of data) push. Improved auto-comment.
+- Op & B counts for every line of auto-decode! This helps to prove a big Script like Mecenas never goes over the 201 ops limit. A future version should also count changes in stack depth, but this update is primarily bugfixes & correction to v1.0.6.
+- darkMagenta & Brown switched.
+- In dark theme, lighter light blue for constants. Also, quarter-gray background switched with black.
+- TXID & other hex input is now allowed to have a tab after it (& '\n' too). Double-clicking a TXID in notepad also selects the tab after it.
+- macOS highlighting slightly lighter this time (an eighth difference, but still a quarter difference on Windows). Dark theme isn't available for Catalina, so I've never tested that on macOS. I'm starting to prefer the dark theme, but EC itself needs an update since it's got some blue text on black background, & some white on bright green, which is nearly unreadable.
+- SHA256 Checksum: 000000928f656c2436c9d18f0f193f3944e9c90b7bb78813cf1591c91e5c06d4 (35 kH/s · 2 mins). Updating via re-install requires restarting EC.
+
 v1.0.6 notes:
 - **asm** stripping (instant via combo-box). It works with PUSHDATA OpCodes, and highlighting. OpCodes 10-16 are given a leading 'OP_'. It's some tricky code! e.g. [Here](https://github.com/mr-zwets/RefreshContract/blob/main/refresh.json) is the RefreshTimer.cash CashScript bytecode.
 - **OpCount** next to ByteCount. e.g. [Mecenas](https://www.blockchain.com/bch/tx/4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f) has 228 ops, but only <201 ever execute.
@@ -43,7 +53,7 @@ v1.0.6 notes:
 - Bugfix so that multiple wallets each have their own auto-decoder memory (combo-box).
 - 21 bytes/line max target for auto-decoder, instead of 16 words/line. e.g. HASH160 requires (1+20)B. BIN2NUM no longer ends lines. Oh & indents are 8 spaces.
 - New tabIcon based on a public-domain WikiMedia flag icon. Still not animated.
-- SHA256 Checksum: 000000b45c129df3950971cf14608568ac8cf8bf853e4b09dde0900dda1aca72 (36 kH/s · 12 mins) Update via re-install requires restarting EC.
+- SHA256 Checksum: 000000b45c129df3950971cf14608568ac8cf8bf853e4b09dde0900dda1aca72 (36 kH/s · 12 mins).
 
 v1.0.5 notes:
 - **All** OpCodes now supported. Correct decoding & blue coloring for PUSHDATA2 & PUSHDATA4. REVERSEBYTES included as Crypto (Qt.magenta). It had its own CHIP & I've never seen it used, so I missed it in v1.0.4. Next version might use darkBlue for byte/s following a PUSHDATA, instead of blue.
