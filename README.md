@@ -24,7 +24,7 @@ I worked full-time for years at a factory named after Cathedral **Cove**, in NZ.
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** or **P2SH** address (but not P2PK).
-- P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible.
+- P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible. However non-0 constant pushes like OP_N aren't supported.
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
 - 15 bits minimum for only 1 input. ~2 bits **more** needed per extra input.
 - 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn5pf0m9dnrjwqx0ttca4f8pxfvschu2rd4cd).
