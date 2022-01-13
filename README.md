@@ -8,8 +8,8 @@ Users can copy paste the following TXIDs into the plugin to see some examples. U
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30`: RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28`: Hodl plugin.
 `83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c`: 1of1 multisig.
-`000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8`: VanityTXID.
-`820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a`: (not TXID) Native Introspection preview which is 32B!
+`000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8`: VanityTXID address.
+`820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a`: (not TXID) Native Introspection preview!
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
