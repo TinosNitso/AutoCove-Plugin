@@ -29,12 +29,12 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.0.7 notes:
-- Bugfix for when asm + OP_CODES setting converts 011N into OP_1N (oops).
+- Bugfix for when asm+OP_CODES setting converts 011N into OP_1N (oops).
 - Bugfix for auto-decode of TX with a sigscript containing an OP_N (instead of data) push. Improved auto-comment.
-- Op & B counts for every line of auto-decode! This helps to prove a big Script like Mecenas never goes over the 201 ops limit. A future version should also count changes in stack depth, but this update is primarily bugfixes & correction to v1.0.6.
-- darkMagenta & Brown switched.
+- Op & B counts for every line of auto-decode! This helps check a big Script like Mecenas never goes over the 201 ops limit. A future version should also count changes in stack depth, but this update is primarily bugfixes & correction to v1.0.6.
+- darkMagenta & brown switched around.
 - In dark theme, lighter light blue for constants. Also, quarter-gray background switched with black.
-- TXID & other hex input is now allowed to have a tab after it (& '\n' too). Double-clicking a TXID in notepad also selects the tab after it.
+- TXID & other hex input is now allowed to have a tab after it (& '\n' too). Double-clicking a TXID in notepad selects the tab after it.
 - macOS highlighting slightly lighter this time (an eighth difference, but still a quarter difference on Windows). Dark theme isn't available for Catalina, so I've never tested that on macOS. I'm starting to prefer the dark theme, but EC itself needs an update since it's got some blue text on black background, & some white on bright green, which is nearly unreadable.
 - SHA256 Checksum: 000000928f656c2436c9d18f0f193f3944e9c90b7bb78813cf1591c91e5c06d4 (35 kH/s · 2 mins). Updating via re-install requires restarting EC.
 
