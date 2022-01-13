@@ -25,14 +25,16 @@ Codes['BCH']='\nCAT SPLIT NUM2BIN BIN2NUM AND OR XOR DIV MOD CHECKDATASIG CHECKD
 Codes['Disabled']='PUSHDATA4 INVERT 2MUL 2DIV MUL LSHIFT RSHIFT'
 Codes1N = {str(N) for N in range(10,17)}   #Codes1N is the set of OpCode names which are hex when 'OP_' is stripped from them, which isn't allowed in Asm.
 #Test line (copy-paste for spectrum): PUSHDATA2 0100ff RETURN TOALTSTACK NUM2BIN INVERT MAX CHECKSIGVERIFY CHECKLOCKTIMEVERIFY TXLOCKTIME RESERVED 
-Colors={'Constants':Qt.blue,'Flow control':Qt.darkMagenta,'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':QColor(128,64,0),'Native Introspection':QColor(128,0,255),'SelectionForeground':Qt.white,'PushData':QColor(128,128,255),'Data':Qt.black}
-#Brown (here) is dark-orange. Sky-blue & Purple (here) stem from blue. darkCyan (aka teal) appears too close to darkGreen. Byte/s following a PUSHDATA are gray+blue. darkYellow is aka olive. I've noticed orange & red are too close, but only when I look slightly *up*, not down, at my LCD screen. It's similar to the darkGreen vs darkCyan problem, the green pixels project slightly upwards, so looking upward orange==red !
-if 'nt' in shutil.os.name:                  Color=QColor(0,120,215) #WIN10 is strong blue. This section determines highlighting color.
+#Brown (here) is dark-orange. Sky-blue & Purple (here) stem from blue. darkCyan (aka teal) appears too close to darkGreen. Byte/s following a PUSHDATA are gray+blue. darkYellow is aka olive. I've noticed orange & red are too close, but only when I look slightly *up*, not down, at my LCD screen. It's similar to the darkGreen vs darkCyan issue.
+QCol = {                       'Brown': QColor(128,64,0),                                        'Orange': QColor(255,128,0),'SkyBlue': QColor(0,128,255),                                                                                       'Purple': QColor(128,0,255),                           'lightBlue': QColor(128,128,255) }
+Colors = {'Constants':Qt.blue,'Flow control':QCol['Brown'],'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QCol['Orange'],'Arithmetic':QCol['SkyBlue'],'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':Qt.darkMagenta,'Native Introspection':QCol['Purple'],'SelectionForeground':Qt.white,'PushData':QCol['lightBlue'],'Data':Qt.black}
+
+if 'nt' in shutil.os.name:                  Color=QColor(0,120,215) #WIN10 is strong blue. This section determines highlighting color. There may not be a command to get this automatically.
 elif 'Darwin' in shutil.os.uname().sysname: Color, Colors['SelectionForeground'] = QColor(179,215,255), Qt.black     #macOS Catalina is pale blue with black foreground. Windows & MX Linux have white foreground.
 else:                                       Color=QColor(48,140,198)    #MX Linux is medium blue.
-ColorLightness = Color.lightness()  #One idea is to seek a 25% difference between selection & highlighting, by either making darker lighter, or lighter darker.
-if ColorLightness < 128: ColorLightness = .75*ColorLightness + 64   #This formula decreases darkness of highlighting by 25%, for all OSs. Max lightness is 255, but MSPaint has max luminosity at 240.
-else:                    ColorLightness*= .75   #In this case, decrease lightness by 25%.
+ColorLightness = Color.lightness()
+if ColorLightness < 128: ColorLightness = .75*ColorLightness + 64   #This formula decreases darkness of highlighting by 25%. Max lightness is 255, but MSPaint has max luminosity at 240.
+else:                    ColorLightness*= .875   #In this case, decrease lightness by an eighth. A quarter is too much on macOS, but an eighth isn't enough on Windows!
 Color.setHsl(Color.hslHue(),Color.hslSaturation(),ColorLightness)
 Colors['SelectionBackground'] = Color
 
@@ -46,7 +48,7 @@ for OP_CODE in OpCodesMembers:    #There might be more OpCodes than what's typed
     HexDict[CODE] = bitcoin.int_to_hex(electroncash.address.OpCodes[OP_CODE].value)
     CodeDict[HexDict[CODE]] = CODE
     try:    ColorDict[CODE]    #Check whether code's been typed out.
-    except: ColorDict[CODE], CaseDict[CODE] = Qt.darkGray, CODE  #Ensure ColorDict & CaseDict well-defined for all OpCodes.
+    except: ColorDict[CODE], CaseDict[CODE] = Qt.white, CODE  #Ensure ColorDict & CaseDict well-defined for all OpCodes.
 for CODE in '0 1 CHECKLOCKTIMEVERIFY CHECKSEQUENCEVERIFY'.split(): CodeDict[HexDict[CODE]] = CODE   #I prefer the ones spelled here.
 
 for code in codesPythonic.split():  #This section converts CaseDict from CODE→Code mapping, into CODE → Code, code mapping. 
@@ -157,15 +159,17 @@ class UI(QDialog):
         self.window, self.plugin = window, plugin
         self.Scripts = CovenantScripts[:]   #[:] is a bugfix for when different wallets interfere with each others' memory.
         
-        try: #Dark color theme demands its own colors, and is based on approx quarter-grey (nearly black). Though dark background allows more colors, I'm trying to be consistent. A trick is to add either 16 (darkMagenta, orange & purple), 32 (brown) or 64 (e.g. sky-blue→cyan) whenever more contrast against quarter-gray (dark-darkGray) is needed.
-            self.pColor = "<font color='blue'>" #This RTF string is used whenever calculating the BCH address with pColor.
+        try: #Dark color theme demands its own colors. Though black background allows more colors, I'm trying to be consistent. A trick is to add either 16 (orange & purple), 32 (brown) or 64 (e.g. sky-blue→cyan) to improve contrast & brightness.
             if 'dark' not in window.config.user_config['qt_gui_color_theme']: raise
-            self.pColor = "<font color='lightblue'>"
-            ColorsUpdate = {'Constants':QColor(128,128,255),'Flow control':QColor(128+16,0,128+16),'Stack':Qt.green,'Bitwise logic':QColor(255,128+16,0),'Arithmetic':QColor(0,128+64,255),'Locktime':Qt.yellow,'Native Introspection':QColor(128+16,0,255),'Reserved words':QColor(128+32,64+32,0),'PushData':QColor(128+64,128+64,255),'Data':Qt.white}
-            Colors.update(ColorsUpdate)   #Lighten blues. Strengthen green & yellow.
+            StyleSheet = 'background-color: black'  #StyleSheet for QTextEdit. I prefer black to dark gray.
+            self.pColor = '<font color=lightblue>'
+            QCol.update( { 'LightLightBlue': QColor(128+64,128+64,255), 'Brown': QColor(128+32,64+32,0),      'Orange': QColor(255,128+16,0), 'SkyBlue': QColor(0,128+64,255),                    'Purple': QColor(128+16,0,255) } )
+            Colors.update( {'Constants':QCol['LightLightBlue'],'Flow control':QCol['Brown'], 'Stack':Qt.green,'Bitwise logic':QCol['Orange'],'Arithmetic':QCol['SkyBlue'],'Locktime':Qt.yellow,'Native Introspection':QCol['Purple'],'Data':Qt.white} ) #Lighten blues. Strengthen green & yellow.
             for key in Codes.keys()-{'BCH','Disabled'}:
                 for Code in Codes[key].split(): ColorDict[Code.upper()] = Colors[key]
-        except: pass    #Default colors.
+        except:    #Default colors.
+            self.pColor = '<font color=blue>' #This RTF string is used whenever calculating the BCH address with pColor.
+            StyleSheet = ''
         
         self.Thread, self.UTXOs, self.Selection = threading.Thread(), {}, ''    #Empty thread, set of UTXOs to *skip* over, & *previous* Selection for highlighting. A separate thread delays auto-broadcasts so wallet has time to analyze history. If main thread is delayed, then maybe it can't analyze the wallet's history.
         window.history_updated_signal.connect(self.history_updated) #This detects preturn UTXOs. A password is never necessary to loop over UTXOs.
@@ -187,7 +191,7 @@ class UI(QDialog):
         try: self.CaseBox.textHighlighted.connect(self.CaseBoxHighlighted), self.AsmBox.textHighlighted.connect(self.AsmBoxHighlighted)
         except: pass    #textHighlighted signal unavailable in EC-v3.6.6.
         
-        Title=QLabel('AutoCove v1.0.6')
+        Title=QLabel('AutoCove v1.0.7')
         Title.setStyleSheet('font-weight: bold'), Title.setAlignment(Qt.AlignCenter)
 
         self.ScriptsBox = QComboBox()
@@ -205,10 +209,11 @@ class UI(QDialog):
         self.ScriptBox.setUndoRedoEnabled(False)    #Undo etc can be enabled in a future version, using QTextDocument. IDE is unsafe without both save & undo.
         self.ScriptBox.setLineWrapMode(QTextEdit.NoWrap), self.ScriptBox.setTabStopDistance(24) # 3=default space-bar-Distance, so 24=8 spaces.
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)
-        #Font=self.ScriptBox.font(); Font.setFamily('Consolas'), Font.setPointSize(10), self.ScriptBox.setFont(Font)    #'Consolas' Size(11) is Windows Notepad default. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths), and Size may be too small. An option is to kern only OpCodes, but I tried & varying font is a bit ugly.
+        #Font=self.ScriptBox.font(); Font.setFamily('Consolas'), Font.setPointSize(10), self.ScriptBox.setFont(Font)    #'Consolas' Size(11) is Windows Notepad default. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths & hex digits from different bytes are squeezed together), and Size may be too small. An option is to kern only OpCodes, but I tried & varying font is a bit ugly.
         
         self.HexBox=QTextEdit()
         self.HexBox.setReadOnly(True)
+        if StyleSheet: {Box.setStyleSheet(StyleSheet) for Box in {self.ScriptBox, self.HexBox} }
 
         self.AddressLabel=QLabel()
         self.CountLabel=QLabel()
@@ -269,26 +274,29 @@ class UI(QDialog):
         Script=self.ScriptBox.toPlainText()
         if self.ScriptsBox.currentIndex() and Script not in self.Scripts: self.ScriptsBox.setCurrentIndex(0)     #New script.
         
-        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if a TX.
-        if ' ' not in Script:
-            Script=Script.lower().replace('0x','')  #Accept 0x hex code, as well.
+        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if a TX or TXID.
+        if Script and ' ' not in Script:
+            ScriptHex=Script.lower().replace('0x','').split()[0]  #Accept 0x hex code, as well. .split allows accepting input containing a tab, e.g. TXID from a list in notepad.
             try:
-                Bytes=bitcoin.bfh(Script)
+                Bytes=bitcoin.bfh(ScriptHex)
                 try:
-                    TX=electroncash.Transaction(Script)
+                    TX=electroncash.Transaction(ScriptHex)
                     Inputs=TX.inputs()
                     Inputs[0] and TX.outputs()[0]   #Check there's at least 1 input & output, or else not a TX.
+                    self.InputN, self.TXIDComment = 0, '/'+str(len(Inputs))+' from TXID '+TX.txid_fast()  #Remember input # & TXID for auto-comment.
                     for Input in Inputs:
+                        self.InputN += 1    #Start counting from 1.
                         if Input['type'] in {'p2sh','unknown'}:    #'p2sh' is usually multisig, but 'unknown' also has a Script.
                             self.get_ops = electroncash.address.Script.get_ops(bitcoin.bfh(Input['scriptSig']))
                             self.ScriptBox.setPlainText(self.get_ops[-1][-1].hex())  #scriptCode to decode.
+                    del self.TXIDComment
                     if Script!=self.ScriptBox.toPlainText(): return #P2SH input detected.
                     else: Bytes=''  #Treat TX as though it's a Script, but don't decode.
                 except:    #Not a TX, so check if TXID.
                     network=self.window.network
-                    if 64==len(Script) and network.is_connected():
-                        Get = network.get_raw_tx_for_txid(Script)   #This can cause a (hang) crash if network is disconnected but can't tell. threading seems too complicated.
-                        if Get[0]:  #TXID==Script
+                    if 64==len(ScriptHex) and network.is_connected():
+                        Get = network.get_raw_tx_for_txid(ScriptHex)   #This can cause a (hang) crash if network is disconnected but can't tell. threading seems too complicated.
+                        if Get[0]:  #TXID==ScriptHex
                             self.ScriptBox.setPlainText(Get[1])
                             return
             except: pass    #Not hex.
@@ -296,14 +304,26 @@ class UI(QDialog):
             endlBefore = 'IF NOTIF ELSE ENDIF RETURN VER VERIF VERNOTIF'.split()   #New line before & after these OpCodes.
             endlAfter = endlBefore+'NUM2BIN BOOLAND'.split()    #NUM2BIN & BOOLAND may look good at line ends.
             Script, endl, IndentSize = '', '\n', 8 #endl gets tabbed after IFs (IF & NOTIF) etc. Try 8 spaces, because default font halves the space size.
-            Size, SizeSize, Count = 0, 0, -1  #Size count-down of "current" data push. SizeSize is the "remaining" size of Size (0 for 0<Size<0x4c). Count is the # of Bytes before the current byte on the current line. Target min of 1 & max of 21, bytes/line.
+            Size, SizeSize, Count, OpCount = 0, 0, -1, 0  #Size count-down of "current" data push. SizeSize is the "remaining" size of Size (0 for 0<Size<0x4c). Count is the # of Bytes before the current byte on the current line. Target min of 1 & max of 21, bytes/line. OpCount is for the current line. 
             try:
-                for Tuple in self.get_ops[:-1]: Script += '#'+Tuple[1].hex()+endl    #Show full stack leading to redeem Script as asm comments, similar to Blockchain.com, when decoding a full scriptSig.
-                self.get_ops=[] #Delete in case of confusion.
+                for Tuple in self.get_ops[:-1]:
+                    Script += '//'
+                    try: Script += Tuple[1].hex()    #Show full stack leading to redeem Script as asm comments, similar to Blockchain.com, when decoding a full scriptSig.
+                    except:   #Sigscript may push OP_N instead of data.
+                        try:    Int = Tuple[0]
+                        except: Int = Tuple   #SLP Ed.
+                        Script += 'OP_'+CodeDict[bitcoin.int_to_hex(Int)]
+                    Script += endl
+                self.get_ops=[] #Delete per input.
             except: pass    #Not decoding a scriptSig with more than a redeem Script.
+            
+            def endlComment(Script,OpCount,Count,endl): #This method is always used to end lines in the redeem Script.
+                if OpCount==1: Ops = ' Op, '
+                else:          Ops = ' Ops, '   #'0 Ops' can happen on the line after a PUSHDATA. Maybe a future update should put them on the same line.
+                return Script+' '*(IndentSize-1)+'#'+str(OpCount)+Ops+str(Count)+'B'+endl, 0    #Reset OpCount to 0 as well. A future update should try to simplify the -1 vs 0 Count dilemma.
             for Byte in Bytes:
                 Count+=1
-                Hex=bitcoin.int_to_hex(Byte,1)  #Byte is an int.
+                Hex=bitcoin.int_to_hex(Byte)  #Byte is an int.
                 if SizeSize:    #This section is for PUSHDATA1,2&4.
                     SizeSize-=1
                     SizeHex +=Hex
@@ -316,24 +336,30 @@ class UI(QDialog):
                     Script+=Hex
                     if not Size: #End of data push.
                         Script+=' '
-                        if Count>=20: Count, Script = -1, Script+endl    #Large data pushes (e.g. HASH160) get their own line.  At most 21B per line. A HASH160 requires 1+20 bytes. Count goes to -1 if word was placed on prior line. 
+                        if Count>=20: (Script, OpCount), Count = endlComment(Script,OpCount,Count+1,endl), -1   #Large data pushes (e.g. HASH160) get their own line.  At most 21B per line. A HASH160 requires 1+20 bytes. Count goes to -1 if word was placed on prior line. 
                     continue
                 try:    #OpCode or else new data push.
                     CODE=CodeDict[Hex]
                     if CODE in {'ENDIF','ELSE'}:
                         endl='\n'+endl[ 1+IndentSize : ] #Subtract indent for ENDIF & ELSE.
                         if not Count and Script[-IndentSize:]==' '*IndentSize: Script=Script[:-IndentSize]    #Subtract indent back if already on a new line.
-                    if Count and (CODE in endlBefore or 'RESERVED' in CODE): Count, Script = 0, Script+endl     #New line before & after any RESERVED. Count goes to 0 if word placed afterward.
+                    if Count and (CODE in endlBefore or 'RESERVED' in CODE): (Script, OpCount), Count = endlComment(Script,OpCount, Count, endl), 0    #New line before & after any RESERVED. Count goes to 0 if word placed afterward.
                     if CODE in {'VERIF', 'VERNOTIF'}: Script=Script.rstrip(' ')   #No tab before these since script will fail no matter what.
                     Script+=CODE+' '
+                    OpCount += 1
                     if CODE in {'ELSE', 'IF', 'NOTIF'}: endl+=' '*IndentSize #Add indent after ELSE, IF & NOTIF.
                     elif 'PUSHDATA' in CODE: SizeHex, SizeSize = '', 2**(Byte-0x4c)  #0x4c is SizeSize=1. SizeHex is to be the little endian hex form of Size.
-                    if Count>=20 or CODE in endlAfter or any(Word in CODE for Word in {'RESERVED', 'VERIFY', 'PUSHDATA'}): Count, Script = -1, Script+endl    #New line *after* any VERIFY or PUSHDATA. The latter should only ever occur with large data-pushes.
+                    if Count>=20 or CODE in endlAfter or any(Word in CODE for Word in {'RESERVED', 'VERIFY', 'PUSHDATA'}): (Script, OpCount), Count = endlComment(Script,OpCount,Count+1,endl), -1   #New line *after* any VERIFY or PUSHDATA. The latter should only ever occur with large data-pushes.
                 except:
                     Size = Byte
-                    if Count and Count+Size>20: Count, Script = 0, Script+endl    #New line before too much data.
-                    Script+=Hex
-            Script=Script.rstrip(' ')+'\n'*(Count!=-1)+'#Auto-decode'   #Final comment shows up like a VERIF.
+                    if Count and Count+Size>20: (Script, OpCount), Count = endlComment(Script,OpCount,Count,endl), 0  #New line before too much data.
+                    Script +=Hex
+                    OpCount+= 1
+            if Count!=-1: Script = endlComment(Script,OpCount,Count+1,'')[0]
+            Script = Script.rstrip(' ')+'\n'*(Count!=-1)+'#Auto-decode'   #Final comment shows up like a VERIF.
+            try: Script += ' of input '+str(self.InputN)+self.TXIDComment    #Txn inputs get a longer comment than plain redeem Script.
+            except: pass
+            
             if not (Size or SizeSize):   #Successful decode is plausible if all data-pushes completed successfully.
                 self.Scripts.append(Script) #This section adds the Auto-decode to memory in the combo-box.
                 self.ScriptsBox.addItem(''), self.ScriptsBox.setCurrentText('') #Don't know what address yet to use as Script name.
@@ -479,7 +505,7 @@ class UI(QDialog):
     def toggled(self):
         self.Selection=None   #Force re-selection, now w/ or w/o Colors.
         self.SetAddress(), self.selectionChanged(), self.ScriptBox.setFocus()   #QCheckBox steals focus.
-    def CaseBoxHighlighted(self,Text): self.CaseBox.setCurrentText(Text), self.CaseBoxActivated()   #Highlighted -> Activated.
+    def CaseBoxHighlighted(self,Text): self.CaseBox.setCurrentText(Text), self.CaseBoxActivated()   #Highlighted → Activated.
     def CaseBoxActivated(self):   #Change btwn Codes, CODES & OP_CODES using QTextCursor. This is more complicated but possibly quicker than editing strings directly.
         self.ScriptBox.textChanged.disconnect(), self.ScriptBox.selectionChanged.disconnect()   #disconnect & connect isn't necessary.
         Script, Cursor, Index = self.ScriptBox.toPlainText(), self.ScriptBox.textCursor(), self.CaseBox.currentIndex()
@@ -498,7 +524,9 @@ class UI(QDialog):
 
                 CODE=Word.replace('OP_','')
                 try:
-                    if self.AsmBool and CODE in Codes1N and Word.startswith('OP_'): insertWord = (Index in {2,3})*'OP_' + (Index in {1,4})*'Op_' + (Index in {0,5})*'op_' + CODE   #Asm requires leading _1N.
+                    if self.AsmBool and CODE in Codes1N:
+                        if Word.startswith('OP_'): insertWord = (Index in {2,3})*'OP_' + (Index in {1,4})*'Op_' + (Index in {0,5})*'op_' + CODE   #Asm requires leading _1N.
+                        else:                      insertWord = Word #Bugfix for 1N → OP_1N when it's actually 011N
                     else: insertWord = (Index==3)*'OP_' + (Index==4)*'Op_' + (Index==5)*'op_' + (Index in {2,3})*CODE + (Index in {1,4})*CaseDict[CODE][0] + (Index in {0,5})*CaseDict[CODE][1]
                     lenChange=len(insertWord)-lenWord
                     Cursor.insertText(insertWord)
@@ -519,7 +547,7 @@ class UI(QDialog):
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)    #Reconnect before re-selecting.
         self.Selection=None #Force re-selection after changing spells.
         self.selectionChanged(), self.ScriptBox.setFocus()    #Return focus to Selection.
-    def AsmBoxHighlighted(self,Text): self.AsmBox.setCurrentText(Text), self.AsmBoxActivated()   #Highlighted -> Activated.
+    def AsmBoxHighlighted(self,Text): self.AsmBox.setCurrentText(Text), self.AsmBoxActivated()   #Highlighted → Activated.
     def AsmBoxActivated(self):  #This method strips out blue leading bytes (asm), or else puts them back in. Instead of editing the ScriptBox string directly, QTextCursor is used.
         AsmBool = bool(self.AsmBox.currentIndex())
         if AsmBool == self.AsmBool: return   #Do nothing if untoggled.

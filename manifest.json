@@ -1,6 +1,6 @@
 {
     "display_name": "AutoCove",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Decode & color P2SH redeem Scripts! Raw TX & TXID input accepted. Selection highlighting of OpCodes, etc. Auto change spelling btwn OP_CODES & op_codes, etc. Convert hex ↔ asm. Plugin can auto-return BCH sent to its preturn... covenant, using PrivKey=1.",
     "project_url": "https://github.com/TinosNitso/AutoCove-Plugin",
     "minimum_ec_version": "3.6",
