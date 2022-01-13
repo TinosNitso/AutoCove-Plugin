@@ -2,7 +2,8 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.7.png)
 
-Users can copy paste the following TXIDs into the plugin to see some examples:
+Users can copy paste the following TXIDs into the plugin to see some examples. Unfortunately direct copy/paste changes the font! (To change back, copy/paste directly from notepad.)
+
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f`: Mecenas plugin, protoge spend.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30`: RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28`: Hodl plugin.
