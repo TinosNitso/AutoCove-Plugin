@@ -12,7 +12,7 @@ Users can copy paste the following TXIDs into the plugin to see some examples. U
 `000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8`: VanityTXID address.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a`: (not TXID) Native Introspection preview!
 
-Or try copy-paste a redeem Script, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate), without native introspection:
+Or users can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
 `5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
 
 Next version will use '//OP_0' instead of empty '//' in sigscripts, provide feedback when there's no P2SH input detected, allow space-bar after TXID, and in dark theme strengthen the very light blue of Constants. I'm coding auto-comments for changes in stack depth (Δdepth).
