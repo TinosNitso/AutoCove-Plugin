@@ -46,10 +46,10 @@ v1.0.8 notes:
 - Δ decoding. I've labelled the change in stack depth of each line Δ, except when there's an IFDUP or CHECKMULTISIG. Auto-comments still unaligned.
 - Empty sigscript data-push now shown as OP_0 to be consistent with Blockchain.com, & may be less confusing.
 - Font won't accidentally change anymore, due to copy-pasting TXIDs etc.
-- "#No P2SH input..." message for when TXID or TX has no such input.
 - Space & tab allowed after TXID, TX or Script. v1.0.7 didn't allow a space-bar after the TXID. PUSHDATAs now go on the same line as their data, to simplify Δ.
-- Dark theme color changes: stronger blue for constants, darkMagenta a bit lighter.
+- Dark theme color changes: stronger blue for constants, darkMagenta a bit lighter. Still no B&W toggle.
 - Instant switching between Scripts which have the same name in the combo-box. e.g. can scroll through multi-sigs in [this](https://www.blockchain.com/bch/tx/fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0) TX.
+- "#No P2SH input..." message for when TXID or TX has no such input.
 - SHA256 Checksum 000000d74f7b1353ede9c99828411ca3a137489c022cf7f41d299e8b5627cadd (34 kH/s · 4 mins). Update via re-install requires restarting EC.
 
 v1.0.7 notes:
