@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+Unfortunately the op counts are **wrong** because all ops ≤0x96 (OP_16) don't count towards the limit! I should have checked CashScript. Next update will fix it.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.7.png)
 
 Users can copy paste the following TXIDs into the plugin to see some examples. Unfortunately direct copy/paste changes the font! (To change back, copy/paste directly from notepad. Next update will fix this.)
