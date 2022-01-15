@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-Unfortunately the op counts are **wrong** because all ops ≤0x96 (OP_16) don't count towards the limit! I should have checked CashScript. Next update will fix it.
+Unfortunately the op counts are **wrong** because all ops ≤0x60 (OP_16) don't count towards the limit! I should have checked CashScript. Next update will fix it.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.7.png)
 
