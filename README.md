@@ -1,10 +1,8 @@
 # AutoCove-Plugin
 
-Unfortunately the op counts are **wrong** because all ops ≤0x60 (OP_16) don't count towards the limit! I should have checked CashScript. Next update will fix it.
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.8.png)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.7.png)
-
-Users can copy paste the following TXIDs into the plugin to see some examples. Unfortunately direct copy/paste changes the font! (To change back, copy/paste directly from notepad. Next update will fix this.)
+Users can copy paste the following TXIDs into the plugin to see some examples.
 
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f`: Mecenas plugin, protoge spend.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30`: RefreshTimer.cash original state.
@@ -16,8 +14,6 @@ Users can copy paste the following TXIDs into the plugin to see some examples. U
 
 Or users can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
 `5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
-
-Next version will use '//OP_0' instead of empty '//' in sigscripts, provide feedback when there's no P2SH input detected, allow space-bar after TXID, and in dark theme strengthen the very light blue of Constants. I'm coding auto-comments for changes in stack depth (Δdepth).
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
@@ -44,6 +40,17 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.8 notes:
+- Bugfix for op counts: no longer count values ≤0x60. None of the Scripts I've seen exceed 201 ops, after all!
+- Δ decoding. I've labelled the change in stack depth of each line Δ, except when there's an IFDUP or CHECKMULTISIG. Auto-comments still unaligned.
+- Empty sigscript data-push now shown as OP_0 to be consistent with Blockchain.com, & may be less confusing.
+- Font won't accidentally change anymore, due to copy-pasting TXIDs etc.
+- "#No P2SH input..." message for when TXID or TX has no such input.
+- Space & tab allowed after TXID, TX or Script. v1.0.7 didn't allow a space-bar after the TXID. PUSHDATAs now go on the same line as their data, to simplify Δ.
+- Dark theme color changes: stronger blue for constants, darkMagenta a bit lighter.
+- Instant switching between Scripts which have the same name in the combo-box. e.g. can scroll through multi-sigs in [this](https://www.blockchain.com/bch/tx/fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0) TX.
+- SHA256 Checksum 000000d74f7b1353ede9c99828411ca3a137489c022cf7f41d299e8b5627cadd (34 kH/s · 4 mins). Update via re-install requires restarting EC.
 
 v1.0.7 notes:
 - Bugfix for when asm+OP_CODES setting converts 011N into OP_1N (oops).
