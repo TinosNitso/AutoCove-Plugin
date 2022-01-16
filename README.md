@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+There's currently a bug when a user copy pastes a single line starting with a hex word, e.g. '01ff NIP'. Will be fixed in next update. It's due to allowing a space-bar after a TXID etc (hex word) and ignoring everything after it.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.8.png)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
