@@ -5,7 +5,6 @@ There's currently a bug when a user copy pastes a single line starting with a he
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.8.png)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
-
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f`: Mecenas plugin, protoge spend.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30`: RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28`: Hodl plugin.
@@ -14,8 +13,13 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8`: VanityTXID address.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a`: (not TXID) Native Introspection preview!
 
-Or users can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
+Plugin can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
 `5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
+
+Alternatively, copy paste from other networks, like this BTC-testnet **L**ight**N**ing channel closure:
+`6321026644cb387614f66421d14da3596c21cffa239011416c9adf3f351ee8551a9fc767029000b27521029654f80732769d7c435a184a3559f12178315526c53bbf003349390811c7590a68ac`
+
+There should be BTC, XEC & BSV compatibility.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
