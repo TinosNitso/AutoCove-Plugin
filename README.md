@@ -1,17 +1,17 @@
 # AutoCove-Plugin
 
-There's currently a bug when a user copy pastes a single line starting with a hex word, e.g. '01ff NIP'. Will be fixed in next update. It's due to allowing a space-bar after a TXID etc (hex word) and ignoring everything after it.
-
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.8.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.9.GIF)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
-`4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f`: Mecenas plugin, protoge spend.
-`9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30`: RefreshTimer.cash original state.
-`4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28`: Hodl plugin.
-`83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c`: 1of1 multisig.
-`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0`: 3of5, 20 inputs, **4th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html).
-`000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8`: VanityTXID address.
-`820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a`: (not TXID) Native Introspection preview!
+`9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
+`4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28` HODL plugin.
+`000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8` VanityTXID address.
+`4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f` Mecenas plugin, protoge spend.
+`a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78` Last Will plugin, cold ended.
+`83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c` 1of1 multisig.
+`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0` 3of5, 20 inputs, **4th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html).
+`1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d` 2of3, 121 inputs, 89 kBCH.
+`820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
 Plugin can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
 `5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
@@ -44,6 +44,17 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.0.9 notes:
+- Bugfix for multi-word single-line whose leading word is hex-bytes, such as *00 NIP* (v1.0.8 ignored everything after the *00*).
+- URL input works the same as the TXID it contains. Will P2SH decode the 1st TXID which appears in .split('/').
+- B&W toggle (check-box). One wallet can have black background, & another white.
+- Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (>70B) sigs, & check if push is getting close to 520B limit.
+- Instant switching btwn Scripts in combo-box whenever they're from decoder memory. e.g. can quickly scroll through 121 2of3 inputs in [this](https://www.blockchain.com/bch/tx/1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d) 89 kBCH txn.
+- Example TXIDs & Scripts shown by default.
+- Adjusted purple on black to be a tiny bit brighter (in red). So it's like a mix between purple and magenta (adjusting colors reduces their purity). I've also mixed orange with yellow. On black: brown mixes with olive & sky-blue with cyan.
+- Combo-box instant highlight-activation for EC-v3.6.6 (SLP Ed.).
+- SHA256 Checksum 0000000a30508dceb6f214074e7cce209bac670ca5d29c139dfc35202d468ce6 (31 kH/s · 8 mins). Update via re-install requires restarting EC.
 
 v1.0.8 notes:
 - Bugfix for op counts: no longer count values ≤0x60. None of the Scripts I've seen exceed 201 ops, after all!
