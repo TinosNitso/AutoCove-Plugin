@@ -46,7 +46,7 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.0.9 notes:
-- Bugfix for multi-word single-line whose leading word is hex-bytes, such as *00 NIP* (v1.0.8 ignored everything after the *00*).
+- Bugfix for multi-word single-line whose leading word is hex, like *00 NIP* (v1.0.8 ignored everything after the *00*).
 - URL input works the same as the TXID it contains. Will P2SH decode the 1st TXID which appears in .split('/').
 - B&W toggle (check-box). One wallet can have black background, & another white.
 - Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (>70B) sigs, & check if push is getting close to 520B limit.
