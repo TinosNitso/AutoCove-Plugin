@@ -25,9 +25,8 @@ Codes['BCH']='\nCAT SPLIT NUM2BIN BIN2NUM AND OR XOR DIV MOD CHECKDATASIG CHECKD
 Codes['Disabled']='PUSHDATA4 INVERT 2MUL 2DIV MUL LSHIFT RSHIFT'
 Codes1N = {str(N) for N in range(10,17)}   #Codes1N is the set of OpCode names which are hex when 'OP_' is stripped from them, which isn't allowed in Asm.
 #Test line (copy-paste for spectrum): PUSHDATA2 0100ff RETURN TOALTSTACK NUM2BIN INVERT MAX CHECKSIGVERIFY CHECKLOCKTIMEVERIFY TXLOCKTIME RESERVED 
-#Brown (here) is dark-orange. Sky-blue & Purple (here) stem from blue. darkCyan (aka teal) appears too close to darkGreen. Byte/s following a PUSHDATA are gray+blue. darkYellow is aka olive. Orange looks identical to red when I look up at my LCD, but looks identical to yellow when I look down. Green pixels may be projecting upwards. It may be similar to the darkGreen vs darkCyan issue, a color which can be re-introduced in the future.
-QCol = {                       'Brown': QColor(128,64,0),                                        'Orange': QColor(255,128,0),'SkyBlue': QColor(0,128,255),                                                                                       'Purple': QColor(128,0,255),                           'lightBlue': QColor(128,128,255) }
-Colors = {'Constants':Qt.blue,'Flow control':QCol['Brown'],'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QCol['Orange'],'Arithmetic':QCol['SkyBlue'],'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':Qt.darkMagenta,'Native Introspection':QCol['Purple'],'SelectionForeground':Qt.white,'PushData':QCol['lightBlue'],'Data':Qt.black}
+#Brown (here) is dark-orange. Sky-blue & Purple (here) stem from blue. darkCyan (aka teal) appears too close to darkGreen. Byte/s following a PUSHDATA are gray+blue. darkYellow is aka olive. Orange looks like red when I look up at my LCD, but looks like yellow when I look down. Green pixels may be projecting upwards. darkCyan is clearer from above, & can be re-introduced in the future.
+Colors = {'Constants':Qt.blue,'Flow control':QColor(128,64,0),'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':Qt.darkMagenta,'Native Introspection':QColor(128,0,255),'SelectionForeground':Qt.white,'PushData':QColor(128,128,255),'Data':Qt.black}
 
 if 'nt' in shutil.os.name:                  Color=QColor(0,120,215) #WIN10 is strong blue. This section determines highlighting color. There may not be a command to get this automatically.
 elif 'Darwin' in shutil.os.uname().sysname: Color, Colors['SelectionForeground'] = QColor(179,215,255), Qt.black     #macOS Catalina is pale blue with black foreground. Windows & MX Linux have white foreground.
@@ -49,7 +48,7 @@ for OP_CODE in OpCodesMembers:    #There might be more OpCodes than what's typed
     HexDict[CODE], DepthDict[CODE] = bitcoin.int_to_hex(electroncash.address.OpCodes[OP_CODE].value), 0 #DepthDict is updated from 0 later.
     CodeDict[HexDict[CODE]] = CODE
     try:    ColorDict[CODE]    #Check whether code's been typed out.
-    except: ColorDict[CODE], CaseDict[CODE] = Qt.white, CODE  #Ensure ColorDict & CaseDict well-defined for all OpCodes.
+    except: ColorDict[CODE], CaseDict[CODE] = Qt.gray, CODE  #Ensure ColorDict & CaseDict well-defined for all OpCodes.
 for CODE in '0 1 CHECKLOCKTIMEVERIFY CHECKSEQUENCEVERIFY'.split(): CodeDict[HexDict[CODE]] = CODE   #I prefer the ones spelled here.
 
 for code in codesPythonic.split():  #This section converts CaseDict from CODE→Code mapping, into CODE → Code, code mapping. 
@@ -70,9 +69,27 @@ for CODE in Codes['Constants'].upper().split(): DepthDict[CODE]=1   #This sectio
 for N in range(len(Δ)>>1): DepthDict[Δ[2*N]] = int(Δ[2*N+1])
 for CODE in {'IFDUP', 'CHECKMULTISIG', 'CHECKMULTISIGVERIFY'}: DepthDict[CODE] = None   #These aren't supported.
 
-CovenantScripts=['',   #This section can provide examples of Scripts.
+CovenantScripts=[   #This section can provide examples of Scripts.
+'''#Copy-paste the following TXIDs into this box (when clear) to see examples of P2SH sigscripts.
+//9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30        #RefreshTimer.cash State 0.
+//4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28        #HODL plugin.
+//000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8        #VanityTXID plugin.
+//b9cd6087f41f24de123899f78c82c3f36cdcbc4800b249bb08ef22229e7f57d1        #AutoCove plugin, pReturn...
+//4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f        #Mecenas plugin, protege spend. Warning: There was a 0-day bug (set time>0).
+//a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78        #Last Will plugin, cold ended. Warning: This required me edit the plugin. Both contract_finder.py (to change my wallet's role) & last_will_contract.py (to use Schnorr due to fee being 1 sat short).
+//83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c        #1of1 multisig.
+//fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0        #3of5, 20 inputs, 4th on BCH rich-list.
+//1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d        #2of3, 121 inputs, 89 kBCH.
+
+#Copy-paste the following redeem Scripts to decode them without the full sigscript.
+//820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a        #Native Introspection "teaser" by u/bitcoincashautist, requires EC v4.2.6+. It's TXIDs are on testnet4, which would require running 'Electron-Cash --testnet4'.
+//6321026644cb387614f66421d14da3596c21cffa239011416c9adf3f351ee8551a9fc767029000b27521029654f80732769d7c435a184a3559f12178315526c53bbf003349390811c7590a68ac        #BTC-testnet to_local LightNing HTLC.
+
+#CashScript hex can also be decoded. The following is a smartBCH SHA-Gate cc_covenant demo, currently without Native Introspection. cashc compiles to asm by default (in that case select 'asm', above, before inserting).
+//5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868
+''',
 ''.join(Codes[key].upper()+'    #'+key+'\n' for key in Codes.keys())+'//Native Introspection & MUL OpCodes will be enabled in 2022.\n//Converting to asm allows the hex below to be decoded.',    #List all the OpCodes.
-'''//[UTX, Preimage, Sig, PubKey] 'preturn...' v1.0.6 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. This update increases fees by 11% by supporting both P2PKH & P2SH senders! P2SH sender must have 3 or 4 data-pushes ≤75B (e.g. 1of1, 1of2 or 2of2) in its unlocking sigscript ≤252B. VanityTXID (compressed) sender is supported! Mof3 MULTISIG not supported yet. CHECKMULTISIG's leading 0 gives an extra data-push.
+'''//[UTX, Preimage, Sig, PubKey]   #'preturn...' v1.0.6 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. This update supports both P2PKH & P2SH senders! P2SH sender must have 3 or 4 data-pushes ≤75B (e.g. 1of1, 1of2 or 2of2) in its unlocking sigscript ≤252B. VanityTXID (compressed) sender is supported! Mof3 MULTISIG not supported.
 3DUP CHECKSIGVERIFY  ROT SIZE 1SUB SPLIT DROP  SWAP SHA256  ROT CHECKDATASIGVERIFY    #[..., Preimage, Sig, PubKey] VERIFY DATApush=Preimage. DATASIG is 1 shorter than a SIG.
 TUCK  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  0124 SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[UTX, Preimage] VERIFY Prevouts = Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 0x24 long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID = Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -171,71 +188,71 @@ class UI(QDialog):
     def __init__(self, window, plugin):
         QDialog.__init__(self, window)
         self.window, self.plugin = window, plugin
-        self.Scripts = CovenantScripts[:]   #[:] creates new copy for each wallet's memory.
-        
-        try: #Dark color theme demands its own colors. Though black allows more colors, I'm trying to be consistent.
-            if 'dark' not in window.config.user_config['qt_gui_color_theme']: raise
-            self.pColor, StyleSheet = '<font color=lightblue>', 'background-color: black'  #RTF string is used whenever calculating the BCH address with p (or 3) Color. StyleSheet for QTextEdit. I prefer black to dark.
-            QCol.update( {                             'Brown': QColor(128+32,64+32,0),               'SkyBlue': QColor(0,128+64,255),                      'DarkMagenta': QColor(128,0+64,128), 'LightLightBlue': QColor(128+64,128+64,255) } )    #Increase brightness of sky-blue, brown & darkMagenta. The latter appears clearer when I look *up* at my LCD.
-            Colors.update( {'Constants':QCol['lightBlue'],'Flow control':QCol['Brown'], 'Stack':Qt.green,'Arithmetic':QCol['SkyBlue'],'Locktime':Qt.yellow,'Reserved words':QCol['DarkMagenta'],'PushData':QCol['LightLightBlue'],'Data':Qt.white} ) #Lighten blues. Strengthen green & yellow. 
-            for key in Codes.keys()-{'BCH','Disabled'}:
-                for Code in Codes[key].split(): ColorDict[Code.upper()] = Colors[key]
-        except: self.pColor, StyleSheet = '<font color=blue>', ''   #Default colors.
-        
+        self.Scripts, self.Colors, self.ColorDict = (Object.copy() for Object in (CovenantScripts, Colors, ColorDict) )  #Create new copy for each wallet's memory.
+
         self.Thread, self.UTXOs, self.Selection = threading.Thread(), {}, ''    #Empty thread, set of UTXOs to *skip* over, & *previous* Selection for highlighting. A separate thread delays auto-broadcasts so wallet has time to analyze history. If main thread is delayed, then maybe it can't analyze the wallet's history.
         window.history_updated_signal.connect(self.history_updated) #This detects preturn UTXOs. A password is never necessary to loop over UTXOs.
         self.HiddenBox=QTextEdit()  #HiddenBox connection allows broadcasting from sub-thread, after sleeping.
         self.HiddenBox.textChanged.connect(self.broadcast_transaction)
 
-        self.CheckBox = QCheckBox('Colors')
-        self.CheckBox.setToolTip("Slows down typing & selections.\nNot sure how colors should be assigned.")
-        self.CheckBox.setChecked(True), self.CheckBox.toggled.connect(self.toggled)
-                
+        self.ColorsBox = QCheckBox('Colors')
+        self.ColorsBox.setToolTip('Slows down typing & selections.\nNot sure how colors should be assigned.')
+        self.ColorsBox.setChecked(True), self.ColorsBox.toggled.connect(self.ColorsToggled)
+        
+        self.BlackBox = QCheckBox('Black')
+        self.BlackBox.setToolTip('Background color toggle.')
+        
         self.CaseBox=QComboBox()
         self.CaseBox.addItems('codes Codes CODES OP_CODES Op_Codes op_codes'.split())
-        self.CaseBox.setCurrentIndex(2), self.CaseBox.activated.connect(self.CaseBoxActivated)
+        self.CaseBox.setCurrentIndex(2)
+        self.CaseBox.activated.connect(self.CaseBoxActivated), self.CaseBox.highlighted.connect(self.CaseBoxHighlighted)
 
         self.AsmBox, self.AsmBool = QComboBox(), False  #AsmBool remembers whether 'hex' or 'asm' was already selected.
         self.AsmBox.addItems(['hex','asm']), self.AsmBox.activated.connect(self.AsmBoxActivated)
         self.AsmBox.setToolTip('Select asm before inserting CashScript bytecode.')
+        self.AsmBox.highlighted.connect(self.AsmBoxHighlighted)
 
-        Title=QLabel('AutoCove v1.0.8')
+        Title=QLabel('AutoCove v1.0.9')
         Title.setStyleSheet('font-weight: bold'), Title.setAlignment(Qt.AlignCenter)
 
         self.ScriptsBox = QComboBox()
-        self.ScriptsBox.setToolTip('New auto-decodes are stored here.\nasm form never stored.')
-        self.ScriptsBox.addItems(["New", "OpCodes", "preturn... v1.0.6", "Clear all below"])
-        self.ScriptsBox.setCurrentIndex(2), self.ScriptsBox.activated.connect(self.ScriptActivated)
-
-        try: self.CaseBox.textHighlighted.connect(self.CaseBoxHighlighted), self.AsmBox.textHighlighted.connect(self.AsmBoxHighlighted), self.ScriptsBox.highlighted.connect(self.ScriptsBoxHighlighted)
-        except: pass    #textHighlighted signal unavailable in EC-v3.6.6.
+        self.ScriptsBox.setToolTip('New auto-decodes are stored here.\nasm form not stored.')
+        self.ScriptsBox.addItems(['New', 'OpCodes List', 'preturn... v1.0.6', 'Clear all below'])
+        self.ScriptsBox.activated.connect(self.ScriptActivated), self.ScriptsBox.highlighted.connect(self.ScriptsBoxHighlighted)
         
         HBoxTitle=QHBoxLayout()
-        HBoxTitle.addWidget(self.CheckBox,.1), HBoxTitle.addWidget(self.CaseBox,.1), HBoxTitle.addWidget(self.AsmBox,.1), HBoxTitle.addWidget(Title,1), HBoxTitle.addWidget(self.ScriptsBox,.1)
+        HBoxTitle.addWidget(self.ColorsBox,.1), HBoxTitle.addWidget(self.BlackBox,.1), HBoxTitle.addWidget(self.CaseBox,.1), HBoxTitle.addWidget(self.AsmBox,.1), HBoxTitle.addWidget(Title,1), HBoxTitle.addWidget(self.ScriptsBox,.1)
         
-        InfoLabel = QLabel("Auto-decode P2SH redeem Script hex into readable form by pasting it below. Paste raw txn or its TXID to decode all its P2SH sigscripts.") 
+        InfoLabel = QLabel("Auto-decode P2SH redeem Script hex into readable form by pasting it below. Paste raw txn or its TXID (or URL) to decode all its P2SH sigscripts.") 
         InfoLabel.setToolTip("Data-pushes equally sized usually appear different widths due to default font.\nAuto-indents are 8 spaces.\nΔ is the stack's depth change for each line, unavailable for IFDUP & CHECKMULTISIGs.")
         
         self.ScriptBox=QTextEdit()
         self.ScriptBox.setUndoRedoEnabled(False)    #Undo etc can be enabled in a future version, using QTextDocument. IDE is unsafe without both save & undo.
-        self.ScriptBox.setLineWrapMode(QTextEdit.NoWrap), self.ScriptBox.setTabStopDistance(24) # 3=default space-bar-Distance, so 24=8 spaces.
+        self.ScriptBox.setLineWrapMode(QTextEdit.NoWrap), self.ScriptBox.setAcceptRichText(False), self.ScriptBox.setTabStopDistance(24) # 3=default space-bar-Distance, so 24=8 spaces. Don't allow copy-paste of colors or font into box (so font is permanently default).
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)
-        self.Font = self.ScriptBox.font()   #Remember font in case it accidentally changes.
-        #Font.setFamily('Consolas'), Font.setPointSize(10), self.ScriptBox.setFont(Font)    #'Consolas' Size(11) is Windows Notepad default. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths & hex digits from different bytes are squeezed together), and Size may be too small. An option is to kern only OpCodes, but I tried & varying font is a bit ugly.
+        self.ScriptBox.setTextColor(Qt.white)
+        #Font = self.ScriptBox.font(); Font.setFamily('Consolas'), Font.setPointSize(10), self.ScriptBox.setFont(Font)    #'Consolas' Size(11) is Windows Notepad default. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths & hex digits from different bytes are squeezed together), and Size may be too small. An option is to kern only OpCodes, but I tried & varying font is a bit ugly.
         
         self.HexBox=QTextEdit()
         self.HexBox.setReadOnly(True)
-        if StyleSheet: {Box.setStyleSheet(StyleSheet) for Box in {self.ScriptBox, self.HexBox} }
 
         self.AddressLabel=QLabel()
         self.AddressLabel.setToolTip("Start Electron-Cash with --testnet or --testnet4 to generate bchtest addresses.")
         self.CountLabel=QLabel()
-        self.ScriptActivated()    #Assembly Script dumped onto HexBox, to set labels.
         HBoxAddress=QHBoxLayout()
-        {HBoxAddress.addWidget(Widget) for Widget in [self.AddressLabel, self.CountLabel]}
+        {HBoxAddress.addWidget(Widget) for Widget in (self.AddressLabel, self.CountLabel)}
         self.CountLabel.setAlignment(Qt.AlignRight)
-        self.CountLabel.setToolTip("Limits are 201 Ops & 520 Bytes.\nOpCode values ≤0x60 don't count.")
+        self.CountLabel.setToolTip("Limits are 201 Ops & 520 Bytes.\nops with values ≤0x60 don't count.")
+        
         {Label.setTextInteractionFlags(Qt.TextSelectableByMouse) for Label in {Title, InfoLabel, self.CountLabel, self.AddressLabel}}
+        self.BlackBox.toggled.connect(self.BlackToggled)    #This section initializes starting Script.
+        try: 
+            if 'dark' not in window.config.user_config['qt_gui_color_theme']: raise
+
+            self.Dark, self.pColor = True, '<font color=lightblue>'  #RTF string is used whenever calculating the BCH address with p (or 3) Color.
+            self.BlackBox.setChecked(True)  #Black by default. 
+        except: self.Dark, self.pColor = False, '<font color=blue>'
+        self.ScriptActivated()    #Assembly Script dumped onto HexBox, to set labels.
 
         VBox=QVBoxLayout()
         VBox.addLayout(HBoxTitle)
@@ -284,13 +301,18 @@ class UI(QDialog):
             if TX!=self.HiddenBox.toPlainText(): self.HiddenBox.setPlainText(TX)    #Don't double broadcast!
     def broadcast_transaction(self): self.window.broadcast_transaction(electroncash.Transaction(self.HiddenBox.toPlainText()),None)  #description=None.
     def textChanged(self):  #Whenever users type, attempt to re-compile.
-        Script=self.ScriptBox.toPlainText()
-        if self.ScriptsBox.currentIndex() and Script not in self.Scripts: self.ScriptsBox.setCurrentIndex(0)     #New script.
+        Script, ScriptsIndex =self.ScriptBox.toPlainText(), self.ScriptsBox.currentIndex()
+        if self.ScriptsBox.currentIndex() and Script!=self.Scripts[ScriptsIndex]: self.ScriptsBox.setCurrentIndex(0)     #New script.
         
-        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if a TX or TXID.
-        if Script and '\n' not in Script:
-            ScriptHex=Script.lower().replace('0x','').split()[0]  #Accept 0x hex code, as well. .split allows accepting input containing a tab, e.g. TXID from a list in notepad.
-            try:
+        Bytes=b''   #This section is the decoder. Start by checking if input is only 1 word & fully hex. Then check if an URL containing TXID, TX or TXID.
+        if Script and '\n' not in Script and 1==len(Script.split()):    #Only attempt to decode a single word (bugfix for e.g. '00 NIP')
+            ScriptLow = Script.lower().replace('0x','') #Accept 0x hex code, as well. 
+            for String in ScriptLow.split('/'):    #This section can extract 1st TXID from URL, as long as its the only length 64 (or 66 with 0x) sub-string.
+                if 64==len(String):
+                    ScriptLow = String
+                    break
+            ScriptHex=ScriptLow.split()[0]  #.split allows accepting input containing a tab, e.g. TXID from a list in notepad.
+            try:    #Check if hex.
                 Bytes=bitcoin.bfh(ScriptHex)
                 try:
                     TX=electroncash.Transaction(ScriptHex)
@@ -324,12 +346,14 @@ class UI(QDialog):
                     Script += '//'
                     try:
                         if not Tuple[1]: raise  #To be consistent with Blockchain.com, list empty push as OP_0.
-                        Script += Tuple[1].hex()    #Show full stack leading to redeem Script as asm comments when decoding a scriptSig.
+                        Script   += Tuple[1].hex()    #Show full stack leading to redeem Script as asm comments when decoding a scriptSig.
+                        ByteCount = ', '+str(len(Tuple[1]))+'B push'
                     except:   #Sigscript may push OP_N instead of data.
                         try:    Int = Tuple[0]
                         except: Int = Tuple   #SLP Ed.
-                        Script += 'OP_'+CodeDict[bitcoin.int_to_hex(Int)]
-                    Script += endl
+                        Script   += 'OP_'+CodeDict[bitcoin.int_to_hex(Int)]
+                        ByteCount = ''  
+                    Script += ' '*IndentSize+'#+1Δ, 0 ops'+ByteCount+endl #No OP_EXEC means never any ops from push-only sigscript.
                 self.get_ops=[] #Delete per input.
             except: pass    #Not decoding a scriptSig with more than a redeem Script.
             
@@ -387,7 +411,7 @@ class UI(QDialog):
                 self.HexBox.clear(), self.ScriptActivated()   #Clearing HexBox ensures new colors, in case it's the same re-coding.
                 self.ScriptsBox.setItemText(ScriptsIndex, self.Address)
                 return  #textChanged signal will return to below this point. Decoder ends here.
-        if self.CheckBox.isChecked():  #This section greys out typed '#' even though they don't change bytecode.
+        if self.ColorsBox.isChecked():  #This section greys out typed '#' even though they don't change bytecode.
             Cursor=self.ScriptBox.textCursor()
             Format=Cursor.charFormat()
             position=Cursor.position()
@@ -397,7 +421,7 @@ class UI(QDialog):
                 self.ScriptBox.setTextCursor(Cursor)
                 return  #signal brings us back to below here.
         Script, OpCount = self.ScriptToHex(Script,False)    #OpCount could also be calculated using EC's .get_ops
-        if Script==self.HexBox.toPlainText(): return    #Do nothing if no hex change.
+        if Script and Script==self.HexBox.toPlainText(): return    #Do nothing if no hex change, unless empty (not much work).
         self.HexBox.setPlainText(Script)
         
         OpCount, ByteCount = str(OpCount)+' Op'+(OpCount!=1)*'s'+' & ', str(len(Script)>>1)+' Bytes' #Set Count QLabels.
@@ -408,7 +432,7 @@ class UI(QDialog):
             self.Address=electroncash.address.Address.from_multisig_script(Bytes).to_ui_string()
         except: self.Address = '_'*42   #42 chars typically in CashAddr. Script invalid.
         self.SetAddress()
-        if self.CheckBox.isChecked(): self.setTextColor()
+        if self.ColorsBox.isChecked(): self.setTextColor()
     def ScriptToHex(self,Script,BypassErrors):
         Assembly=''.join(Line.split('#')[0].split('//')[0].upper()+' ' for Line in Script.splitlines()).split()    #This removes all line breaks & comments from assembly code, to start encoding. Both # & // supported.
         Hex, OpCount = '', 0
@@ -427,29 +451,28 @@ class UI(QDialog):
         return Hex, OpCount
     def ScriptsBoxHighlighted(self,Index):
         Box = self.ScriptsBox
-        if self.Address==Box.itemText(Index) and Index!=Box.currentIndex(): Box.setCurrentIndex(Index), self.ScriptActivated()   #Highlighted → Activated, but only if same address with different comments (stack).
+        if Index>3 and Box.currentIndex()>3 and Index!=Box.currentIndex(): Box.setCurrentIndex(Index), self.ScriptActivated()   #Highlighted → Activated, but only if current & future Scripts are from decoder memory.
     def ScriptActivated(self):    #Change redeem script with correct case.
         Index, self.AsmBool = self.ScriptsBox.currentIndex(), False    #Loading directly into Asm requires artificially toggling since memory is always in hex.
         if Index==3:   #This section is for 'Clear below'. Maybe gc.collect() could fit in.
             {self.ScriptsBox.removeItem(4) for ItemN in range(4,len(self.Scripts))}
             self.Scripts, Index = self.Scripts[:4], 0   #0 sets to 'New'.
         self.ScriptBox.setPlainText((self.Scripts[Index])), self.ScriptsBox.setCurrentIndex(Index), self.CaseBoxActivated(), self.AsmBoxActivated()
-        if self.CheckBox.isChecked(): self.setTextColor()   #Color even if no change in bytecode or hex/asm.
+        if self.ColorsBox.isChecked(): self.setTextColor()   #Color even if no change in bytecode or hex/asm.
     def SetAddress(self):
-        if self.Address and self.CheckBox.isChecked(): self.AddressLabel.setText(self.pColor+self.Address[0]+"</font>"+self.Address[1:])
+        if self.Address and self.ColorsBox.isChecked(): self.AddressLabel.setText(self.pColor+self.Address[0]+"</font>"+self.Address[1:])
         else:                                          self.AddressLabel.setText(                                      self.Address)
     def setTextColor(self):
         self.ScriptBox.textChanged.disconnect(), self.ScriptBox.selectionChanged.disconnect()
         Text, Cursor, HexCursor = self.ScriptBox.toPlainText(), self.ScriptBox.textCursor(), self.HexBox.textCursor()
         Format, CursorPos = Cursor.charFormat(), Cursor.position()
-        Format.setForeground(Colors['Data']), Format.setBackground(Qt.transparent)
-        if Format.font()!=self.Font: Format.setFont(self.Font)  #O'wise font can change accidentally if someone copy-pastes hex off the web.
+        Format.setForeground(self.Colors['Data']), Format.setBackground(Qt.transparent)
         
         Cursor.setPosition(0), Cursor.movePosition(Cursor.End,Cursor.KeepAnchor), Cursor.setCharFormat(Format)   #All black. This line guarantees fully transparent background.
-        HexCursor.setPosition(0), HexCursor.movePosition(HexCursor.End,HexCursor.KeepAnchor), HexCursor.setCharFormat(Format)  #Hex colors actually add a lot of CPU lag.
-        if self.CheckBox.isChecked():   #This can max out a CPU core when users hold in a button like '0'. A future possibility is only coloring the current word, unless copy/paste detected.
+        HexCursor.setPosition(0), HexCursor.movePosition(HexCursor.End,HexCursor.KeepAnchor), HexCursor.setCharFormat(Format)
+        if self.ColorsBox.isChecked():   #This can max out a CPU core when users hold in a button like '0'. A future possibility is only coloring the current word, unless copy/paste detected.
             StartPosit, HexPos, SizeSize = 0, 0, 2    #Line's absolute position, along with HexBox position. SizeSize is the # of hex digits which are colored in blue, by default.
-            ForegroundColor = Colors['Constants']   #This tracks whether a PUSHDATA color should be used for the data-push size.
+            ForegroundColor = self.Colors['Constants']   #This tracks whether a PUSHDATA color should be used for the data-push size.
             for Line in Text.splitlines():
                 LineCode=Line.split('#')[0].split('//')[0].upper()
                 CommentPos, Pos, lenLine = len(LineCode), StartPosit, len(Line)  #Comment posn, virtual cursor position.
@@ -459,19 +482,19 @@ class UI(QDialog):
                     Cursor.setPosition(Pos), HexCursor.setPosition(HexPos)   #This removes Anchor.
                     try:    #to color in Word as OpCode
                         if self.AsmBool and Word in Codes1N: raise #1N not an OpCode in Asm.
-                        else: Format.setForeground(ColorDict[Word.replace('OP_','')])
+                        else: Format.setForeground(self.ColorDict[Word.replace('OP_','')])
                         Pos+=lenWord
                         Cursor   .setPosition(   Pos,Cursor.KeepAnchor),    Cursor.setCharFormat(Format)
                         HexPos+=2
                         HexCursor.setPosition(HexPos,Cursor.KeepAnchor), HexCursor.setCharFormat(Format)
                         
                         if 'PUSHDATA' in Word:
-                            ForegroundColor = Colors['PushData']
+                            ForegroundColor = self.Colors['PushData']
                             if   Word.endswith('2'): SizeSize = 4  # of blue digits to follow.
                             elif Word.endswith('4'): SizeSize = 8
                     except: #Assume data push
                         Format.setForeground(ForegroundColor)   #Color 1st SizeSize chars blue if not an opcode.
-                        if ForegroundColor!=Colors['Constants']: ForegroundColor=Colors['Constants']
+                        if ForegroundColor!=self.Colors['Constants']: ForegroundColor=self.Colors['Constants']  #Reset
                         
                         if self.AsmBool:
                             if   lenWord > 0xff<<1: SizeSize = 6    #4d____ is 4 extra digits, on top of 2. 6 total only happens for Asm.
@@ -527,10 +550,10 @@ class UI(QDialog):
             Bytes=Bytes[Find+lenSelectionBytes:]
             Find=Bytes.find(SelectionBytes)
         HexCursor.setPosition(0), self.HexBox.setTextCursor(HexCursor)
-    def toggled(self):
+    def ColorsToggled(self):
         self.Selection=None   #Force re-selection, now w/ or w/o Colors.
         self.SetAddress(), self.selectionChanged(), self.ScriptBox.setFocus()   #QCheckBox steals focus.
-    def CaseBoxHighlighted(self,Text): self.CaseBox.setCurrentText(Text), self.CaseBoxActivated()   #Highlighted → Activated.
+    def CaseBoxHighlighted(self,Index): self.CaseBox.setCurrentIndex(Index), self.CaseBoxActivated()   #Highlighted → Activated.
     def CaseBoxActivated(self):   #Change btwn Codes, CODES & OP_CODES using QTextCursor. This is more complicated but possibly quicker than editing strings directly.
         self.ScriptBox.textChanged.disconnect(), self.ScriptBox.selectionChanged.disconnect()   #disconnect & connect isn't necessary.
         Script, Cursor, Index = self.ScriptBox.toPlainText(), self.ScriptBox.textCursor(), self.CaseBox.currentIndex()
@@ -572,7 +595,7 @@ class UI(QDialog):
         self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)    #Reconnect before re-selecting.
         self.Selection=None #Force re-selection after changing spells.
         self.selectionChanged(), self.ScriptBox.setFocus()    #Return focus to Selection.
-    def AsmBoxHighlighted(self,Text): self.AsmBox.setCurrentText(Text), self.AsmBoxActivated()   #Highlighted → Activated.
+    def AsmBoxHighlighted(self,Index): self.AsmBox.setCurrentIndex(Index), self.AsmBoxActivated()   #Highlighted → Activated.
     def AsmBoxActivated(self):  #This method strips out blue leading bytes (asm), or else puts them back in. Instead of editing the ScriptBox string directly, QTextCursor is used.
         AsmBool = bool(self.AsmBox.currentIndex())
         if AsmBool == self.AsmBool: return   #Do nothing if untoggled.
@@ -623,4 +646,19 @@ class UI(QDialog):
 
         self.CaseBoxActivated() #Change spelling as required (OP_ or op_ etc).
         if AsmBool: self.textChanged()  #Converting to Asm deletes incorrect leading bytes, which are impossible to restore.
-        elif self.CheckBox.isChecked(): self.setTextColor() #Color leading blue bytes for not-Asm.
+        elif self.ColorsBox.isChecked(): self.setTextColor() #Color leading blue bytes for not-Asm.
+    def BlackToggled(self):
+        if self.BlackBox.isChecked(): #Dark color theme demands its own colors. Though black allows more colors, I'm trying to be consistent.
+            #Lighten blues. Strengthen green & yellow. Increase brightness of sky-blue, brown, purple & darkMagenta. The latter appears clearer when I look *up* at my LCD. +32 & +64 sacrifice color purity for readability. Sky-blue is mixed with cyan, brown with olive, purple with magenta, darkMagenta with gray & orange with yellow. Orange is also mixed with yellow, but not for brightness.
+            self.Colors.update( {'Constants':QColor(0+128,0+128,255),'Flow control':QColor(128+32,64+32,0), 'Stack':Qt.green,'Bitwise logic':QColor(255,128+32,0),'Arithmetic':QColor(0,128+64,255),'Locktime':Qt.yellow,'Native Introspection':QColor(128+32,0,255),'Reserved words':QColor(128,0+64,128),'PushData':QColor(128+64,128+64,255),'Data':Qt.white} )
+            if self.Dark: StyleSheet = 'background: black'    #StyleSheet for QTextEdit. I prefer black to dark. 'background: black; color: white' could also work.
+            else:         StyleSheet = 'background: black; color: white'    #'selection-background-color: blue' could also work. There's a ContextMenu problem.
+        else:
+            self.Colors.update( {'Constants':Qt.blue,'Flow control':QColor(128,64,0),'Stack':Qt.darkGreen,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':Qt.darkMagenta,'Native Introspection':QColor(128,0,255),'PushData':QColor(128,128,255),'Data':Qt.black} )
+            if self.Dark: StyleSheet = 'background: white; color: black'    #'color: black' is needed for ContextMenu.
+            else:         StyleSheet = ''   #Default StyleSheet
+        for key in Codes.keys()-{'BCH','Disabled'}:
+                for Code in Codes[key].split(): self.ColorDict[Code.upper()] = self.Colors[key]
+        {Box.setStyleSheet(StyleSheet) for Box in {self.ScriptBox, self.HexBox} }
+        self.Selection = None   #This forces re-coloring without losing actual selection.
+        self.selectionChanged(), self.ScriptBox.setFocus()
