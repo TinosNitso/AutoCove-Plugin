@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-There's currently a bug when a user copy pastes a single line starting with a hex word, e.g. '01ff NIP'. Will be fixed in next update. It's due to allowing a space-bar after a TXID etc (hex word) and ignoring everything after it. Also, the Δ is **wrong** for a whole line of Crypto codes, HASH160 etc (as can be seen in the below example). 
+There's currently a bug when a user copy pastes a single line starting with a hex word, e.g. '01ff NIP'. Will be fixed in next update. It's due to allowing a space-bar after a TXID etc (hex word) and ignoring everything after it.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.8.png)
 
