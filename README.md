@@ -19,6 +19,8 @@ Plugin can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smar
 Alternatively, copy paste redeem Scripts from other networks, like from [this](https://www.blockchain.com/btc-testnet/tx/4f8d776c85b1fc15c1125e7043a9aee70e33f0793b472823e3946a8de075bec4) BTC-testnet **L**ight**N**ing `to_local` txn:
 `6321026644cb387614f66421d14da3596c21cffa239011416c9adf3f351ee8551a9fc767029000b27521029654f80732769d7c435a184a3559f12178315526c53bbf003349390811c7590a68ac`
 
+Next version will have drag & drop for txn files, `<dec>` input, and lighter-on-black colors (need same clarity on B&W backgrounds). There's a bugfix for when selecting asm switches to 'New', & no more exact duplicates in the memory. There may also be `dec` conversion (decoding to decimal).
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.6-macOS.png)
