@@ -51,7 +51,7 @@ v1.0.9 notes:
 - Bugfix for multi-word single-line whose leading word is hex, like *00 NIP* (v1.0.8 ignored everything after the *00*).
 - URL input works the same as the TXID it contains. Will P2SH decode the 1st TXID which appears in .split('/').
 - B&W toggle (check-box). One wallet can have black background, & another white.
-- Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (>70B) sigs, & check if push is getting close to 520B limit.
+- Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (≥70B) sigs, & check if push is getting close to 520B limit.
 - Instant switching btwn Scripts in combo-box whenever they're from decoder memory. e.g. can quickly scroll through 121 2of3 inputs in [this](https://www.blockchain.com/bch/tx/1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d) 89 kBCH txn.
 - Example TXIDs & Scripts shown by default.
 - Adjusted purple on black to be a tiny bit brighter (in red). So it's like a mix between purple and magenta (adjusting colors reduces their purity). I've also mixed orange with yellow. On black: brown mixes with olive & sky-blue with cyan.
