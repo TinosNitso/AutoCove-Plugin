@@ -14,7 +14,7 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
 Plugin can decode CashScript hex, like for smartBCH [SHA-Gate](https://docs.smartbch.org/smartbch/sha-gate) (without native introspection):
-`5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901527f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
+`5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901297f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
 
 Alternatively, copy paste redeem Scripts from other networks, like from [this](https://www.blockchain.com/btc-testnet/tx/4f8d776c85b1fc15c1125e7043a9aee70e33f0793b472823e3946a8de075bec4) BTC-testnet **L**ight**N**ing `to_local` txn:
 `6321026644cb387614f66421d14da3596c21cffa239011416c9adf3f351ee8551a9fc767029000b27521029654f80732769d7c435a184a3559f12178315526c53bbf003349390811c7590a68ac`
@@ -51,7 +51,7 @@ v1.0.9 notes:
 - Bugfix for multi-word single-line whose leading word is hex, like *00 NIP* (v1.0.8 ignored everything after the *00*).
 - URL input works the same as the TXID it contains. Will P2SH decode the 1st TXID which appears in .split('/').
 - B&W toggle (check-box). One wallet can have black background, & another white.
-- Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (≥70B) sigs, & check if push is getting close to 520B limit.
+- Appended size of each sigscript data push. Can discern Schnorr (<70B) from ECDSA (usually ≥70B) sigs, & check if push is getting close to 520B limit.
 - Instant switching btwn Scripts in combo-box whenever they're from decoder memory. e.g. can quickly scroll through 121 2of3 inputs in [this](https://www.blockchain.com/bch/tx/1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d) 89 kBCH txn.
 - Example TXIDs & Scripts shown by default.
 - Adjusted purple on black to be a tiny bit brighter (in red). So it's like a mix between purple and magenta (adjusting colors reduces their purity). I've also mixed orange with yellow. On black: brown mixes with olive & sky-blue with cyan.
@@ -67,7 +67,7 @@ v1.0.8 notes:
 - Dark theme color changes: stronger blue for constants, darkMagenta a bit lighter. Still no B&W toggle.
 - Instant switching between Scripts which have the same name in the combo-box. e.g. can scroll through multi-sigs in [this](https://www.blockchain.com/bch/tx/fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0) TX.
 - "#No P2SH input..." message for when TXID or TX has no such input.
-- SHA256 Checksum 000000d74f7b1353ede9c99828411ca3a137489c022cf7f41d299e8b5627cadd (34 kH/s · 4 mins). Update via re-install requires restarting EC.
+- SHA256 Checksum 000000d74f7b1353ede9c99828411ca3a137489c022cf7f41d299e8b5627cadd (34 kH/s · 4 mins).
 
 v1.0.7 notes:
 - Bugfix for when asm+OP_CODES setting converts 011N into OP_1N (oops).
@@ -77,7 +77,7 @@ v1.0.7 notes:
 - In dark theme, lighter light blue for constants. Also, quarter-gray background switched with black.
 - TXID & other hex input is now allowed to have a tab after it (& '\n' too). Double-clicking a TXID in notepad selects the tab after it.
 - macOS highlighting slightly lighter this time (an eighth difference, but still a quarter difference on Windows). Dark theme isn't available for Catalina, so I've never tested that on macOS. I'm starting to prefer the dark theme, but EC itself needs an update since it's got some blue text on black background, & some white on bright green, which is nearly unreadable.
-- SHA256 Checksum: 000000928f656c2436c9d18f0f193f3944e9c90b7bb78813cf1591c91e5c06d4 (35 kH/s · 2 mins). Updating via re-install requires restarting EC.
+- SHA256 Checksum: 000000928f656c2436c9d18f0f193f3944e9c90b7bb78813cf1591c91e5c06d4 (35 kH/s · 2 mins).
 
 v1.0.6 notes:
 - **asm** stripping (instant via combo-box). It works with PUSHDATA OpCodes, and highlighting. OpCodes 10-16 are given a leading 'OP_'. It's some tricky code! e.g. [Here](https://github.com/mr-zwets/RefreshContract/blob/main/refresh.json) is the RefreshTimer.cash CashScript bytecode.
