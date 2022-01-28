@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.9.GIF)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.gif)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
@@ -9,41 +9,39 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f` Mecenas plugin, protoge spend.
 `a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78` Last Will plugin, cold ended.
 `83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c` 1of1 multisig.
-`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0` 3of5, 20 inputs, **4th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html).
+`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0` 3of5, 20 inputs, **5th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html).
 `1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d` 2of3, 121 inputs, 89 kBCH.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
-Plugin can decode CashScript hex, like for smartBCH SHA-Gate [cc_covenant_v0.cash](https://github.com/smartbch/shagate/blob/main/cc_covenant_v0.cash) (without native introspection):
-`5679009c6357796101687f77820134947f587f547f7701207f755b7a5c796e7c828c7f755e7aa87bbbad5a79547a875a79557a879b597a557a879b69547a81011ea163022c01b275680b0400000000040000000021577a7e537a012c7f777e7b8102e8039458800317a9147e7ca97e01877eaa87777777675679519c635779547f7701207f01207f7701247f61007f77820134947f587f547f7701207f755d7a5e7a6e7c828c7f75607aa87bbbad597981011e9f5b7981011e9f9a695c7901297f752901000000010000000000000000000000000000000000000000000000000000000000000000ffffffff885c79aa5e798853795e7a7e5e7a7eaa557a885b7a5c7a7f7701247f75547a88577959795c7a635a79818b548077675979818b54807b757c68547c7e547e7c7e537a5a7f777e7b8102e8039458800317a9147e7ca97e01877eaa886d6d6d755167567a529d567a547aad029600b275547a81547a81a27777776868`
+Plugin can decode CashScript hex, like for smartBCH SHA-Gate [cc_covenant_v1.cash](https://github.com/smartbch/shagate/blob/main/cc_covenant_v1.cash) (without native introspection):
+`5379547f7701207f01207f7701247f61007f77820134947f587f547f7701207f75597a5a796e7c828c7f755c7aa87bbbad060400000000145a7a7e5379011a7f777e587a8101117a635979a9597988029600b2757603e09304967802307597a269675f79009c635979a95b795d797e5e797ea9597988765c7987785e79879b785f79879b697803e09304965279023075979f63022c01b2756875675d79547f7701257f75a914282711cb97968c8674a46b5564ce3549f5782ea48855795e79aa7e5f797eaa5779885d7960797f7701247f7556798860796376023075937767768b7768547854807e5579557f777e7b757c6853798102d007945880760317a9147e5379a97e01877e76aa5579886d686d6d6d6d6d6d6d6d7551`
 
 Alternatively, copy paste redeem Scripts from other networks, like from [this](https://www.blockchain.com/btc-testnet/tx/4f8d776c85b1fc15c1125e7043a9aee70e33f0793b472823e3946a8de075bec4) BTC-testnet **L**ight**N**ing `to_local` txn:
 `6321026644cb387614f66421d14da3596c21cffa239011416c9adf3f351ee8551a9fc767029000b27521029654f80732769d7c435a184a3559f12178315526c53bbf003349390811c7590a68ac`
 
 If there's ever a discrepancy between 2 large Scripts, a neat trick is to turn off the colors (for speed), maximize EC, & then use the address combo-box to instantly switch btwn them. To verify the difference, edit one Script until the address matches the other. Another trick is to scroll through the (3of5) 20 inputs example, to see how ECDSA multisigs vary.
 
-Next version will have drag & drop for .txn & CashScript .artifact files, `<dec>` input, more examples, and lighter-on-black colors (need similar clarity on B&W backgrounds). There's a bugfix for when selecting asm switches to 'New', & no more exact duplicates in the memory. There'll also be `<dec>` conversion (decoding to decimal). CashAddr toggle will be connected, and a '1 line' button to condense Scripts to 1 line. Also a font combo-box for default vs Consolas, & a new preturn... Script with CODESEPARATOR!
-
-Another example is from [slp_dollar.artifact](https://github.com/simpleledger/Electron-Cash-SLP/blob/cashscript-dev/lib/cashscript/slp_dollar.artifact). It's for SLP tokens which can always be frozen by the issuer, by forcibly sending any possible descendent to a frozen state.
+Another example is from [slp_dollar.artifact](https://github.com/simpleledger/Electron-Cash-SLP/blob/cashscript-dev/lib/cashscript/slp_dollar.artifact). It's for SLP tokens which can always be frozen by the issuer, by forcibly sending any possible descendent to a frozen state. There's a bug since DEPTH+Δ>1 for all branches.
 `5579009c635679016b7f77820134947f5c7f7701207f75527902010187916959798277589d5a79827701219d5b798277589d170000000000000000406a04534c500001010453454e4420577a7e587e59797e587e5b797e7b01207f77082202000000000000760317a9147e5156797e587e5c7a7e01147e5c79a97e53797ea97e01877e780317a9147e51577a7e587e5d7a7e01147e58797e547a7ea97e01877e7b041976a9147e5a7aa97e0288ac7e727e7b7e7c7e577a7eaa885579a97b88716e7c828c7f75577aa87bbbac77777767557a519d55796101687f77820134947f5c7f7701207f75587951876352790100886758790100876352795188686851597a7e7b527f777e082202000000000000760317a9147e7ba97e01877e7c041976a9147e557a7e0288ac7e170000000000000000376a04534c500001010453454e4420577a7e587e557a7e537a7c537a7e7b7e557a7eaa88537a7b6e7c828c7f75557aa87bbbac7768`
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.6-macOS.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.png)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.0.6** [preturn5pf0m9dnrjwqx0ttca4f8pxfvscnwwy0zl3](https://www.blockchain.com/bch/address/preturn5pf0m9dnrjwqx0ttca4f8pxfvscnwwy0zl3) ([pReturn_AutoCove#158748; 🥝](https://www.cashaccount.info/#lookup) Cash Account):
->6fad7b828c7f757ca87bbb7d547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940289029458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa7c820128947f7701207f758708030000000071d8e975
+**v1.1.0** [preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe](https://www.blockchain.com/bch/address/preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe) (pReturn#161132; 🧀 [Cash Account]((https://www.cashaccount.info/#lookup)):
+>78547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940202029458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279abbbac0801000000009ab19a75
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** or **P2SH** address (but not P2PK).
 - P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible. However non-0 constant pushes like OP_N aren't supported.
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
-- 15 bits minimum for only 1 input. ~2 bits **more** needed per extra input.
+- 13 bits minimum for only 1 input. ~2 bits **more** needed per extra input.
 - 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn5pf0m9dnrjwqx0ttca4f8pxfvschu2rd4cd).
-- 8→12 bits fee.
+- 7→10 bits fee.
 - Total amount will be returned to **first** (0th) input.
 - Never send **SLP** tokens.
 - Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes.
@@ -51,6 +49,19 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+v1.1.0 notes:
+- <dec> input. e.g. can copy paste from [this](https://github.com/bitjson/bch-loops) CHIP.
+- <dec> convert any Script using the (hex, asm, <dec>) combo-box. Can ID special <#>s.
+- Drag & drop for .txn & CashScript .artifact files. I didn't bother with an 'Open' file button, and it's only 1 file at a time, and .artifact not working on Linux.
+- No more exact Script duplicates in the combo-box.
+- *1 line* button to condense any Script (with LineWrap). With asm, it's identical to CashScript artifact bytecode.
+- CashAddr toggle connected.
+- Font combo-box (Default vs Consolas PointSize(11)). Unfortunately Consolas isn't working on macOS.
+- Lighter (blander) colors on black, aiming for equivalent clarity between B&W backgrounds (from a distance). Unfortunately not even gray is as clear on a black background!
+- Bugfix for when choosing asm switches to 'New'. So now it's quick to scroll through sigscripts, in asm or <dec> form.
+- Bugfix for when word '00' vanishes when converting to asm. More generally a '77' converts to 'NIP' instead of vanishing.
+- SHA256 Checksum 000000d05ad1b70931563be4030fa3a9d6755787b081e8afee3e80df200a7f44 (25 kH/s · 31 mins). Updating via re-install requires restarting EC.
 
 v1.0.9 notes:
 - Bugfix for multi-word single-line whose leading word is hex, like *00 NIP* (v1.0.8 ignored everything after the *00*).
