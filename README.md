@@ -51,17 +51,17 @@ Another example could be address *ppythag0ras*... which only returns three coins
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 v1.1.0 notes:
-- `<dec>` input. e.g. can copy paste from [this](https://github.com/bitjson/bch-loops) CHIP.
+- `<dec>` input. e.g. can copy paste from a [CHIP](https://github.com/bitjson/bch-loops). A future update should enable <0x...> & <0o...>.
 - `<dec>` convert any Script using the `(hex, asm, <dec>)` combo-box. Can ID special <#>s.
 - Drag & drop for .txn & CashScript .artifact files. I didn't bother with an 'Open' file button, and it's only 1 file at a time, and .artifact not working on Linux.
 - New pReturn... Script reduces its fee by 18% using a CODESEPARATOR.
 - No more exact Script duplicates in the combo-box.
-- *1 line* button to condense any Script (with LineWrap). With asm, it's identical to CashScript artifact bytecode.
+- *1 line* button to condense any Script (with LineWrap). With asm & OP_CODES, it's identical to CashScript artifact bytecode.
 - CashAddr toggle connected.
 - Font combo-box (Default vs Consolas PointSize(11)). Unfortunately Consolas isn't working on macOS.
 - Lighter (blander) colors on black, aiming for equivalent clarity between B&W backgrounds (from a distance). Unfortunately not even gray is as clear on a black background!
-- Bugfix for when choosing asm switches to 'New'. So now it's quick to scroll through sigscripts, in asm or `<dec>` form.
-- Bugfix for when word '00' vanishes when converting to asm. More generally a '77' converts to 'NIP' instead of vanishing.
+- Bugfix for when choosing asm, switches to 'New'. So now it's quick to scroll through sigscripts, in asm or `<dec>` form.
+- Bugfix for when word '00' vanishes when converting to asm. More generally a lone '77' converts to 'NIP' instead of vanishing.
 - SHA256 Checksum 000000d05ad1b70931563be4030fa3a9d6755787b081e8afee3e80df200a7f44 (25 kH/s · 31 mins). Updating via re-install requires restarting EC.
 
 v1.0.9 notes:
