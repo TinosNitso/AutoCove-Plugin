@@ -32,7 +32,7 @@ Fully automatic covenants forward payments without any further authorization. Pa
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.1.0** [preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe](https://www.blockchain.com/bch/address/preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe) (pReturn#161132; 🧀 [Cash Account]((https://www.cashaccount.info/#lookup)):
+**v1.1.0** [preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe](https://www.blockchain.com/bch/address/preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe) (pReturn#161132; 🧀 [Cash Account](https://www.cashaccount.info/#lookup)):
 >78547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940202029458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279abbbac0801000000009ab19a75
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
@@ -52,7 +52,7 @@ Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://gi
 
 v1.1.0 notes:
 - `<dec>` input. e.g. can copy paste from [this](https://github.com/bitjson/bch-loops) CHIP.
-- `<dec>` convert any Script using the (hex, asm, `<dec>`) combo-box. Can ID special <#>s.
+- `<dec>` convert any Script using the `(hex, asm, <dec>)` combo-box. Can ID special <#>s.
 - Drag & drop for .txn & CashScript .artifact files. I didn't bother with an 'Open' file button, and it's only 1 file at a time, and .artifact not working on Linux.
 - New pReturn... Script reduces its fee by 18% using a CODESEPARATOR.
 - No more exact Script duplicates in the combo-box.
