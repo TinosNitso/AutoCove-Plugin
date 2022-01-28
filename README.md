@@ -5,7 +5,7 @@
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28` HODL plugin.
-`000000d1120b8e55f057362ef41244f950cfdebb988ae4d25697b5f568d2fcc8` VanityTXID address.
+`0000000e0ad818cf6600060b5ee4cf75e6f4292204af77aceb2f95bbf9fc1194` VanityTXID address.
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f` Mecenas plugin, protoge spend.
 `a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78` Last Will plugin, cold ended.
 `83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c` 1of1 multisig.
