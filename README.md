@@ -13,6 +13,8 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d` 2of3, 121 inputs, 89 kBCH.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
+Next version will have a new *pReturn...* covenant with 2% lower fee, HTML save button, bugfix for Linux drag & drop, drag & drop of many files all at once, & <±0b...>, <±0o...> & <±0x...> (bin, oct & hex) conversion & input, as well as <Python_eval> more generally.
+
 Plugin can decode CashScript hex, like for smartBCH SHA-Gate [cc_covenant_v1.cash](https://github.com/smartbch/shagate/blob/main/cc_covenant_v1.cash) (without native introspection):
 `5379547f7701207f01207f7701247f61007f77820134947f587f547f7701207f75597a5a796e7c828c7f755c7aa87bbbad060400000000145a7a7e5379011a7f777e587a8101117a635979a9597988029600b2757603e09304967802307597a269675f79009c635979a95b795d797e5e797ea9597988765c7987785e79879b785f79879b697803e09304965279023075979f63022c01b2756875675d79547f7701257f75a914282711cb97968c8674a46b5564ce3549f5782ea48855795e79aa7e5f797eaa5779885d7960797f7701247f7556798860796376023075937767768b7768547854807e5579557f777e7b757c6853798102d007945880760317a9147e5379a97e01877e76aa5579886d686d6d6d6d6d6d6d6d7551`
 
