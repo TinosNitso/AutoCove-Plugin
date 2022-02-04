@@ -53,11 +53,11 @@ Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://gi
 The HTML examples above come with an example of xztar 23x compression, which is supported internally by EC. Whole market-places could possibly be stored & updated using xztar, [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc, but maybe even those are smaller as archives. In fact, compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. I just compressed a 128p (60% quality) jpg by over 3% using xz, to 3.8kB (currently 1.1 US cents, in BCH, to upload). A seller could use the same image at different market-places, and it's quite sharp for a cent.
 
 v1.1.1 notes:
-- New `pReturn...` covenant has up to 2% fee reduction by placing CODESEPARATOR just before CHECKSIG @ Script end (`<Nonce>DROP` @Start). Decoder endlAfter `<Nonce>DROP`.
+- New `pReturn...` covenant has up to 2% fee reduction by placing CODESEPARATOR just before CHECKSIG @ Script end (`<Nonce>DROP` @ Start). Decoder endlAfter `<Nonce>DROP`.
 - Save button for HTML! (Full color + B&W background.) Examples incl. in release, with 23x compression using `xztar`.
 - Bugfix for drag & drop in Linux.
 - Multi-file drag & drop. Decode lots of artifacts &/or txns! More elegant json.loads code.
-- <...> input now Python-evaluates ... e.g. <2-3>==<-1>→4f, etc. <±0b...>, <±0o...> & <±0x...> too! 
+- <...> input now Python-evaluates ... e.g. `<2-3>==<-1>`→`4f`, etc. `<±0b...>`, `<±0o...>` & `<±0x...>` too! 
 - bin, oct & hex conversion! e.g. can decode directly to octal.
 - No font combo-box in macOS (Consolas didn't work).
 - SHA256 Checksum 0000000f040262fd608ffa7b8877adaee2b700a671d134588933ec8f7902b775 (23 kH/s · 36 mins). Update via re-install requires restarting EC.
@@ -74,7 +74,7 @@ v1.1.0 notes:
 - Lighter (blander) colors on black, aiming for equivalent clarity between B&W backgrounds (from a distance). Unfortunately not even gray is as clear on a black background!
 - Bugfix for when choosing asm, switches to 'New'. So now it's quick to scroll through sigscripts, in asm or `<dec>` form.
 - Bugfix for when word '00' vanishes when converting to asm. More generally a lone '77' converts to 'NIP' instead of vanishing.
-- SHA256 Checksum 000000d05ad1b70931563be4030fa3a9d6755787b081e8afee3e80df200a7f44 (25 kH/s · 31 mins). Updating via re-install requires restarting EC.
+- SHA256 Checksum 000000d05ad1b70931563be4030fa3a9d6755787b081e8afee3e80df200a7f44 (25 kH/s · 31 mins).
 
 v1.0.9 notes:
 - Bugfix for multi-word single-line whose leading word is hex, like *00 NIP* (v1.0.8 ignored everything after the *00*).
@@ -85,7 +85,7 @@ v1.0.9 notes:
 - Example TXIDs & Scripts shown by default.
 - Adjusted purple on black to be a tiny bit brighter (in red). So it's like a mix between purple and magenta (adjusting colors reduces their purity). I've also mixed orange with yellow. On black: brown mixes with olive & sky-blue with cyan.
 - Combo-box instant highlight-activation for EC-v3.6.6 (SLP Ed.).
-- SHA256 Checksum 0000000a30508dceb6f214074e7cce209bac670ca5d29c139dfc35202d468ce6 (31 kH/s · 8 mins). Update via re-install requires restarting EC.
+- SHA256 Checksum 0000000a30508dceb6f214074e7cce209bac670ca5d29c139dfc35202d468ce6 (31 kH/s · 8 mins).
 
 v1.0.8 notes:
 - Bugfix for op counts: no longer count values ≤0x60. None of the Scripts I've seen exceed 201 ops, after all!
