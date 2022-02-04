@@ -32,8 +32,8 @@ Fully automatic covenants forward payments without any further authorization. Pa
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.1.0** [preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe](https://www.blockchain.com/bch/address/preturn64ylcxyx9fktkrf8jpdanp4qvjyuqmfa2xe) (pReturn#161132; 🧀 [Cash Account](https://www.cashaccount.info/#lookup)):
->78547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f7581788277940202029458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279abbbac0801000000009ab19a75
+**v1.1.1** [preturnhnsa96ga83fppzdm2jx6ddn7y4cght33fcv](https://www.blockchain.com/bch/address/preturnhnsa96ga83fppzdm2jx6ddn7y4cght33fcv) (pReturn#162188; ✉ [Cash Account](https://www.cashaccount.info/#lookup)):
+>08070000000345b4077578547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f75817882779402f7019458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279bbabac
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** or **P2SH** address (but not P2PK).
