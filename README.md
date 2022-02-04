@@ -13,8 +13,6 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d` 2of3, 121 inputs, 89 kBCH.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
-Next version will have a new *pReturn...* covenant with 2% lower fee, HTML save button, bugfix for Linux drag & drop, drag & drop of many files all at once, & <±0b...>, <±0o...> & <±0x...> (bin, oct & hex) conversion & input, as well as <Python_eval> more generally.
-
 Plugin can decode CashScript hex, like for smartBCH SHA-Gate [cc_covenant_v1.cash](https://github.com/smartbch/shagate/blob/main/cc_covenant_v1.cash) (without native introspection):
 `5379547f7701207f01207f7701247f61007f77820134947f587f547f7701207f75597a5a796e7c828c7f755c7aa87bbbad060400000000145a7a7e5379011a7f777e587a8101117a635979a9597988029600b2757603e09304967802307597a269675f79009c635979a95b795d797e5e797ea9597988765c7987785e79879b785f79879b697803e09304965279023075979f63022c01b2756875675d79547f7701257f75a914282711cb97968c8674a46b5564ce3549f5782ea48855795e79aa7e5f797eaa5779885d7960797f7701247f7556798860796376023075937767768b7768547854807e5579557f777e7b757c6853798102d007945880760317a9147e5379a97e01877e76aa5579886d686d6d6d6d6d6d6d6d7551`
 
@@ -28,7 +26,7 @@ Another example is from [slp_dollar.artifact](https://github.com/simpleledger/El
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.1.png)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
 
@@ -51,6 +49,18 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+
+The HTML examples above come with an example of xztar 23x compression, which is supported internally by EC. Whole market-places could possibly be stored & updated using xztar, [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc, but maybe even those should only exist as an archive. In fact, compressed HTML is even smaller than the plain-text itself as a .txt. Even a jpg image is smaller when in an xz archive. I just compressed a 128p (60% quality) jpg by over 3% using xz, to 3.8kB (currently 1.1 US cents, in BCH, to upload). A vendor could use the same image at different market-places, and is quite sharp for a cent.
+
+v1.1.1 notes:
+- New `pReturn...` covenant has up to 2% fee reduction by placing CODESEPARATOR just before CHECKSIG @ Script end (`<Nonce>DROP` @Start). Decoder endlAfter `<Nonce>DROP`.
+- Save button for HTML! (Full color + B&W background.) Examples incl. in release, with 23x compression using `xztar`.
+- Bugfix for drag & drop in Linux.
+- Multi-file drag & drop. Decode lots of artifacts &/or txns! More elegant json.loads code.
+- <...> input now Python-evaluates ... e.g. <2-3>==<-1>→4f, etc. <±0b...>, <±0o...> & <±0x...> too! 
+- bin, oct & hex conversion! e.g. can decode directly to octal.
+- No font combo-box in macOS (Consolas didn't work).
+- SHA256 Checksum 0000000f040262fd608ffa7b8877adaee2b700a671d134588933ec8f7902b775 (23 kH/s · 36 mins). Update via re-install requires restarting EC.
 
 v1.1.0 notes:
 - `<dec>` input. e.g. can copy paste from a [CHIP](https://github.com/bitjson/bch-loops). A future update should enable <0x...> & <0o...>.
