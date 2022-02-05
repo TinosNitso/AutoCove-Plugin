@@ -1,5 +1,11 @@
 # AutoCove-Plugin
 
+Next version will have a CLI! e.g.
+
+`./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 C:/Users/Username/Desktop/Test.html`
+
+This won't count as official "Command-line Integration" because `daemon_command` is only used to remote-control the GUI, which controls all settings (black, colors etc). Maybe there'll be interest in a purely web interface. There'll also be ±Δ for the OpCodes List.
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.gif)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
