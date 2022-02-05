@@ -9,7 +9,7 @@ Users can copy paste the following TXIDs into the plugin to see some examples.
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f` Mecenas plugin, protoge spend.
 `a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78` Last Will plugin, cold ended.
 `83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c` 1of1 multisig.
-`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0` 3of5, 20 inputs, **5th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html).
+`fccebdc8fcf556bebeb91ded0339756e568b254a6aa797f22a74ec3787f8a5d0` 3of5, 20 inputs, **5th** on BCH [rich-list](https://bitinfocharts.com/top-100-richest-bitcoin%20cash-addresses.html) with >1% of total supply.
 `1fcd75baedf6cc609e6d0c66059fc3937a1d185fb50a15d812d0747544353e5d` 2of3, 121 inputs, 89 kBCH.
 `820140877c7500c0879a00c900879a51c951879a00c851c8879a00cd00c7879a` (not TXID) Native Introspection preview!
 
