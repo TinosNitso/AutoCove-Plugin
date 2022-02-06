@@ -2,9 +2,9 @@
 
 Next version will have a CLI! e.g.
 
-`./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 C:/Users/Username/Desktop/Test.html`
+`./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 C:/Users/Username/Desktop/Test.html black align#`
 
-This won't count as official "Command-line Integration" because `@daemon_command` is only used to remote-control the GUI, which controls all settings (black, colors etc). Maybe there'll be interest in a purely web interface, but the server needs to run a GUI EC wallet (e.g. watching-only). There'll also be ±Δ for the OpCodes List.
+This won't count as official "Command-line Integration" because `@daemon_command` is only used to remote-control the GUI (but with almost all options available). Maybe there'll be interest in a purely web interface, but the server needs to run a GUI EC wallet (e.g. watching-only). There'll also be ±Δ for the OpCodes List, & an *Align #* button with small Consolas. There'll probably also be ΣΔ-decoding (counted from start or prior ΣΔ, i.e. Δ summed over each IF branch), along with `Ln #, Col #` like Notepad.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.gif)
 
