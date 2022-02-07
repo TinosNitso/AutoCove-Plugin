@@ -2,7 +2,7 @@ from PyQt5.QtCore         import Qt
 from PyQt5.QtGui          import QIcon, QMovie, QColor
 from PyQt5.QtWidgets      import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QTextEdit, QCheckBox, QPushButton, QFileDialog
 from electroncash         import bitcoin
-from electroncash.plugins import BasePlugin, hook
+from electroncash.plugins import BasePlugin, hook, daemon_command
 import electroncash, zipfile, shutil, threading, time, json
 
 Codes={'Constants': '0 False  PushData1 PushData2 PushData4 1Negate  1 True '+''.join(' '+str(N) for N in range(2,17))}   #Codes dict is used for colors & lower-case conversion.
@@ -28,9 +28,8 @@ Codes1N = {str(N) for N in range(10,17)}   #Codes1N is the set of OpCode names w
 #Brown (here) is dark-orange. Sky-blue & Purple (here) stem from blue. darkCyan (aka teal) appears too close to darkGreen. Byte/s following a PUSHDATA are gray+blue. darkYellow is aka olive. Orange looks like red when I look up at my LCD, but looks like yellow when I look down. Green pixels may be projecting upwards. darkCyan is clearer from above, & can be re-introduced in the future.
 Colors = {'Constants':Qt.blue,'Flow control':QColor(128,64,0),'Stack':Qt.darkGreen,'Splice':Qt.red,'Bitwise logic':QColor(255,128,0),'Arithmetic':QColor(0,128,255),'Crypto':Qt.magenta,'Locktime':Qt.darkYellow,'Reserved words':Qt.darkMagenta,'Native Introspection':QColor(128,0,255),'SelectionForeground':Qt.white,'PushData':QColor(128,128,255),'Data':Qt.black}
 
-DarwinBool = False  #Keep track of whether or not macOS.
 if 'nt' in shutil.os.name:                  Color=QColor(0,120,215) #WIN10 is strong blue. This section determines highlighting color. There may not be a command to get this automatically.
-elif 'Darwin' in shutil.os.uname().sysname: Color, Colors['SelectionForeground'], DarwinBool = QColor(179,215,255), Qt.black, True  #macOS Catalina is pale blue with black foreground. Windows & MX Linux have white foreground.
+elif 'Darwin' in shutil.os.uname().sysname: Color, Colors['SelectionForeground'] = QColor(179,215,255), Qt.black  #macOS Catalina is pale blue with black foreground. Windows & MX Linux have white foreground.
 else:                                       Color=QColor(48,140,198)    #MX Linux is medium blue.
 ColorLightness = Color.lightness()
 if ColorLightness < 128: ColorLightness = .75*ColorLightness + 64   #This formula decreases darkness of highlighting by 25%. Max lightness is 255, but MSPaint has max luminosity at 240.
@@ -59,10 +58,10 @@ for CODE in CaseDict.keys()-codesPythonic.upper().split(): CaseDict[CODE] = Case
 
 for CODE in Codes['Constants'].upper().split(): DepthDict[CODE]=1   #This section maps CODE to Δdepth. Δ is just a variable.
 Δ = 'IF -1 NOTIF -1 VERIFY -1 '
-Δ+= 'TOALTSTACK -1 FROMALTSTACK 1 2DROP -2 2DUP 2 3DUP 3 2OVER 2 DEPTH 1 DROP -1 DUP 1 NIP -1 OVER 1 TUCK 1 '   #IFDUP is 0 or 1.
+Δ+= 'TOALTSTACK -1 FROMALTSTACK 1 2DROP -2 2DUP 2 3DUP 3 2OVER 2 DEPTH 1 DROP -1 DUP 1 NIP -1 OVER 1 ROLL -1 TUCK 1 '   #IFDUP is 0 or 1.
 Δ+= 'CAT -1 NUM2BIN -1 SIZE 1 '
 Δ+= 'AND -1 OR -1 XOR -1 EQUAL -1 EQUALVERIFY -2 '
-Δ+= 'ADD -1 SUB -1 MUL -1 DIV -1 MOD -1 LSHIFT -1 RSHIFT -1 BOOLAND -1 BOOLOR -1 NUMEQUAL -1 NUMEQUALVERIFY -2 NUMNOTEQUAL -1 LESSTHAN -1 GREATERTHAN -1 GREATERTHANOREQUAL -1 MIN -1 MAX -1 '
+Δ+= 'ADD -1 SUB -1 MUL -1 DIV -1 MOD -1 LSHIFT -1 RSHIFT -1 BOOLAND -1 BOOLOR -1 NUMEQUAL -1 NUMEQUALVERIFY -2 NUMNOTEQUAL -1 LESSTHAN -1 GREATERTHAN -1 LESSTHANOREQUAL -1 GREATERTHANOREQUAL -1 MIN -1 MAX -1 '
 Δ+= 'WITHIN -2 '
 Δ+= 'CHECKSIG -1 CHECKSIGVERIFY -2 CHECKDATASIG -2 CHECKDATASIGVERIFY -3 '    #CHECKMULTISIG is <-2 & CHECKMULTISIGVERIFY<-3.
 Δ+= 'INPUTINDEX 1 ACTIVEBYTECODE 1 TXVERSION 1 TXINPUTCOUNT 1 TXOUTPUTCOUNT 1 TXLOCKTIME 1 '
@@ -88,17 +87,17 @@ CovenantScripts=[   #This section can provide examples of Scripts.
 
 #CashScript hex can also be decoded. The following is the smartBCH SHA-Gate cc_covenant_v1.cash demo, without Native Introspection. cashc compiles to asm by default (in that case select 'asm', above, before inserting).
 //5379547f7701207f01207f7701247f61007f77820134947f587f547f7701207f75597a5a796e7c828c7f755c7aa87bbbad060400000000145a7a7e5379011a7f777e587a8101117a635979a9597988029600b2757603e09304967802307597a269675f79009c635979a95b795d797e5e797ea9597988765c7987785e79879b785f79879b697803e09304965279023075979f63022c01b2756875675d79547f7701257f75a914282711cb97968c8674a46b5564ce3549f5782ea48855795e79aa7e5f797eaa5779885d7960797f7701247f7556798860796376023075937767768b7768547854807e5579557f777e7b757c6853798102d007945880760317a9147e5379a97e01877e76aa5579886d686d6d6d6d6d6d6d6d7551
-#A few more follow, with artifacts from James Cramer. slp_dollar.artifact is for issuer freezable SLP tokens, with dust notifications, which can only ever be sent from & to freezable addresses. Unfortunately slp_dollar.cash v0.1 is different to the v0.1 source in the .artifact, whose own source doesn't compile with cashc v0.6.5 to the v0.5.3 bytecode (there's a 'NOP 0168' vs '016b' discrepancy near the beginning). There's a bug since DEPTH+Δ>1 on all branches.
+#A few more follow, with artifacts from James Cramer. slp_dollar.artifact is for issuer freezable SLP tokens, with dust notifications, which can only ever be sent from & to freezable addresses. Unfortunately slp_dollar.cash v0.1 is different to the v0.1 source in the .artifact, whose own source doesn't compile with cashc v0.6.5 to the v0.5.3 bytecode (there's a 'NOP 0168' vs '016b' discrepancy near the beginning).
 //5579009c635679016b7f77820134947f5c7f7701207f75527902010187916959798277589d5a79827701219d5b798277589d170000000000000000406a04534c500001010453454e4420577a7e587e59797e587e5b797e7b01207f77082202000000000000760317a9147e5156797e587e5c7a7e01147e5c79a97e53797ea97e01877e780317a9147e51577a7e587e5d7a7e01147e58797e547a7ea97e01877e7b041976a9147e5a7aa97e0288ac7e727e7b7e7c7e577a7eaa885579a97b88716e7c828c7f75577aa87bbbac77777767557a519d55796101687f77820134947f5c7f7701207f75587951876352790100886758790100876352795188686851597a7e7b527f777e082202000000000000760317a9147e7ba97e01877e7c041976a9147e557a7e0288ac7e170000000000000000376a04534c500001010453454e4420577a7e587e557a7e537a7c537a7e7b7e557a7eaa88537a7b6e7c828c7f75557aa87bbbac7768
 #cashc -h slp_vault.cash aims to avoid accidental burning of SLP tokens. Equivalent to asm bytecode in slp_vault.artifact, & has no CODESEPARATORs. Both cashc v0.6.5 & v0.5.3 -h output are identical for the following 2 Scripts.
 //78009c635279820134947f77587f75547f7581022202a1635379587f7508000000000000000088685379547a827752947f770288ac885379a988726e7c828c7f75557aa87bbbac77677c519d7801447f7701247f820134947f77587f547f7701207f757c547f7581022202a163765579aa885479587f750800000000000000008868557a56797e577a7eaa7b01207f7588716e7c828c7f75567aa87bbbac77777768
-#slp_mint_guard.artifact. Equivalent to 'cashc -h slp_mint_guard.cash' + 2 CODESEPARATORs. There's a bug since DEPTH+Δ>2 for all branches.
+#slp_mint_guard.artifact. Equivalent to 'cashc -h slp_mint_guard.cash' + 2 CODESEPARATORs.
 //5479009c635579820128947f7701207f755779827701219d707c7e030102087e0800000000000000007e0822020000000000000317a9147e01145a7aa97e01207e567a7e01177e557a7e01207e54797e5a797ea97e01877e7c577a7e7c7e5679040000000087646e58797eaa88676eaa8868577aa8537a885679a9537a88567a567a6e7c828c7f75577aa87babbbad6d6d5167547a519d5479820128947f7701207f75707c7e030102087e577a7e0822020000000000000317a9147e011457797e01207e567a7e01177e557a7e01207e54797e59797ea97e01877e7c567a7e7c7e5579040000000087646e57797eaa88676eaa8868567aa8537a885579a9537a88716e7c828c7f75567aa87babbbac77777768
-#And there's 'cashc -h yieldContract.cash', yield-farming CashScript from github.com/mazetoken/SLP-smart-contract-tokens. There's a bug due to +4Δ (>+1Δ is invalid).
+#And there's 'cashc -h yieldContract.cash', yield-farming CashScript from github.com/mazetoken/SLP-smart-contract-tokens.
 //52796101687f77820134947f5c7f7701207f75567a56796e7c828c7f75587aa87bbbad02e8030222020222025879537aa269080000000000000000016a04534c5000827c7e7e51827c7e7e044d494e548276014ba063014c7c7e687c7e7e577a8276014ba063014c7c7e687c7e7e53827c7e7e0800000000000186a0827c7e7e827c7e7e7b5880041976a9147e567aa97e0288ac7e567a5880041976a9147e567a7e0288ac7e537a58800317a9147e557aa97e01877e727e7b7e7c7eaa87
 ''',
 ''.join(Codes[key].upper()+'    #'+key+'\n' for key in Codes.keys())+'//Native Introspection & MUL OpCodes will be enabled in 2022.\n//Converting to asm allows the hex below to be decoded.',    #List all the OpCodes.
-'''//[Sig, PubKey, Preimage, UTX]    #'preturn...' v1.1.1 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. This update reduces fees by up to another 2% by placing <Nonce>DROP @Start, & CODESEPARATOR in-btwn CHECKs.
+'''//[Sig, PubKey, Preimage, UTX]    #'preturn...' v1.1.1 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. Compared to v1.1.0, this one has up to 2% lower fees by better placement of <Nonce>DROP & CODESEPARATOR.
 08070000000345b407 DROP    #[...] Prepend nonce for vanity address, generated using VanityTXID-Plugin.
 OVER  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  <32+4> SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[..., Preimage, UTX] VERIFY Prevouts == Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 36B long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID == Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -109,7 +108,7 @@ SWAP <4+1+32+4> SPLIT NIP  1 SPLIT SWAP 0100 CAT BIN2NUM  SPLIT DROP    #[..., U
 1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(1)), scriptSig(1:)] ] Separate next data-push. Always assume data-push isn't OP_N with N>0. If send is malleable, this is an issue.
 SIZE  IF  NIP    #[..., scriptSig(1), [SIZE(scriptSig(2)), scriptSig(2:)] ] SIZE decides whether sender was P2SH or P2PKH. IMO it's more elegant to combine IF with a stack OpCode to simplify the stack.
         1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(2)), scriptSig(2:)] ] Separate next data-push.
-        SIZE  IF  NIP	#[..., scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
+        SIZE  IF  NIP   #[..., scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
                 1 SPLIT  SWAP SPLIT    #[..., [SIZE(Script), scriptSig(3:)] ] BIN2NUM unnecessary because the empty redeem Script isn't supported.
         ENDIF  DROP    #[..., Script, 0] Assume "3rd" data-push is final & is redeem Script.
         HASH160  0317a914 SWAP CAT  CAT  0187    #[..., Amount, Script] Predict Outputs for P2SH sender.
@@ -118,7 +117,7 @@ ELSE  DROP    #[..., PubKey, 0]
 ENDIF  CAT    #[..., SPLIT(Outputs)] From now is the same for both P2SH & P2PKH.
 HASH256  OVER SIZE <32+4+4> SUB SPLIT NIP  0120 SPLIT DROP  EQUALVERIFY    #[..., Preimage, Outputs] VERIFY Outputs==Output is correct. hashOutputs is located 40B from Preimage end.
 SHA256  2 PICK SIZE 1SUB SPLIT DROP    #[Sig, PubKey, Preimage] DATASIG is 1 shorter than a SIG.
-SWAP  2 PICK  CHECKDATASIGVERIFY CODESEPARATOR CHECKSIG    #[Sig, PubKey, SHA256, Sig[:-1]] VERIFY DATApush==Preimage. Only 1B following CODESEPARATOR must be signed for by PrivKey=1. 
+SWAP  2 PICK  CHECKDATASIGVERIFY CODESEPARATOR CHECKSIG    #[Sig, PubKey, SHA256, Sig[:-1]] VERIFY DATApush==Preimage. Only 1B following CODESEPARATOR must be signed for (e.g. by PrivKey=1). 
 
 #If the 'preturn...' address is added to a watching-only wallet, this plugin will automatically broadcast the return txns.
 #Sender must use a P2PKH or P2SH address, not P2PK. P2PK isn't currently supported by EC.
@@ -133,11 +132,11 @@ SWAP  2 PICK  CHECKDATASIGVERIFY CODESEPARATOR CHECKSIG    #[Sig, PubKey, SHA256
 #To return from other addresses requires editing qt.py.
 ''',
 ''] #Blanks for 'New' & 'Clear all below'.
-CovenantScripts[1]=CovenantScripts[1].replace('Bitwise logic','Bitwise logic (unary & binary)').replace('Locktime','Locktime (unary)').replace('Reserved words','Reserved words (nullary)').replace('BCH','BCH (binary, unary & ternary)')   #This section provides some commentary to OpCodes list.
-CovenantScripts[1]=CovenantScripts[1].replace('Splice','Splice (unary)').replace('NUM2BIN  ','NUM2BIN    #Splice (binary)')
-CovenantScripts[1]=CovenantScripts[1].replace('Arithmetic','Arithmetic (ternary)').replace('MAX  ','MAX    #Arithmetic (binary)').replace('0NOTEQUAL','0NOTEQUAL    #Arithmetic (unary)')
-CovenantScripts[1]=CovenantScripts[1].replace('Crypto','Crypto (binary, multary & unary)').replace('CODESEPARATOR  ','CODESEPARATOR    #Crypto (unary & nullary)')
-CovenantScripts[1]=CovenantScripts[1].replace('#Native Introspection','#Native Introspection (unary)').replace('TXLOCKTIME  ','TXLOCKTIME    #Native Introspection (nullary)')
+CovenantScripts[1]=CovenantScripts[1].replace('Flow control','Flow control. -3Δ').replace('Bitwise logic','Bitwise logic (unary & binary). -6Δ').replace('Locktime','Locktime (unary). +0Δ').replace('Reserved words','Reserved words (nullary). +0Δ').replace('BCH','BCH (binary, unary & ternary)')   #This section provides some commentary to OpCodes list.
+CovenantScripts[1]=CovenantScripts[1].replace('Splice','Splice (unary). +1Δ').replace('NUM2BIN  ','NUM2BIN    #Splice (binary). -2Δ')
+CovenantScripts[1]=CovenantScripts[1].replace('Arithmetic','Arithmetic (ternary). -2Δ').replace('MAX  ','MAX    #Arithmetic (binary). -19Δ').replace('0NOTEQUAL','0NOTEQUAL    #Arithmetic (unary). +0Δ')
+CovenantScripts[1]=CovenantScripts[1].replace('Crypto','Crypto (binary, multary & unary)').replace('CODESEPARATOR  ','CODESEPARATOR    #Crypto (unary & nullary). +0Δ')
+CovenantScripts[1]=CovenantScripts[1].replace('#Native Introspection','#Native Introspection (unary). +0Δ').replace('TXLOCKTIME  ','TXLOCKTIME    #Native Introspection (nullary). +6Δ')
 
 ReturnScripts='''
 08070000000345b4077578547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f75817882779402f7019458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279bbabac
@@ -152,13 +151,13 @@ class Plugin(BasePlugin):
         BasePlugin.__init__(self, parent, config, name)
         self.windows, self.tabs, self.UIs = {}, {}, {}  #Initialize plugin wallet dictionaries.
   
-        Dir=self.parent.get_external_plugin_dir()+'/AutoCove/'
-        self.WebP=Dir+'Icon.webp'    #QMovie only supports GIF & WebP. GIF appears ugly. Animating a flag looks too difficult for me.
-        if shutil.os.path.exists(Dir): Extract=False   #Only ever extract zip (i.e. install) once.
+        self.Dir=(self.parent.get_external_plugin_dir()+'/AutoCove/').replace('\\','/') #Daemon help message needs /.
+        self.WebP=self.Dir+'Icon.webp'    #QMovie only supports GIF & WebP. GIF appears ugly. Animating a flag looks too difficult for me.
+        if shutil.os.path.exists(self.Dir): Extract=False   #Only ever extract zip (i.e. install) once.
         else:
             Extract=True
-            Zip=zipfile.ZipFile(Dir[:-1]+'-Plugin.zip')
-            Zip.extract('AutoCove/Icon.webp',Dir[:-9])
+            Zip=zipfile.ZipFile(self.Dir[:-1]+'-Plugin.zip')
+            Zip.extract('AutoCove/Icon.webp',self.Dir[:-9])
         if Extract: Zip.close()
         self.Icon=QIcon()   #QMovie waits for init_qt. self.Icon isn't necessary, but I suspect it's more efficient than calling QIcon for all wallets.
     def on_close(self):
@@ -194,6 +193,12 @@ class Plugin(BasePlugin):
         for wallet_name in self.UIs.keys():
             Tabs=self.windows[wallet_name].tabs
             Tabs.setTabIcon(Tabs.indexOf(self.tabs[wallet_name]),self.Icon)
+    @daemon_command #This method allows internet servers to decode any user input to a HTML file, using only terminal command, after EC GUI wallet has been launched. Only the last P2SH sigscript in a txn will be written to HTML (unless someone requests o'wise - it seems like the server could make over a hundred HTML files on just 1 request).
+    def AutoCove(self, daemon, config):
+        if not self.UIs: return 'No UI. Check GUI.' #UI won't load until after user clicks OK when launching a watching-only wallet.
+        self.DaemonArgs = config.get('subargs')
+        if len(self.DaemonArgs)<2: return 'AutoCove usage example:\nElectron-Cash daemon AutoCove TXID FileName.html Option1 Option2 Option3 Option4\nTXID can instead be a redeem Script, a raw TX, etc.\nAll 4 options are optional and can be in any order, select from:\nblack white\ncodes Codes CODES OP_CODES Op_Codes op_codes\nhex asm dec 0b 0o 0x\n1line align#\nColors & font can be set manually in GUI.\nGUI memory cleared before each HTML, except all options are remembered.\nExample of PowerShell usage:\n./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 '+self.Dir+'RefreshTimer.html black'
+        list(self.UIs.values())[0].HiddenButton.clicked.emit()  #Daemon isn't allowed to directly connect to a real live text-box. Use the 0th UI.
 class UI(QDialog):
     def __init__(self, window, plugin):
         QDialog.__init__(self, window)
@@ -204,8 +209,8 @@ class UI(QDialog):
         window.history_updated_signal.connect(self.history_updated) #This detects preturn UTXOs. A password is never necessary to loop over UTXOs.
         window.addr_converter_button.clicked.connect(self.ConverterClicked)   #Toggle CashAddr.
         
-        self.HiddenBox=QTextEdit()  #HiddenBox connection allows broadcasting from sub-thread, after sleeping.
-        self.HiddenBox.textChanged.connect(self.broadcast_transaction)
+        self.HiddenBox, self.HiddenButton = QTextEdit(), QPushButton()  #HiddenBox connection allows broadcasting from sub-thread, after sleeping. The Daemon CLI needs a PYQT_SIGNAL (imaginary button). I've never used an imaginary button before!
+        self.HiddenBox.textChanged.connect(self.broadcast_transaction), self.HiddenButton.clicked.connect(self.Daemon)
 
         self.ColorsBox = QCheckBox('Colors')
         self.ColorsBox.setToolTip('Slows down typing, selections, etc.\nNot sure how colors should be assigned.')
@@ -225,38 +230,43 @@ class UI(QDialog):
         self.AsmBox.activated.connect(self.AsmBoxActivated), self.AsmBox.highlighted.connect(self.AsmBoxHighlighted)
         
         self.FontBox = QComboBox()
-        self.FontBox.addItems('Default font,Consolas'.split(','))
-        self.FontBox.setToolTip("Font.\nConsolas is Notepad's default, PointSize(11), & has no kerning.")
+        self.FontBox.addItems('Default font; Courier New; Courier New, 10'.split('; '))
+        self.FontBox.setToolTip("Consolas is Notepad's default, PointSize(11), & has no kerning.")
         self.FontBox.activated.connect(self.FontBoxActivated), self.FontBox.highlighted.connect(self.FontBoxHighlighted)
 
-        Title=QLabel('v1.1.1')
-        Title.setStyleSheet('font-weight: bold'), Title.setAlignment(Qt.AlignCenter)
-        
-        SaveButton = QPushButton('Save HTML')
-        SaveButton.clicked.connect(self.SaveButtonClicked)
-        
-        LineButton = QPushButton('1 line')
+        AlignButton = QPushButton('Align #')
+        AlignButton.setToolTip("macOS doesn't have Consolas, so alignment would require some other font.\nOnly lines with ≤21B are aligned.")
+        AlignButton.clicked.connect(self.AlignButtonClicked)
+
+        LineButton = QPushButton('1 Line')
         LineButton.setToolTip('Strips out all comments.\nConvert to OP_CODES & asm to generate CashScript bytecode.\nTemporarily enables LineWrap.\nDisable colors for more speed.')
         LineButton.clicked.connect(self.LineButtonClicked)
         
+        SaveButton = QPushButton('Save HTML')
+        SaveButton.setToolTip("Supports B&W background, word wrap, & highlighting.\nTerminal command './Electron-Cash daemon AutoCove' displays CLI instructions.")
+        SaveButton.clicked.connect(self.SaveButtonClicked)
+
         self.ScriptsBox = QComboBox()
         self.ScriptsBox.setToolTip('New auto-decodes are stored here.\nasm form not stored.\nDisable colors for more speed.')
-        self.ScriptsBox.addItems('New,OpCodes List,preturn... v1.1.1,Clear all below'.split(','))
+        self.ScriptsBox.addItems('New, OpCodes List, preturn... v1.1.1, Clear all below'.split(', '))
         self.ScriptsBox.activated.connect(self.ScriptActivated), self.ScriptsBox.highlighted.connect(self.ScriptsBoxHighlighted)
         self.KeepScriptsIndex = False   #Normally False. Whenever text changes, combo-box switches to 'New'.
 
+        Title=QLabel('v1.1.2')
+        Title.setStyleSheet('font-weight: bold'), Title.setAlignment(Qt.AlignCenter)
+
         HBoxTitle=QHBoxLayout()
-        {HBoxTitle.addWidget(Widget) for Widget in (self.ColorsBox, self.BlackBox, self.CaseBox, self.AsmBox)}
-        if not DarwinBool: HBoxTitle.addWidget(self.FontBox) #Consolas isn't working on macOS.
-        {HBoxTitle.addWidget(Widget) for Widget in (LineButton, SaveButton, self.ScriptsBox, Title)}
-        
+        {HBoxTitle.addWidget(Widget) for Widget in (self.ColorsBox, self.BlackBox, self.CaseBox, self.AsmBox, self.FontBox, AlignButton, LineButton, SaveButton, self.ScriptsBox, Title)}
+       
         InfoLabel = QLabel("Decode P2SH redeem Script hex by pasting it below. Paste txn or its TXID (or URL) to decode. Drag & drop .artifact &/or .txn files.") 
-        InfoLabel.setToolTip("Only P2SH sigscripts are ever decoded.\nIf file is too large (e.g. 1GB) EC crashes.\nURL needs a TXID in its .split('/')\nAuto-indents are 8 spaces.\nΔ is the stack's depth change for each line, unavailable for IFDUP & CHECKMULTISIGs.\nUndo & Redo unavailable.")
+        InfoLabel.setToolTip("Only P2SH sigscripts are ever decoded.\nIf file is too large (e.g. 1GB) EC crashes.\nURL needs a TXID in its .split('/')\nAuto-indents are 8 spaces.\nΔ is the stack's depth change for each line, unavailable for IFDUP & CHECKMULTISIGs.\nΣΔ is summed from the last ΣΔ, or the beginning.\nUndo & Redo unavailable.")
+        self.CoordsLabel = QLabel()
+        HBoxInfo=QHBoxLayout()
+        {HBoxInfo.addWidget(Label) for Label in (InfoLabel, self.CoordsLabel)}
         
         self.ScriptBox=QTextEdit()
-        self.ScriptBox.setUndoRedoEnabled(False)    #Undo etc can be enabled in a future version, using QTextDocument. IDE is unsafe without both save & undo. Unfortunately clicking btwn 2 lines often moves the cursor to line end.
-        self.ScriptBox.setAcceptRichText(False), self.ScriptBox.setTabStopWidth(24) # 3=default space-bar-width, so 24=8 spaces. Don't allow copy-paste of colors or font into box (so font is permanently default).
-        self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged)
+        self.ScriptBox.setUndoRedoEnabled(False), self.ScriptBox.setAcceptRichText(False), self.ScriptBox.setTabStopWidth(24) # 3=default space-bar-width, so 24=8 spaces. Don't allow copy-paste of colors or font into box. Undo etc can be enabled in a future version, using QTextDocument. IDE unsafe without undo. Unfortunately clicking btwn 2 lines often moves the cursor to line end
+        self.ScriptBox.textChanged.connect(self.textChanged), self.ScriptBox.selectionChanged.connect(self.selectionChanged), self.ScriptBox.cursorPositionChanged.connect(self.cursorPositionChanged)
         
         DefaultFont = self.ScriptBox.font()
         self.Family, self.PointSize = DefaultFont.family(), DefaultFont.pointSize()
@@ -264,15 +274,14 @@ class UI(QDialog):
         self.HexBox=QTextEdit()
         self.HexBox.setReadOnly(True)
 
-        self.AddressLabel=QLabel()
+        self.AddressLabel, self.CountLabel = QLabel(), QLabel()
         self.AddressLabel.setToolTip("Start Electron-Cash with --testnet or --testnet4 to generate bchtest addresses.")
-        self.CountLabel=QLabel()
+        self.  CountLabel.setToolTip("Limits are 201 Ops & 520 Bytes.\nops with values ≤0x60 don't count.")
         HBoxAddress=QHBoxLayout()
         {HBoxAddress.addWidget(Widget) for Widget in (self.AddressLabel, self.CountLabel)}
-        self.CountLabel.setAlignment(Qt.AlignRight)
-        self.CountLabel.setToolTip("Limits are 201 Ops & 520 Bytes.\nops with values ≤0x60 don't count.")
-        
-        {Label.setTextInteractionFlags(Qt.TextSelectableByMouse) for Label in {Title, InfoLabel, self.CountLabel, self.AddressLabel}}
+
+        {Label.setAlignment(Qt.AlignRight) for Label in (self.CoordsLabel, self.CountLabel)}
+        {Label.setTextInteractionFlags(Qt.TextSelectableByMouse) for Label in {Title, InfoLabel, self.CoordsLabel, self.CountLabel, self.AddressLabel}}
         self.BlackBox.toggled.connect(self.BlackToggled)    #This section initializes starting Script.
         try: 
             if 'dark' not in window.config.user_config['qt_gui_color_theme']: raise
@@ -283,7 +292,7 @@ class UI(QDialog):
         self.ScriptActivated()    #Assembly Script dumped onto HexBox, to set labels.
 
         VBox=QVBoxLayout()
-        VBox.addLayout(HBoxTitle), VBox.addWidget(InfoLabel)
+        {VBox.addLayout(HBox) for HBox in (HBoxTitle, HBoxInfo)}
         VBox.addWidget(self.ScriptBox,10), VBox.addWidget(self.HexBox,1)  #Script bigger than hex. Dunno how to set a dynamic or adjustable height on HexBox.
         VBox.addLayout(HBoxAddress)
         
@@ -375,28 +384,34 @@ class UI(QDialog):
             endlBefore = endlEither+['CODESEPARATOR']   #CODESEPARATOR often appears in a triple preceding a CHECKDATASIG & a CHECKSIG.
             endlAfter  = endlEither+'NUM2BIN BOOLAND'.split()    #NUM2BIN & BOOLAND may look good at line ends.
             Script, endl, IndentSize = '', '\n', 8 #endl gets tabbed after IFs (IF & NOTIF) etc. Try 8 spaces, because default font halves the space size.
-            Size, SizeSize, Count, OpCount, Δ = 0, 0, 0, 0, 0  #Size count-down of "current" data push. SizeSize is the "remaining" size of Size (0 for 0<Size<0x4c). Count is the # of Bytes on the current line. Target min of 1 & max of 21, bytes/line. OpCount is for the current line. Δ counts the change in stack depth.
+            Size, SizeSize, Count, OpCount, Δ, ΣΔ = 0, 0, 0, 0, 0, 0  #Size count-down of "current" data push. SizeSize is the "remaining" size of Size (0 for 0<Size<0x4c). Count is the # of Bytes on the current line. Target min of 1 & max of 21, bytes/line. OpCount is for the current line. Δ counts the change in stack depth.
             try:
                 for Tuple in self.get_ops[:-1]:
                     Script += '//'
                     try:
                         if not Tuple[1]: raise  #To be consistent with Blockchain.com, list empty push as OP_0.
                         Script   += Tuple[1].hex()    #Show full stack leading to redeem Script as asm comments when decoding a scriptSig.
-                        ByteCount = ', '+str(len(Tuple[1]))+'B push'
+                        ByteCount = ' '+str(len(Tuple[1]))+'B push'
                     except:   #Sigscript may push OP_N instead of data.
                         try:    Int = Tuple[0]
                         except: Int = Tuple   #SLP Ed.
                         Script   += 'OP_'+CodeDict[bitcoin.int_to_hex(Int)]
                         ByteCount = ''  
-                    Script += ' '*IndentSize+'#+1Δ, 0 ops'+ByteCount+endl #No OP_EXEC means never any ops from push-only data-pushes.
+                    Script += ' '*IndentSize+'#+1Δ 0ops'+ByteCount+endl #No OP_EXEC means never any ops from push-only data-pushes.
+                    ΣΔ += 1
                 self.get_ops=[] #Delete per input.
             except: pass    #Not decoding a scriptSig with more than a redeem Script.
             
-            def endlComment(Script,Δ,OpCount,Count,endl): #This method is always used to end lines in the redeem Script, when decoding.
+            def endlComment(Script,Δ,OpCount,Count,endl): #This method is used to end lines in the redeem Script, when decoding.
                 if Δ==None: ΔStr = ''
-                else:       ΔStr = (Δ>=0)*'+'+str(Δ)+'Δ, '  #+ indicates 
-                ops  = ' op'+'s'*(OpCount!=1)+', '
+                else:       ΔStr = (Δ>=0)*'+'+str(Δ)+'Δ '
+                if OpCount==1: ops  = 'op  '
+                else:          ops  = 'ops '
                 return Script+' '*(IndentSize-1)+'#'+ΔStr+str(OpCount)+ops+str(Count)+'B'+endl, 0, 0, 0    #Reset Δ, OpCount & Count to 0.
+            def ΣΔComment(Script, ΣΔ, endl):  #This method adds ΣΔ to the last line & any line with IF, ENDIF etc. Also returns zeroed out ΣΔ.
+                if ΣΔ==None: ΣΔStr = '?'   #Indicates where next ΣΔStr is summed from.
+                else:        ΣΔStr = (ΣΔ>=0)*'+'+str(ΣΔ)
+                return Script.rstrip(endl)+' '*IndentSize+ΣΔStr+'ΣΔ'+endl, 0
             endlAfterDROP = True    #A Script may start with <Nonce>DROP for a vanity address. endlBefore <Nonce>DROP would be trickier. If Script starts with DROP, it still ends the 1st line due to implied malleability.
             for Byte in Bytes:
                 Hex=bitcoin.int_to_hex(Byte)  #Byte is an int.
@@ -416,7 +431,7 @@ class UI(QDialog):
                         if Count>=21: Script, Δ, OpCount, Count = endlComment(Script,Δ,OpCount,Count,endl)   #Large data pushes (e.g. HASH160) get their own line.  At most 21B per line. A HASH160 requires 1+20 bytes.
                     endlAfterDROP = True
                     continue
-                try:    #OpCode or else new data push.
+                try:    #OpCode which has a name.
                     CODE=CodeDict[Hex]
                     if CODE in {'ENDIF','ELSE'}:
                         endl='\n'+endl[ 1+IndentSize : ] #Subtract indent for ENDIF & ELSE.
@@ -426,21 +441,28 @@ class UI(QDialog):
                     Script  += CODE+' '
                     Count   += 1
                     OpCount += Byte>0x60 #Only these count towards 201 limit.
-                    try:   Δ+= DepthDict[CODE]
-                    except:Δ = None
+                    try:    Δ+= DepthDict[CODE]
+                    except: Δ = None
+                    try:   ΣΔ+= DepthDict[CODE]
+                    except:ΣΔ = None
                     if CODE in {'ELSE', 'IF', 'NOTIF'}: endl+=' '*IndentSize #Add indent after ELSE, IF & NOTIF.
                     elif 'PUSHDATA' in CODE: SizeHex, SizeSize = '', 2**(Byte-0x4c)  #0x4c is SizeSize=1. SizeHex is to be the little endian hex form of Size.
-                    if Count>=21 or CODE in endlAfter or any(Word in CODE for Word in {'RESERVED', 'VERIFY'}) or (endlAfterDROP and CODE=='DROP'): Script, Δ, OpCount, Count = endlComment(Script,Δ,OpCount,Count,endl)   #New line *after* any VERIFY or RESERVED. A <Nonce>DROP also demands its own endlAfter (& maybe endlBefore).
-                except:
+                    if Count>=21 or CODE in endlAfter or any(Word in CODE for Word in {'RESERVED', 'VERIFY'}) or (endlAfterDROP and CODE=='DROP'): Script, Δ, OpCount, Count = endlComment(Script,Δ,OpCount,Count,endl)   #New line *after* any VERIFY or RESERVED. A <Nonce>DROP should have its own endlAfter (& maybe endlBefore).
+                    if CODE in 'IF NOTIF ELSE ENDIF'.split(): Script, ΣΔ = ΣΔComment(Script, ΣΔ, endl)
+                except: #New data push.
                     Size = Byte
                     if Count and Count+Size>=21: Script, Δ, OpCount, Count = endlComment(Script,Δ,OpCount,Count,endl)  #New line before too much data.
                     Script += Hex
                     Count  += 1
-                    try: Δ += 1
-                    except: pass    #Δ may be None.
+                    try:
+                        Δ += 1
+                        ΣΔ+= 1
+                    except: pass    #Δ or ΣΔ may be None.
                 if endlAfterDROP: endlAfterDROP = False
-            if Count: Script = endlComment(Script,Δ,OpCount,Count,'')[0]
-            Script = Script.rstrip(' ')+'\n'*(Count>0)+'#Auto-decode'   #Final comment shows up like a VERIF.
+            Script = Script.rstrip(endl)    #Remove empty last line.
+            if Count: Script = endlComment(Script,Δ,OpCount,Count,'')[0]  #Comment final line.
+            if 'ΣΔ' not in Script.splitlines()[-1]: Script = ΣΔComment(Script, ΣΔ, '')[0]
+            Script += '\n#Auto-decode'
             try: Script += ' of input '+str(self.InputN)+self.TXIDComment    #Txn inputs get a longer comment than plain redeem Script.
             except: pass
             
@@ -455,15 +477,15 @@ class UI(QDialog):
                 self.HexBox.clear(), self.ScriptActivated()   #Clearing HexBox ensures new colors, in case the same Script is being decoded.
                 self.ScriptsBox.setItemText(ScriptsIndex, self.Address)
                 return  #textChanged signal will return to below this point. Decoder ends here.
-        if self.ColorsBox.isChecked():  #This section greys out typed '#' even though they don't change bytecode.
+        if Script and self.ColorsBox.isChecked():  #This section greys out typed '#' even though they don't change bytecode. Same with bluing out '>'.
             Cursor=self.ScriptBox.textCursor()
-            Format=Cursor.charFormat()
-            position=Cursor.position()
-            if Script and '#'==Script[position-1] and Qt.gray!=Format.foreground():
-                Format.setForeground(Qt.gray)
-                Cursor.setPosition(position-1), Cursor.setPosition(position,Cursor.KeepAnchor), Cursor.setCharFormat(Format), Cursor.clearSelection()
-                self.ScriptBox.setTextCursor(Cursor)
-                return  #signal brings us back to below here.
+            Format, position, ColorChange = Cursor.charFormat(), Cursor.position(), False  #if ColorChange, return.
+            Color, ColorNew = (Format.foreground(),)*2
+            if   '#'==Script[position-1]: ColorNew = Qt.gray
+            elif '>'==Script[position-1] and Color == self.Colors['Data']: ColorNew = self.Colors['Constants']
+            if Color!=ColorNew: #Set ColorNew.
+                Format.setForeground(ColorNew), Cursor.setPosition(position-1), Cursor.setPosition(position,Cursor.KeepAnchor), Cursor.setCharFormat(Format), Cursor.clearSelection(), self.ScriptBox.setTextCursor(Cursor)
+                return  #Signal returns below here.
         Script, OpCount = self.ScriptToHex(Script,False)    #OpCount could also be calculated using EC's .get_ops
         if Script and Script==self.HexBox.toPlainText(): return    #Do nothing if no hex change, unless empty (not much work).
         self.HexBox.setPlainText(Script)
@@ -515,10 +537,10 @@ class UI(QDialog):
         Box = self.ScriptsBox
         if Index>=len(CovenantScripts) and Index!=Box.currentIndex(): Box.setCurrentIndex(Index), self.ScriptActivated()   #Highlighted → Activated, but only if current & future Scripts are from decoder memory.
     def ScriptActivated(self):    #Change redeem script with correct case.
-        Index, self.AsmBool, self.AsmIndex = self.ScriptsBox.currentIndex(), False, 0    #Loading into asm or <dec> requires artificially toggling since memory is always in hex.
-        if Index==3:   #This section is for 'Clear below'. Maybe gc.collect() could fit in.
-            {self.ScriptsBox.removeItem(4) for ItemN in range(4,len(self.Scripts))}
-            self.Scripts, Index = self.Scripts[:4], 0   #0 sets to 'New'.
+        Index, FirstIndex, self.AsmBool, self.AsmIndex = self.ScriptsBox.currentIndex(), len(CovenantScripts), False, 0    #FirstIndex is for Scripts below 'Clear...'. Loading into asm or <dec> requires artificially toggling since memory is always in hex.
+        if Index==FirstIndex-1:   #This section is for 'Clear below'. Maybe gc.collect() could fit in.
+            {self.ScriptsBox.removeItem(FirstIndex) for ItemN in range(FirstIndex,len(self.Scripts))}
+            self.Scripts, Index = self.Scripts[:FirstIndex], 0   #0 sets to 'New'.
         self.ScriptBox.setPlainText((self.Scripts[Index])), self.ScriptsBox.setCurrentIndex(Index), self.CaseBoxActivated(), self.AsmBoxActivated()
         if self.ColorsBox.isChecked(): self.setTextColor()   #Color even if no change in bytecode or hex/asm.
     def SetAddress(self):
@@ -542,7 +564,7 @@ class UI(QDialog):
                     Find, lenWord = LineCode.find(Word), len(Word)
                     Pos+=Find
                     Cursor.setPosition(Pos), HexCursor.setPosition(HexPos)   #This removes Anchor.
-                    try:    #to color in Word as OpCode
+                    try:    #to color in Word as OpCode Name.
                         if self.AsmBool and Word in Codes1N: raise #1N not an OpCode in Asm.
                         else: Format.setForeground(self.ColorDict[Word.replace('OP_','')])
                         Pos+=lenWord
@@ -693,7 +715,7 @@ class UI(QDialog):
                 Pos+=lenWord
                 Cursor.setPosition(Pos,Cursor.KeepAnchor)
 
-                try:
+                try:    
                     WordUp = Word.upper().replace('OP_','')
                     HexDict[WordUp] #If OpCode, usually do nothing.
                     if Index and 'PUSHDATA' in WordUp:
@@ -709,7 +731,7 @@ class UI(QDialog):
                         try:
                             if Index>2: insertWord = '<'+FromDec(int(WordUp))+'>'   #Decimal names should be converted to bin, oct or hex.
                         except: pass
-                except:    #Word isn't an OpCode.
+                except:    #Word isn't an OpCode Name.
                     if Word.startswith('<') or Word.endswith('>'): insertWord = self.DecToHex(Word,False) #<dec>→hex
                     if not Index:   #→hex
                         if self.AsmBool and Word==insertWord: insertWord = push_script(Word)   #asm→hex, when not <dec>.
@@ -789,23 +811,63 @@ class UI(QDialog):
             self.SetAddress()
         except: pass
     def FontBoxHighlighted(self,Index): self.FontBox.setCurrentIndex(Index), self.FontBoxActivated()   #Highlighted → Activated.
-    def FontBoxActivated(self):
-        Font = self.ScriptBox.font()
-        if self.FontBox.currentIndex(): Font.setFamily('Consolas'), Font.setPointSize(11), self.ScriptBox.setFont(Font), self.HexBox.setFont(Font)  #'Consolas' Size(11) is Windows Notepad default. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths & hex digits from different bytes are squeezed together), and Size may be too small. An option is to kern only OpCodes, but I tried & varying font is a bit ugly.
-        else:              Font.setFamily(self.Family), Font.setPointSize(self.PointSize), self.ScriptBox.setFont(Font), self.HexBox.setFont(Font)
-    def SaveButtonClicked(self):    #Save HTML. A tabIcon isn't needed. LineWrap & background-color edited manually.
-        HTML = '<title>'+self.Address+'</title>\n'+self.ScriptBox.toHtml()  #Can use address as title.
+    def FontBoxActivated(self): #A future version of this method could replace all 8-sized indents with 4-sized ones, depending on font. Notepad & macOS use 8, but MX-Linux uses 4.
+        Font, Index = self.ScriptBox.font(), self.FontBox.currentIndex()
+        if Index:
+            Font.setFamily('Courier New')    #'Consolas' Size(11) is Windows Notepad default. 'Courier New' Size(10) is Notepad++. O'wise default is 'MS Shell Dlg 2' Size(8) which makes spaces half as big, and forces kerning (e.g. multisig PubKeys have different widths & hex digits from different bytes are squeezed together), and Size may be too small.
+            if Index==1: Font.setPointSize(self.PointSize)
+            else:        Font.setPointSize(10)
+        else: Font.setFamily(self.Family), Font.setPointSize(self.PointSize)
+        self.ScriptBox.setFont(Font), self.HexBox.setFont(Font)
+    def SaveHTML(self,FileName,SaveCoords):    #Save HTML. A tabIcon isn't needed. LineWrap, background-color & a word-break edited manually. This method serves terminal Daemon as well, just not the coords.
+        HTML = '<title>'+self.Address+'</title>\n\n'+self.ScriptBox.toHtml()  #Can use address as title.
         if self.BlackBox.isChecked(): HTML = HTML.replace('style="','style=" background-color:#000000;',1)    #Black background.
-        HTML+= '<br>\n'+self.HexBox.toHtml().replace('p style="','p style="white-space: pre-wrap; word-break: break-word;',1)+'\n'    #The big hex word always gets broken word-wrap.
+        HTML+= '\n<br>\n'+self.HexBox.toHtml().replace('p style="','p style="white-space: pre-wrap; word-break: break-word;',1)+'\n\n'    #The big hex word always gets broken word-wrap.
         
         Box=QTextEdit() #Append address & count info to HTML output.
-        Box.setTextColor(self.Colors['Data']), Box.setText('\n'+self.Address+'\n'+self.CountLabel.text())
+        Box.setTextColor(self.Colors['Data']), Box.setText('\n'+self.Address+'\n'+self.CountLabel.text()+'\n'+SaveCoords*('\n'+self.CoordsLabel.text()+'\n'))
         if self.ColorsBox.isChecked():  #Leading p or 3 can be blue.
             Cursor = Box.textCursor()
             Format = Cursor.charFormat()
             Cursor.setPosition(1), Cursor.setPosition(2, Cursor.KeepAnchor), Format.setForeground(self.Colors['Constants']), Cursor.setCharFormat(Format), Box.setTextCursor(Cursor)
         if not self.ScriptBox.lineWrapMode(): HTML+= Box.toHtml().replace('-wrap','',1)    #No -wrap. It turns out only the last declaration counts in general.
         else                                : HTML+= Box.toHtml()
-
-        try: open(QFileDialog.getSaveFileName(self,'','','*.html')[0], 'w', encoding='utf-8').write(HTML)
-        except: pass    #User cancelled.
+        try: open(FileName, 'w', encoding='utf-8').write(HTML+'\n')
+        except: self.window.show_message("Can't save to that location.")    #Triggered by bad Daemon command.
+    def SaveButtonClicked(self):    #Another possibility is to save a screenie, but that's always missing the title-bar. window.screen().grabWindow(window.winId()).save(FileName,'png')
+        FileName = QFileDialog.getSaveFileName(self,'','','*.html')[0]
+        if FileName: self.SaveHTML(FileName,True)
+    def Daemon(self):   #This method interfaces UI with Daemon CLI. It's like a remote control. The "correct" CLI options are determined here. 
+        self.ScriptsBox.setCurrentIndex(len(CovenantScripts)-1), self.ScriptActivated(), self.ScriptBox.clear() #Clear memory before decoding.
+        Args, OptionsLow = self.plugin.DaemonArgs, []
+        for Option in Args[2:]:
+            OptionLow = Option.lower()
+            OptionsLow.append(OptionLow)
+            if   'black' in OptionLow: self.BlackBox.setChecked(True )
+            elif 'white' in OptionLow: self.BlackBox.setChecked(False)
+            elif Option in (self.CaseBox.itemText(n) for n in range(6)): self.CaseBox.setCurrentText(Option)   #OP_CODES etc.
+            else:
+                try: self.AsmBox.setCurrentIndex('hex asm dec 0b 0o 0x'.split().index(OptionLow))
+                except: pass
+        self.ScriptBox.setText(Args[0])
+        
+        if    '1line' in OptionsLow: self.LineButtonClicked()   #A button may be pushed, too.
+        elif 'align#' in OptionsLow: self.AlignButtonClicked()
+        self.SaveHTML(Args[1],False)
+    def AlignButtonClicked(self):   #Size up each line's bytecode, and base alignment on longest line ≤21B.
+        Script, Cursor, Pos, MaxFind = self.ScriptBox.toPlainText(), self.ScriptBox.textCursor(), 0, 0  #Pos is line starting position, & MaxFind sets standard # column position.
+        SplitLines = Script.splitlines()
+        for Line in SplitLines: #Determine MaxFind
+            if '#' in Line and 0 < len(self.ScriptToHex(Line,True)[0])>>1 <= 21: MaxFind = max(MaxFind, len(Line.split('#')[0].rstrip(' ')))    #This can all be done without rstrip (.find only), but not as well.
+        for Line in SplitLines: #Insert spacing.
+            Find, FindStrip = Line.find('#'), len(Line.split('#')[0].rstrip(' '))
+            if 0<Find and FindStrip<=MaxFind:
+                Cursor.setPosition(Pos+FindStrip), Cursor.setPosition(Pos+Find, Cursor.KeepAnchor), Cursor.insertText(' '*(MaxFind-FindStrip))
+                Pos += MaxFind-Find
+            Pos += len(Line)+1
+        self.ScriptBox.setTextCursor(Cursor)    #It might be faster to disconnect & reconnect, but there's no change in bytecode (no coloring either way).
+        self.FontBoxHighlighted(1)  #Switch to Courier New.
+    def cursorPositionChanged(self):  #Calculate new coords. Standard convention is to start @(1,1).
+        Text, CursorPos = '\n'+self.ScriptBox.toPlainText(), self.ScriptBox.textCursor().position()+1   #Place an endl @Start.
+        TextReversed = Text[CursorPos-1::-1]    #Python str reversal seems unintuitive.
+        self.CoordsLabel.setText('Ln '+str(TextReversed.count('\n'))+', Col '+str(TextReversed.find('\n')+1))
