@@ -1,5 +1,7 @@
 # AutoCove-Plugin
 
+I've discovered 2 bugs in the Δ! OP_ROLL should be 1 instead of 0, & OP_LESSTHANOREQUAL should be -1 instead of 0. Next version will fix this. ROLL caused a massive discrepancy in the RefreshTimer's ΣΔ, while LESSTHANOREQUAL affected Mecenas' ΣΔ. Without ΣΔ it was too difficult for me to detect!
+
 Next version will have a CLI! e.g.
 
 `./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 C:/Users/Username/Desktop/Test.html black align#`
