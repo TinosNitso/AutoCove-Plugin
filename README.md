@@ -1,14 +1,6 @@
 # AutoCove-Plugin
 
-I've discovered 2 bugs in the Δ! Both OP_ROLL & OP_LESSTHANOREQUAL should be -1 instead of 0. Next version will fix this. That fixes all the "bugs" I thought I could see...
-
-Next version will have a CLI, too! e.g.
-
-`./Electron-Cash daemon AutoCove 9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30 C:/Users/Username/Desktop/Test.html black align#`
-
-This won't count as official "Command-line Integration" because `@daemon_command` is only used to remote-control the GUI (but with almost all options available). Maybe there'll be interest in a purely web interface, but the server needs to run a GUI EC wallet (e.g. watching-only). There'll also be ±Δ for the OpCodes List, & an *Align #* button with small Consolas. There'll probably also be ΣΔ-decoding (counted from start or prior ΣΔ, i.e. Δ summed over each IF branch), along with `Ln #, Col #` like Notepad.
-
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.0.gif)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
@@ -58,7 +50,17 @@ Another example could be address *ppythag0ras*... which only returns three coins
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
-The HTML examples above come with an example of xztar 23x compression, which is supported internally by EC. Whole market-places could possibly be stored & updated using xztar, [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc. In fact, compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. I just compressed a 128p (60% quality) jpg by over 3% using xz, to 3.8kB (currently 1.1 US cents, in BCH, to upload). A seller could use the same image at different market-places, and it's quite sharp for a cent.
+The HTML examples above come with an example of xztar 23x compression, which is supported internally by EC. Whole market-places could possibly be stored & updated using xztar, [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc. Compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. A 128p (60% quality) jpg is compressed by 3% using xz, to 3.8kB (currently 1.3 US cents, in BCH, to upload). A seller could use the same image at different market-places, and it's quite sharp for a cent.
+
+v1.1.2 notes:
+- Bugfixes for the Δ of ROLL & LESSTHANOREQUAL (both -1).
+- ΣΔ decoding! It sums up the Δ, not counting the last ΣΔ.
+- *Align #* button! Works with asm, <dec> etc.
+- Ln #, Col # coords label! (Top-right.) 
+- Command line interface! First start the EC GUI with any wallet, & AutoCove installed. Then cd to EC & enter `./Electron-Cash daemon AutoCove` to see instructions. Almost all options available (B&W, hex/asm, 1Line, etc). The CLI doesn't officially count as "Command-line Integration" because it only uses `@daemon_command` to remote-control the GUI, which controls all default settings. Only the last sigscript is written to HTML, since a single TXID could create >100 Scripts. If there's interest a future version could specify Input#. Every HTML command clears decoder memory. The HTML output could be appended to a server's website interface (after <input> box, etc). It might also be possible for one plugin to command another one using the daemon, but without a system command. Linux usage is similar but looks more like `./Electron-Cash-4.2.6-x86_64.AppImage daemon AutoCove TXID /home/Username/Desktop/Test.html black align#`, etc. I couldn't get macOS terminal permission to launch `./Applications/Electron-Cash.app` (`zsh: permission denied`). Safari on Catalina might have trouble displaying *ΣΔ*.
+- Added ±Δ to OpCodes List. e.g. all unary Introspection codes are +0Δ.
+- *Courier New* font has wider compatibility than *Consolas*.
+- SHA256 Checksum 000000dd4a88643037b15d593201ee7436b1e2bc1be172af03d48583fa797991 (23 kH/s · 5 mins). Update via reinstall requires restarting EC.
 
 v1.1.1 notes:
 - New `pReturn...` covenant has up to 2% fee reduction by placing CODESEPARATOR just before CHECKSIG @ Script end (`<Nonce>DROP` @ Start). Decoder endlAfter `<Nonce>DROP`.
@@ -68,7 +70,7 @@ v1.1.1 notes:
 - <...> input now Python-evaluates ... e.g. `<2-3>==<-1>`→`4f`, etc. `<±0b...>`, `<±0o...>` & `<±0x...>` too! 
 - bin, oct & hex conversion! e.g. can decode directly to octal.
 - No font combo-box in macOS (Consolas didn't work).
-- SHA256 Checksum 0000000f040262fd608ffa7b8877adaee2b700a671d134588933ec8f7902b775 (23 kH/s · 36 mins). Update via re-install requires restarting EC.
+- SHA256 Checksum 0000000f040262fd608ffa7b8877adaee2b700a671d134588933ec8f7902b775 (23 kH/s · 36 mins).
 
 v1.1.0 notes:
 - `<dec>` input. e.g. can copy paste from a [CHIP](https://github.com/bitjson/bch-loops). A future update should enable <0x...> & <0o...>.
