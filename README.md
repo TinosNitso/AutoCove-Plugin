@@ -56,7 +56,7 @@ v1.1.2 notes:
 - Bugfixes for the Δ of ROLL & LESSTHANOREQUAL (both -1).
 - ΣΔ decoding! It sums up the Δ, not counting the last ΣΔ.
 - *Align #* button! Works with asm, <dec> etc.
-- Ln #, Col # coords label! (Top-right.) 
+- *Ln, Col* coords label! (Top-right.) 
 - Command line interface! First start the EC GUI with any wallet, & AutoCove installed. Then cd to EC & enter `./Electron-Cash daemon AutoCove` to see instructions. Almost all options available (B&W, hex/asm, 1Line, etc). The CLI doesn't officially count as "Command-line Integration" because it only uses `@daemon_command` to remote-control the GUI, which controls all default settings. Only the last sigscript is written to HTML, since a single TXID could create >100 Scripts. If there's interest a future version could specify Input#. Every HTML command clears decoder memory. The HTML output could be appended to a server's website interface (after <input> box, etc). It might also be possible for one plugin to command another one using the daemon, but without a system command. Linux usage is similar but looks more like `./Electron-Cash-4.2.6-x86_64.AppImage daemon AutoCove TXID /home/Username/Desktop/Test.html black align#`, etc. I couldn't get macOS terminal permission to launch `./Applications/Electron-Cash.app` (`zsh: permission denied`). Safari on Catalina might have trouble displaying *ΣΔ*.
 - Added ±Δ to OpCodes List. e.g. all unary Introspection codes are +0Δ.
 - *Courier New* font has wider compatibility than *Consolas*.
