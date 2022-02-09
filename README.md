@@ -2,6 +2,8 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
+Next version will have Undo support & *Align #* will work on random text too.
+
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28` HODL plugin.
@@ -21,7 +23,7 @@ Alternatively, copy paste redeem Scripts from other networks, like from [this](h
 
 If there's ever a discrepancy between 2 large Scripts, a neat trick is to turn off the colors (for speed), maximize EC, & then use the address combo-box to instantly switch btwn them. To verify the difference, edit one Script until the address matches the other. Another trick is to scroll through the (3of5) 20 inputs example, to see how ECDSA multisigs vary.
 
-Another example is from [slp_dollar.artifact](https://github.com/simpleledger/Electron-Cash-SLP/blob/cashscript-dev/lib/cashscript/slp_dollar.artifact). It's for SLP tokens which can always be frozen by the issuer, by forcibly sending any possible descendent to a frozen state. There's a bug since DEPTH+Δ>1 for all branches.
+Another example is from [slp_dollar.artifact](https://github.com/simpleledger/Electron-Cash-SLP/blob/cashscript-dev/lib/cashscript/slp_dollar.artifact). It's for SLP tokens which can always be frozen by the issuer, by forcibly sending any possible descendent to a frozen state.
 `5579009c635679016b7f77820134947f5c7f7701207f75527902010187916959798277589d5a79827701219d5b798277589d170000000000000000406a04534c500001010453454e4420577a7e587e59797e587e5b797e7b01207f77082202000000000000760317a9147e5156797e587e5c7a7e01147e5c79a97e53797ea97e01877e780317a9147e51577a7e587e5d7a7e01147e58797e547a7ea97e01877e7b041976a9147e5a7aa97e0288ac7e727e7b7e7c7e577a7eaa885579a97b88716e7c828c7f75577aa87bbbac77777767557a519d55796101687f77820134947f5c7f7701207f75587951876352790100886758790100876352795188686851597a7e7b527f777e082202000000000000760317a9147e7ba97e01877e7c041976a9147e557a7e0288ac7e170000000000000000376a04534c500001010453454e4420577a7e587e557a7e537a7c537a7e7b7e557a7eaa88537a7b6e7c828c7f75557aa87bbbac7768`
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
