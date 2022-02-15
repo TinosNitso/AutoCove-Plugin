@@ -2,7 +2,9 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
-Next version will have Undo (history) support, redo (only without colors), a bugfix for when clicking in btwn lines causes a horizontalScrollBar jump (to the right), & *Align #* will work on random text too. Coloring will be twice as fast, and there'll be a full Δ List to check all Δ values. Font sizes will vary with Ctrl+ScrollWheel.
+Next version will have Undo & Redo (with history & colors), a bugfix for when clicking in btwn lines causes a horizontalScrollBar jump (to the right), & *Align #* will work on random text too. Coloring will be twice as fast, and there'll be a full Δ List to check all Δ values. Font sizes will vary with Ctrl+ScrollWheel. There'll be Ctrl+S, Ctrl+±, Ctrl+Z, Ctrl+Shift+Z shortcuts with a bugfix for Esc key.
+
+Undo & redo is taking longer than I thought. The trick is to create an imaginary QPlainTextEdit inside the QTextEdit, and use only its undo history. It's a whole new class of QTextEdit. Any attempt to use only the one QTextEdit (e.g. using .joinPreviousEditBlock & .endEditBlock etc) ultimately caused occasional glitches no matter how clever (PyQt5.15.2). It's a fascinating problem, and I still want to improve the code so that Undo works better on whole editBlocks, before release.
 
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
