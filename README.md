@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
-Next version will have Undo & Redo (with history & colors), a bugfix for when clicking in btwn lines causes a horizontalScrollBar jump (to the right), & *Align #* will work on random text too. There'll be a full Δ List to check all Δ values. Font sizes will vary with Ctrl+ScrollWheel. There'll be Ctrl+S, Ctrl+±, Ctrl+Z, Ctrl+Shift+Z shortcuts with a bugfix for Esc key. Daemon CLI will support `.artifact` input, & QSplitter will allow resizing the hex box. Black context menus will be improved; drag & drop will work for text.
+Next version will have Undo & Redo (with history & colors), a bugfix for when clicking in btwn lines causes a horizontalScrollBar jump (to the right), & *Align #* will work on random text too. There'll be a full Δ List to check all Δ values. Font sizes will vary with Ctrl+ScrollWheel. There'll be Ctrl+S, Ctrl+±, Ctrl+Z, Ctrl+Shift+Z shortcuts with a bugfix for Esc key. Daemon CLI will support `.artifact` input, & QSplitter will allow resizing the hex box. Black context menus will be improved; drag & drop will work for text. New pReturn... covenant will VERIFY SIGHASH_ALL, & be 4B shorter using the ALTSTACK.
 
 Undo & redo is taking longer than I thought. The trick is to create a phantom QPlainTextEdit inside the QTextEdit, and use only its undo history. It's a whole new class of QTextEdit. Any attempt to use only the one QTextEdit (e.g. using .joinPreviousEditBlock & .endEditBlock etc) ultimately caused occasional glitches (using PyQt5.15.2).
 
