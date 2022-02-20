@@ -108,7 +108,7 @@ SHA256  2 PICK SIZE 1SUB SPLIT DROP    #[Sig, PubKey, Preimage] DATASIG is 1 sho
 SWAP  2 PICK  CODESEPARATOR CHECKDATASIGVERIFY  CHECKSIG    #[Sig, PubKey, SHA256, Sig[:-1]] VERIFY DATApush=Preimage.
 0801000000009ab19a DROP    #[BOOL] Append nonce for vanity address, generated using VanityTXID-Plugin. It'd be more efficient before the CODESEPARATOR, but Native Introspection should remove that altogether.
 ''',
-'''//[Sig, PubKey, Preimage, UTX]    #'preturn...' v1.1.1 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. This update reduces fees by up to another 2% by placing <Nonce>DROP @Start, & CODESEPARATOR in-btwn CHECKs.
+'''//[Sig, PubKey, Preimage, UTX]    #'preturn...' v1.1.1 Script. UTX = (Unspent TX) = Parent. The starting stack items relevant to each line are to its right. Compared to v1.1.0, this one has up to 2% lower fees by better placement of <Nonce>DROP & CODESEPARATOR.
 08070000000345b407 DROP    #[...] Prepend nonce for vanity address, generated using VanityTXID-Plugin.
 OVER  4 SPLIT NIP  0120 SPLIT  0120 SPLIT NIP  <32+4> SPLIT DROP TUCK  HASH256  EQUALVERIFY    #[..., Preimage, UTX] VERIFY Prevouts == Outpoint. i.e. only 1 input in Preimage, or else a miner could take a 2nd return as fee. hashPrevouts is always @ position 4, & Outpoint is always 36B long @ position 0x44.
 0120 SPLIT DROP  OVER HASH256 EQUALVERIFY    #[..., UTX, Outpoint] VERIFY UTXID == Outpoint TXID. Outpoint from prior line contains UTXID of coin being returned.
@@ -119,7 +119,7 @@ SWAP <4+1+32+4> SPLIT NIP  1 SPLIT SWAP 0100 CAT BIN2NUM  SPLIT DROP    #[..., U
 1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(1)), scriptSig(1:)] ] Separate next data-push. Always assume data-push isn't OP_N with N>0. If send is malleable, this is an issue.
 SIZE  IF  NIP    #[..., scriptSig(1), [SIZE(scriptSig(2)), scriptSig(2:)] ] SIZE decides whether sender was P2SH or P2PKH. IMO it's more elegant to combine IF with a stack OpCode to simplify the stack.
         1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(2)), scriptSig(2:)] ] Separate next data-push.
-        SIZE  IF  NIP	#[..., scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
+        SIZE  IF  NIP   #[..., scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
                 1 SPLIT  SWAP SPLIT    #[..., [SIZE(Script), scriptSig(3:)] ] BIN2NUM unnecessary because the empty redeem Script isn't supported.
         ENDIF  DROP    #[..., Script, 0] Assume "3rd" data-push is final & is redeem Script.
         HASH160  0317a914 SWAP CAT  CAT  0187    #[..., Amount, Script] Predict Outputs for P2SH sender.
@@ -128,17 +128,40 @@ ELSE  DROP    #[..., PubKey, 0]
 ENDIF  CAT    #[..., SPLIT(Outputs)] From now is the same for both P2SH & P2PKH.
 HASH256  OVER SIZE <32+4+4> SUB SPLIT NIP  0120 SPLIT DROP  EQUALVERIFY    #[..., Preimage, Outputs] VERIFY Outputs==Output is correct. hashOutputs is located 40B from Preimage end.
 SHA256  2 PICK SIZE 1SUB SPLIT DROP    #[Sig, PubKey, Preimage] DATASIG is 1 shorter than a SIG.
-SWAP  2 PICK  CHECKDATASIGVERIFY CODESEPARATOR CHECKSIG    #[Sig, PubKey, SHA256, Sig[:-1]] VERIFY DATApush==Preimage. Only 1B following CODESEPARATOR must be signed for by PrivKey=1. 
+SWAP  2 PICK  CHECKDATASIGVERIFY CODESEPARATOR CHECKSIG    #[Sig, PubKey, SHA256, Sig[:-1]] VERIFY DATApush==Preimage. Only 1B following CODESEPARATOR must be signed for as scriptCode (e.g. by PrivKey=1). 
+''',
+'''//[SIG[:-1], PubKey, Preimage[68:], UTX]    #'preturn...' v1.1.3 Script. UTX = (Unspent TX) = Parent. The starting stack [...] relevant to each line is to its right, with {...} for ALTSTACK. This update reduces the fee by up to 12% mainly by using a shorter Preimage. Return SIGHASH 0xc3 is required, & ALTSTACK is used for greater efficiency.
+080000000000da5ddd DROP    #[...] Prepend nonce for vanity address, generated using VanityTXID-Plugin.
+OVER 0120 SPLIT TOALTSTACK  OVER HASH256 EQUALVERIFY    #[..., Preimage[68:], UTX] VERIFY UTXID == Outpoint TXID == Preimage[68:][:32]. IMO starting with OVER is efficient.
+SIZE <415> ADD    #[..., UTX] Fee is (SIZE(UTX)+415 sats). A sat less should also always work. P2SH returns are 2B smaller than P2PKH for same SIZE(UTX).
+FROMALTSTACK 6 SPLIT NIP  8 SPLIT TOALTSTACK  BIN2NUM    #[...]{Preimage[0x64:]} Obtain 8B Value from Preimage, NIP off 4B Outpoint index + 2B for scriptCode '01ac'. ALTSTACK allows efficient Preimage NIPping.
+SWAP SUB  8 NUM2BIN    #[..., Fee, Value] Calculate output Amount by subtracting Fee.
+SWAP <4+1+32+4> SPLIT NIP    #[..., UTX, Amount] NIP off UTX nVersion, #Inputs & prior outpoint.
+1 SPLIT  SWAP 0100 CAT BIN2NUM  SPLIT DROP    #[..., UTX[41:] ] DROP UTX-end, to isolate scriptSig. Always assumes SIZE(scriptSig)<0xfd. 0 padding guarantees a +ve #.
+1 SPLIT  SWAP BIN2NUM SPLIT NIP    #[..., scriptSig]  Always assume SIZE(data-push)<0x4c. This rules out Mof3 MULTISIG, & uncompressed VanityTXID. The "0th" data-push, "scriptSig(0)", is only final for P2PK sender, therefore NIP it off. BIN2NUM is required for an empty data-push (has leading 0-byte).
+1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(1)), scriptSig(1:)] ] Separate next data-push. Always assume data-push isn't OP_N with N>0. If send is malleable, this is an issue.
+SIZE  IF  NIP    #[..., scriptSig(1), [SIZE(scriptSig(2)), scriptSig(2:)] ] SIZE decides whether sender was P2SH or P2PKH. IMO it's more elegant to combine IF with a stack OpCode to simplify the stack.
+        1 SPLIT  SWAP BIN2NUM SPLIT    #[..., [SIZE(scriptSig(2)), scriptSig(2:)] ] Separate next data-push.
+        SIZE  IF  NIP   #[..., scriptSig(2), [SIZE(scriptSig(3)), scriptSig(3:)] ] The next data-push is for 2of2. SIZE decides if it even exists.
+                1 SPLIT  SWAP SPLIT    #[..., [SIZE(Script), scriptSig(3:)] ] BIN2NUM unnecessary because the empty redeem Script isn't supported.
+        ENDIF  DROP    #[..., Script, 0] Assume "3rd" data-push is final & is redeem Script.
+        HASH160  0317a914 SWAP CAT  CAT  0187    #[..., Amount, Script] Predict Output for P2SH sender.
+ELSE  DROP    #[..., PubKey, 0]
+        HASH160  041976a914 SWAP CAT  CAT  0288ac    #[..., Amount, PubKey] Predict Output for P2PKH sender.
+ENDIF  CAT    #[..., SPLIT(Output)] From now is the same for both P2SH & P2PKH.
+HASH256  FROMALTSTACK 4 SPLIT NIP  0120 SPLIT DROP  EQUALVERIFY    #[..., Output]{Preimage[-44:]} VERIFY Output is correct. NIP off 4B nSequence. hashOutputs @40B from Preimage end.
+1 <4+32*2> NUM2BIN  SWAP CAT  SHA256    #[..., Preimage[68:]] Reconstruct full Preimage using nVersion 1, followed by hashSequence & hashPrevouts all zeroed out.
+3DUP  SWAP CHECKDATASIGVERIFY  DROP    #[SIG[:-1], PubKey, SHA256] VERIFY Preimage is correct. 
+SWAP 01c3 CAT  SWAP  CODESEPARATOR CHECKSIG    #[SIG[:-1], PubKey] VERIFY SIGHASH_SINGLE|ANYONECANPAY|FORKID (0xc3). Efficiently blocks a theoretical vulnerability where a 2nd identical send is taken as a fee instead of being returned. A SIG is 1B longer than a DATASIG, due to the SIGHASH. Only 1B following CODESEPARATOR must be signed for as scriptCode (e.g. by PrivKey=1). 
 
 #If the 'preturn...' address is added to a watching-only wallet, this plugin will automatically broadcast the return txns.
 #Sender must use a P2PKH or P2SH address, not P2PK. P2PK isn't currently supported by EC.
 #P2SH sender must have 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible.
-#Sending txn SIZE must be at most 520 Bytes (3 inputs max).
+#Sending txn SIZE must be at most 520 Bytes. 3 inputs max for P2PKH, 1 input max for 2of2.
 #13 bits minimum for single input (P2PKH sender), but add a couple more bits per extra input.
 #It can't return SLP tokens!
-#Fee between 7 & 10 bits.
-#21 BCH max, but I haven't tested over 10tBCH. If the sending txn is somehow malleated (e.g. by miner), then the money may be lost! 
+#Fee btwn 6 to 9 bits.
+#21 BCH max, but only 10tBCH have been tested. If the sending txn is somehow malleated (e.g. by miner), then the money may be lost! 
 #The private key used to auto-return is 1.
-#The sender shouldn't use a PUSHDATA OpCode in the output pkscript (non-standard).
 #To return from other addresses requires editing qt.py.
 ''']
