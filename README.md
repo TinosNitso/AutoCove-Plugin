@@ -25,6 +25,8 @@ If there's ever a discrepancy between 2 large Scripts, a neat trick is to turn o
 Another example is from [slp_dollar.artifact](https://github.com/simpleledger/Electron-Cash-SLP/blob/cashscript-dev/lib/cashscript/slp_dollar.artifact). It's for SLP tokens which can always be frozen by the issuer, by forcibly sending any possible descendent to a frozen state.
 `5579009c635679016b7f77820134947f5c7f7701207f75527902010187916959798277589d5a79827701219d5b798277589d170000000000000000406a04534c500001010453454e4420577a7e587e59797e587e5b797e7b01207f77082202000000000000760317a9147e5156797e587e5c7a7e01147e5c79a97e53797ea97e01877e780317a9147e51577a7e587e5d7a7e01147e58797e547a7ea97e01877e7b041976a9147e5a7aa97e0288ac7e727e7b7e7c7e577a7eaa885579a97b88716e7c828c7f75577aa87bbbac77777767557a519d55796101687f77820134947f5c7f7701207f75587951876352790100886758790100876352795188686851597a7e7b527f777e082202000000000000760317a9147e7ba97e01877e7c041976a9147e557a7e0288ac7e170000000000000000376a04534c500001010453454e4420577a7e587e557a7e537a7c537a7e7b7e557a7eaa88537a7b6e7c828c7f75557aa87bbbac7768`
 
+After decoding, if a user disables Colors, there's unfortunately a bug where the hex is still colored in! Will be fixed in the next version. 
+
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.3.png)
