@@ -2,14 +2,11 @@
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
-Next version will have Undo & Redo (with history & colors), a bugfix for when clicking in btwn lines causes a horizontalScrollBar jump (to the right), & *Align #* will work on random text too. There'll be a full Δ List to check all Δ values. Font sizes will vary with Ctrl+ScrollWheel. There'll be Ctrl+S, Ctrl+±, Ctrl+Z, Ctrl+Shift+Z shortcuts with a bugfix for Esc key. Daemon CLI will support `.artifact` input, & QSplitter will allow resizing the hex box. Black context menus will be improved; drag & drop will work for text. New pReturn... covenant have a 12% lower fee mostly due to a shorter Preimage, using SIGHASH `0xc3` (`hashPrevouts` & `hashSequence` are both zeroed out).
-
-Undo & redo is taking longer than I thought. The trick is to create a phantom QPlainTextEdit inside the QTextEdit, and use only its undo history. It's a whole new class of QTextEdit. Any attempt to use only the one QTextEdit (e.g. using .joinPreviousEditBlock & .endEditBlock etc) ultimately caused occasional glitches (using PyQt5.15.2).
-
 Users can copy paste the following TXIDs into the plugin to see some examples.
 `9b91b2c8afb3caca4e98921cb8b7d6131a8087ee524018d1154b609b92e92b30` RefreshTimer.cash original state.
 `4377faca0d82294509e972f711957e95a843c01119320a3e2b0b4daf26afca28` HODL plugin.
-`0000000e0ad818cf6600060b5ee4cf75e6f4292204af77aceb2f95bbf9fc1194` VanityTXID address.
+`0000000e0ad818cf6600060b5ee4cf75e6f4292204af77aceb2f95bbf9fc1194` VanityTXID plugin.
+`616e1e6d0d411d7a7aaf62bb1b3801c32184b8b23f366084967f0aae06b38be6` AutoCove plugin, pReturn...
 `4b84bd37e0660203da70796e9dd76f58f37d843917694c59ede7758ded5bb05f` Mecenas plugin, protoge spend.
 `a1018135011451d569183e6e327b37bb2600ac7001b1b918fc6121ad3e4bcf78` Last Will plugin, cold ended.
 `83b045c46418d0dd1922d52d6b0c2b35366e77cb9d20647e43b13cfcb78ec58c` 1of1 multisig.
@@ -30,7 +27,7 @@ Another example is from [slp_dollar.artifact](https://github.com/simpleledger/El
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.0.5.WebP)
 
-![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.1.png)
+![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.3.png)
 
 Fully automatic covenants forward payments without any further authorization. Parental introspection can be achieved using PrivKey=1, so that PubKey is the compressed base point of secp256k1.
 
@@ -54,7 +51,21 @@ Another example could be address *ppythag0ras*... which only returns three coins
 
 Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
-The HTML examples above come with an example of xztar 23x compression, which is supported internally by EC. Whole market-places could possibly be stored & updated using xztar, [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc. Compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. A 128p (60% quality) jpg is compressed by 3% using xz, to 3.8kB (currently 1.3 US cents, in BCH, to upload). A seller could use the same image at different market-places, and it's quite sharp for a cent.
+The HTML examples above come with an example of xztar 25x compression, which is supported internally by EC. xztar should be useful with [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc. Compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. I compressed a 128p (60% quality) jpg by 3% using xz, to 3.8kB (currently 1.1 cents US, in BCH, to upload). A seller could use the same image across different market-places.
+
+v1.1.3 notes:
+- Bugfix for when clicking in btwn 2 lines causes the horizontalScrollBar to jump to end-of-long-line.
+- Undo & Redo (with history and colors)! A "phantom" PlainTextEdit is used to track each step. EditBlocks aren't perfect yet (e.g. pressing BackSpace twice normally should be undone in 1 step, not 2).
+- Improved *Align #* (e.g. for random text).
+- Ctrl+ScrollWheel, Ctrl+S, Ctrl+±, Ctrl+Z, Ctrl+Shift+Z shortcuts enabled.
+- Bugfix for Esc key killing plugin's UI.
+- Daemon CLI updated to accept filename inputs (`.artifact` & `.txn`).
+- Bugfix for text drag & drop (e.g. from hex to Script box).
+- Bugfix for black context menus.
+- New pReturn... covenant has 12% lower fee by shortening Preimage by 68B, & using ALTSTACK. Adding sighash 0x`c3` in-Script is also more efficient (sighash should be checked). A `NUM2BIN` not at line-end.
+- Hex-box vertically resizeable, using QSplitter. Auto-resizes.
+- Full Δ List in Combo Box, to verify each Δ. (Small error with Native Introspection OpCodes appearing in older EC.)
+- SHA256 Checksum 00000037972912870f383e7fce12eb6b4d29e68515bed81f7a7138b1a814fbeb (19 kH/s · 28 mins). Update via re-install requires restarting EC.
 
 v1.1.2 notes:
 - Bugfixes for the Δ of ROLL & LESSTHANOREQUAL (both -1).
