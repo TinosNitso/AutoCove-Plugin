@@ -33,8 +33,8 @@ Fully automatic covenants forward payments without any further authorization. Pa
 
 I worked full-time for years at a factory named after Cathedral **Cove**, in NZ. *Cove* is also short for *Covenant*! So *AutoCove* seemed like a nice name. Its current covenant address & script is:
 
-**v1.1.1** [preturnhnsa96ga83fppzdm2jx6ddn7y4cght33fcv](https://www.blockchain.com/bch/address/preturnhnsa96ga83fppzdm2jx6ddn7y4cght33fcv) (pReturn#162188; ✉ [Cash Account](https://www.cashaccount.info/#lookup)):
->08070000000345b4077578547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f75817882779402f7019458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279bbabac
+**v1.1.3** [preturn5dnk5aw7utkfrjak5grw4jksye5guwv956h](https://www.blockchain.com/bch/address/preturn5dnk5aw7utkfrjak5grw4jksye5guwv956h) (pReturn#164493; 🍭 [Cash Account](https://www.cashaccount.info/#lookup)):
+>080000000000da5ddd757801207f6b78aa8882029f01936c567f77587f6b817c9458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa6c547f7701207f7588510144807c7ea86f7cbb757c01c37e7cabac
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
 - Sender must use a **P2PKH** or **P2SH** address, but not P2PK.
@@ -47,7 +47,7 @@ In the case of *preturn*..., it will return whatever coins are sent to it, autom
 - 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn5dnk5aw7utkfrjak5grw4jksye5vw2t8rat).
 - Sender's sigscript must not be **malleated** in any way (eg by miner).
 
-A future example could be an address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using `OP_DIV`, the Script could check a/(c+b)=(c-b)/a).
+A future example could be an address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and `a²+b²==c²` (using `OP_DIV`, the Script could check `a/(c+b)==(c-b)/a`).
 
 Vanity hashes & addresses generated using [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
@@ -62,7 +62,7 @@ v1.1.3 notes:
 - Daemon CLI updated to accept filename inputs (`.artifact` & `.txn`).
 - Bugfix for text drag & drop (e.g. from hex to Script box).
 - Bugfix for black context menus.
-- New pReturn... covenant has 12% lower fee by shortening Preimage by 68B, & using ALTSTACK. Adding sighash 0x`c3` in-Script is also more efficient (sighash should be checked). A `NUM2BIN` not at line-end.
+- New pReturn... covenant has 12% lower fee by shortening Preimage by 68B, & using ALTSTACK. Adding sighash `0xc3` in-Script is also more efficient (sighash should be checked). A `NUM2BIN` not at line-end.
 - Hex-box vertically resizeable, using QSplitter. Auto-resizes.
 - Full Δ List in Combo Box, to verify each Δ. (Small error with Native Introspection OpCodes appearing in older EC.)
 - SHA256 Checksum 00000037972912870f383e7fce12eb6b4d29e68515bed81f7a7138b1a814fbeb (19 kH/s · 28 mins). Update via re-install requires restarting EC.
