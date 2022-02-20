@@ -37,19 +37,19 @@ I worked full-time for years at a factory named after Cathedral **Cove**, in NZ.
 >08070000000345b4077578547f7701207f01207f7701247f757daa8801207f7578aa8878820134947f77587f75817882779402f7019458807c01297f77517f7c01007e817f75517f7c817f77517f7c817f826377517f7c817f826377517f7c7f6875a90317a9147c7e7e01876775a9041976a9147c7e7e0288ac687eaa78820128947f7701207f7588a85279828c7f757c5279bbabac
 
 In the case of *preturn*..., it will return whatever coins are sent to it, automatically, assuming some conditions:
-- Sender must use a **P2PKH** or **P2SH** address (but not P2PK).
-- P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible. However non-0 constant pushes like OP_N aren't supported.
+- Sender must use a **P2PKH** or **P2SH** address, but not P2PK.
 - Sending transaction must be no more than **520B**. Only 3 inputs at most.
-- 13 bits minimum for only 1 input. ~2 bits **more** needed per extra input.
-- 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn64ylcxyx9fktkrf8jpdanp4qvjycjlwlap9).
-- 7→10 bits fee.
-- Total amount will be returned to **first** (0th) input.
-- Never send **SLP** tokens.
-- Sender's sigscript must not be **malleated** in any way (eg by miner). The output pkscript should have no PUSHDATA OpCodes.
+- 13 bits minimum for only 1 P2PKH sender input. ~2 bits **more** needed per extra input.
+- 6→9 bits fee.
+- It can't return **SLP** tokens.
+- Total amount minus fee will be returned to **first** (0th) input.
+- P2SH sender must use 3 or 4 data pushes, ≤75B each, in their unlocking sigscript ≤252B. Compressed 1of1, 1of2, 2of2 & VanityTXID are all compatible. However non-0 constant pushes like `OP_N` aren't supported.
+- 21 BCH max (theoretically), but I've only tested up to 10tBCH. I've tested 1of1, 2of2, multiple inputs & outputs, Schnorr & ECDSA, both compressed & uncompressed PubKeys (P2PKH) on [testnet4](https://testnet4.imaginary.cash/address/bchtest:preturn5dnk5aw7utkfrjak5grw4jksye5vw2t8rat).
+- Sender's sigscript must not be **malleated** in any way (eg by miner).
 
-Another example could be address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using OP_DIV we could check a/(c+b)=(c-b)/a).
+A future example could be an address *ppythag0ras*... which only returns three coins at a time, and only if the same address sends them, and a²+b²=c² (using `OP_DIV`, the Script could check a/(c+b)=(c-b)/a).
 
-Vanity hashes & addresses are generated using the [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
+Vanity hashes & addresses generated using [VanityTXID-Plugin](https://github.com/TinosNitso/VanityTXID-Plugin).
 
 The HTML examples above come with an example of xztar 25x compression, which is supported internally by EC. xztar should be useful with [BFP](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) type 0x02. BFP type 0x01 may work for small messages, like an encrypted link to a paste-bin etc. Compressed HTML is even smaller than the plain-text itself as a .txt (e.g. 38% smaller). Even a jpg image is smaller when in an xz archive. I compressed a 128p (60% quality) jpg by 3% using xz, to 3.8kB (currently 1.1 cents US, in BCH, to upload). A seller could use the same image across different market-places.
 
