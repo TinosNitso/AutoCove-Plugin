@@ -1,6 +1,6 @@
 # AutoCove-Plugin
 
-Unfortunately EC v4.2.7 has caused a couple bugs: hex ⇔ asm conversion isn't working properly. Also, `//OP_1` shows up as `//01` when decoding whole txns. Both bugs'll be fixed in the next version (I didn't bother testing the dev version of EC). Another bug is that if colors are disabled, the hex-box sometimes still gets colored!
+Unfortunately EC v4.2.7 has caused a couple bugs: hex ⇔ asm conversion isn't working properly. Also, `//OP_1` shows up as `//01` when decoding whole txns. Both bugs'll be fixed in the next version (I didn't bother testing the dev version of EC). Another bug is that if colors are disabled, the hex-box sometimes still gets colored! Next version will have double-click to resize the splitter in btwn boxes.
 
 ![alt text](https://github.com/TinosNitso/AutoCove-Plugin/blob/main/v1.1.2.GIF)
 
